@@ -36,7 +36,13 @@
                     "type": "tree"
                 }
             ]
-        }
+        },
+        "commands": [
+            {
+                "command": "tabView.refresh",
+                "title": "Refresh Open Files"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
