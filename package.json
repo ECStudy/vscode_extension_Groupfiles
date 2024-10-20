@@ -26,13 +26,14 @@
         "views": {
             "vscode-tabgroup-and-bookmark": [
                 {
-                    "id": "package-dependencies",
-                    "name": "Dependencies",
+                    "id": "tab-view",
+                    "name": "Tabs",
                     "type": "tree"
                 },
                 {
-                    "id": "package-outline",
-                    "name": "Outline"
+                    "id": "bookmark-view",
+                    "name": "Bookmarks",
+                    "type": "tree"
                 }
             ]
         }
