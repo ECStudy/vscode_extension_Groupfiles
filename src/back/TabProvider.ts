@@ -7,6 +7,23 @@ export class TabProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
     readonly onDidChangeTreeData: vscode.Event<
         vscode.TreeItem | undefined | void
     > = this._onDidChangeTreeData.event;
+    initialState: any;
+    treeData: any;
+
+    constructor() {
+        //처음 열렸을 때 데이터
+        this.initialState = this.initializeState();
+        //
+        this.treeData;
+    }
+
+    initializeState() {
+        const allTabs = vscode.window.tabGroups.all.flatMap(
+            (group) => group.tabs
+        );
+
+        return allTabs;
+    }
 
     // 트리 항목 반환(탭 목록)
     getTreeItem(element: vscode.TreeItem): vscode.TreeItem {
