@@ -1,3 +1,7 @@
-import { Disposable } from "./Disposable";
+import { CommandManager } from "./CommandManager";
 
-export class BookMark extends Disposable {}
+export class BookMark extends CommandManager {
+    constructor() {
+        super();
+    }
+}

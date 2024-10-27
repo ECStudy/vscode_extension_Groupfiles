@@ -10,8 +10,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     // TabProvider 등록
     const tabProvider = new TabProvider();
-    //views에 들어갈 id는 tab-view
-    vscode.window.registerTreeDataProvider("tab-view", tabProvider);
+    //views에 들어갈 id는 TabsGroupView
+    vscode.window.registerTreeDataProvider("TabsGroupView", tabProvider);
 
     // BookmarkProvider 등록
     const bookmarkProvider = new BookmarkProvider();
