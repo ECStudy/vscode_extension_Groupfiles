@@ -29,13 +29,13 @@ export class Tabs extends CommandManager {
     private registerCommandHandler() {
         this.registerCommand(
             vscode.window.tabGroups.onDidChangeTabs((e) => {
-                console.log("탭 변화 이벤트 변화", e.changed);
-                console.log("탭 변화 이벤트 열림", e.opened);
-                console.log("탭 변화 이벤트 닫힘", e.closed);
+                // console.log("탭 변화 이벤트 변화", e.changed);
+                // console.log("탭 변화 이벤트 열림", e.opened);
+                // console.log("탭 변화 이벤트 닫힘", e.closed);
 
                 const openTabs = this.getOpenTabs();
 
-                console.log("열린탭", openTabs);
+                //console.log("열린탭", openTabs);
 
                 this.TDManager.setTabsData(openTabs);
             })

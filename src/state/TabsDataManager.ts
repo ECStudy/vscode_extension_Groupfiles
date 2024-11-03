@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import { TabsData } from "./TabsData";
+import { Group } from "../types";
 
 export class TabsDataManager {
     private tabsData: any;
@@ -35,10 +36,32 @@ export class TabsDataManager {
      * @param element
      * @returns
      */
-    getTreeItem(element: vscode.TreeItem): vscode.TreeItem {
-        console.log("엘리먼트", element);
+    getTreeItem(element: vscode.Tab | Group): vscode.TreeItem {
+        console.log("11111111111", element);
 
-        return element;
+        // Tab 데이터를 바탕으로 TreeItem 생성
+        const treeItem = new vscode.TreeItem(
+            element.label,
+            vscode.TreeItemCollapsibleState.Collapsed
+        );
+
+        // // 명령 추가
+        // treeItem.command = {
+        //     command: "vscode.open",
+        //     title: "Open File",
+        //     arguments: [
+        //         element.input instanceof vscode.TabInputText
+        //             ? element.input.uri
+        //             : undefined,
+        //     ],
+        // };
+
+        // // 아이콘 설정
+        // //treeItem.iconPath = new vscode.ThemeIcon("file");
+        // //treeItem.iconPath = new vscode.ThemeIcon("indent");
+        // treeItem.iconPath = new vscode.ThemeIcon("layout-sidebar-left");
+
+        return treeItem;
     }
 
     /**
@@ -52,19 +75,18 @@ export class TabsDataManager {
     getChildren(
         element?: vscode.TreeItem
     ): vscode.TreeItem[] | Thenable<vscode.TreeItem[]> {
-        if (!element) {
-            return this.getTreeItemByTabsData();
-        }
+        // if (!element) {
+        //     // 루트 요소 (탭 목록) 반환
+        //     return this.getTabsData() || [];
+        // }
         return [];
     }
 
     getTreeItemByTabsData() {
         const tabs = this.getTabsData() || [];
         return tabs.map((tab: vscode.Tab) => {
-            const treeItem = new vscode.TreeItem(
-                tab.label,
-                vscode.TreeItemCollapsibleState.None
-            );
+            const treeItem = new vscode.TreeItem("");
+            treeItem.label = tab.label;
 
             treeItem.command = {
                 command: "vscode.open",
