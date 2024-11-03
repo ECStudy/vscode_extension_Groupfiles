@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import { TabsData } from "./TabsData";
 import { Group } from "../types";
 
-export class TabsDataManager {
+export class TabsDataManager implements vscode.TreeDataProvider<vscode.TreeItem> {
     private tabsData: any;
 
     // EventEmitter를 정의
@@ -36,32 +36,8 @@ export class TabsDataManager {
      * @param element
      * @returns
      */
-    getTreeItem(element: vscode.Tab | Group): vscode.TreeItem {
-        console.log("11111111111", element);
-
-        // Tab 데이터를 바탕으로 TreeItem 생성
-        const treeItem = new vscode.TreeItem(
-            element.label,
-            vscode.TreeItemCollapsibleState.Collapsed
-        );
-
-        // // 명령 추가
-        // treeItem.command = {
-        //     command: "vscode.open",
-        //     title: "Open File",
-        //     arguments: [
-        //         element.input instanceof vscode.TabInputText
-        //             ? element.input.uri
-        //             : undefined,
-        //     ],
-        // };
-
-        // // 아이콘 설정
-        // //treeItem.iconPath = new vscode.ThemeIcon("file");
-        // //treeItem.iconPath = new vscode.ThemeIcon("indent");
-        // treeItem.iconPath = new vscode.ThemeIcon("layout-sidebar-left");
-
-        return treeItem;
+    getTreeItem(element: vscode.TreeItem): vscode.TreeItem {
+        return element;
     }
 
     /**
@@ -72,32 +48,29 @@ export class TabsDataManager {
      * @param element
      * @returns
      */
-    getChildren(
-        element?: vscode.TreeItem
-    ): vscode.TreeItem[] | Thenable<vscode.TreeItem[]> {
-        // if (!element) {
-        //     // 루트 요소 (탭 목록) 반환
-        //     return this.getTabsData() || [];
-        // }
-        return [];
+    getChildren(element?: vscode.TreeItem): vscode.ProviderResult<vscode.TreeItem[]> {
+        if (!element) {
+            return this.getTreeItemByTabsData(); // 루트 레벨 요소 반환
+        }
+        return []; // 자식 요소가 없으므로 빈 배열 반환
     }
 
-    getTreeItemByTabsData() {
+    getTreeItemByTabsData(): vscode.TreeItem[] {
         const tabs = this.getTabsData() || [];
         return tabs.map((tab: vscode.Tab) => {
-            const treeItem = new vscode.TreeItem("");
-            treeItem.label = tab.label;
-
-            treeItem.command = {
-                command: "vscode.open",
-                title: "fileOpen",
-                arguments: [
-                    tab.input instanceof vscode.TabInputText
-                        ? tab.input.uri
-                        : undefined,
-                ],
-            };
-            return treeItem;
+            if(tab.input instanceof vscode.TabInputText){
+                const treeItem = new vscode.TreeItem(tab.input.uri, vscode.TreeItemCollapsibleState.None);
+                treeItem.command = {
+                    command: "vscode.open",
+                    title: "Open File",
+                    arguments: [  tab.input.uri   ],
+                };
+                return treeItem;
+            } else{
+                // 이게 뭘까?
+                return null;
+            }
+           
         });
     }
 
