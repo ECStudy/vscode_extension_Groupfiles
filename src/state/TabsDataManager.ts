@@ -37,7 +37,12 @@ export class TabsDataManager implements vscode.TreeDataProvider<vscode.TreeItem>
      * @returns
      */
     getTreeItem(element: vscode.TreeItem): vscode.TreeItem {
-        return element;
+
+        console.log("getTreeItem", element, (element as any).type); 
+
+       return element;
+
+        //return {}
     }
 
     /**
@@ -49,6 +54,8 @@ export class TabsDataManager implements vscode.TreeDataProvider<vscode.TreeItem>
      * @returns
      */
     getChildren(element?: vscode.TreeItem): vscode.ProviderResult<vscode.TreeItem[]> {
+        
+        console.log("getChildren", element); 
         if (!element) {
             return this.getTreeItemByTabsData(); // 루트 레벨 요소 반환
         }
@@ -56,7 +63,7 @@ export class TabsDataManager implements vscode.TreeDataProvider<vscode.TreeItem>
     }
 
     getTreeItemByTabsData(): vscode.TreeItem[] {
-        const tabs = this.getTabsData() || [];
+        const tabs = this.tabsData.getData() || [];
         return tabs.map((tab: vscode.Tab) => {
             if(tab.input instanceof vscode.TabInputText){
                 const treeItem = new vscode.TreeItem(tab.input.uri, vscode.TreeItemCollapsibleState.None);

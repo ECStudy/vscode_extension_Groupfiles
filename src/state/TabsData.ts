@@ -1,15 +1,28 @@
+import { Tab, Group, TreeItemType } from "../types";
+
 export class TabsData {
-    private tabs: any;
+    private root: any;
 
     constructor() {
-        this.tabs;
+        this.root;
     }
 
     setData(data: any) {
-        this.tabs = data;
+        this.root = data;
     }
 
     getData() {
-        return this.tabs;
+        return this.root;
     }
+
+	getChildren(element?: Tab | Group): Array<Tab | Group> | null {
+		if (!element) {
+			return this.root;
+		}
+		if (element.type === TreeItemType.Tab) {
+			return null;
+		}
+		return element.children;
+	}
+
 }
