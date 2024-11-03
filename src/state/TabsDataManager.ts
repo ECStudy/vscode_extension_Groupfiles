@@ -3,7 +3,9 @@ import * as vscode from "vscode";
 import { TabsData } from "./TabsData";
 import { Group } from "../types";
 
-export class TabsDataManager implements vscode.TreeDataProvider<vscode.TreeItem> {
+export class TabsDataManager
+    implements vscode.TreeDataProvider<vscode.TreeItem>
+{
     private tabsData: any;
 
     // EventEmitter를 정의
@@ -29,6 +31,27 @@ export class TabsDataManager implements vscode.TreeDataProvider<vscode.TreeItem>
         return this.tabsData.getData();
     }
 
+    addTabs(nativeTabs: readonly vscode.Tab[]) {
+        nativeTabs.forEach((nativeTab) => {
+            console.log("네이티브 패스", (nativeTab as any).input.uri.path);
+            const tabId = (nativeTab as any).input.uri.path;
+            if (tabId) {
+                this.tabsData.addTab(tabId);
+            }
+        });
+    }
+
+    deleteTabs(nativeTabs: readonly vscode.Tab[]) {
+        nativeTabs.forEach((nativeTab) => {
+            console.log("네이티브 패스", (nativeTab as any).input.uri.path);
+            const tabId = (nativeTab as any).input.uri.path;
+            const tab = this.tabsData.getTab(tabId);
+            if (tab && nativeTabs.length === 0) {
+                this.tabsData.deleteTab(tabId);
+            }
+        });
+    }
+
     /**
      * 트리의 각 항목(TreeItem)을 제공
      * 트리 뷰는 각 항목에 대해 getTreeItem을 호출하여, 해당 항목을 렌더링할 때 사용할 데이터를 가져옴
@@ -37,10 +60,9 @@ export class TabsDataManager implements vscode.TreeDataProvider<vscode.TreeItem>
      * @returns
      */
     getTreeItem(element: vscode.TreeItem): vscode.TreeItem {
+        console.log("getTreeItem", element, (element as any).type);
 
-        console.log("getTreeItem", element, (element as any).type); 
-
-       return element;
+        return element;
 
         //return {}
     }
@@ -53,9 +75,10 @@ export class TabsDataManager implements vscode.TreeDataProvider<vscode.TreeItem>
      * @param element
      * @returns
      */
-    getChildren(element?: vscode.TreeItem): vscode.ProviderResult<vscode.TreeItem[]> {
-        
-        console.log("getChildren", element); 
+    getChildren(
+        element?: vscode.TreeItem
+    ): vscode.ProviderResult<vscode.TreeItem[]> {
+        console.log("getChildren", element);
         if (!element) {
             return this.getTreeItemByTabsData(); // 루트 레벨 요소 반환
         }
@@ -65,19 +88,21 @@ export class TabsDataManager implements vscode.TreeDataProvider<vscode.TreeItem>
     getTreeItemByTabsData(): vscode.TreeItem[] {
         const tabs = this.tabsData.getData() || [];
         return tabs.map((tab: vscode.Tab) => {
-            if(tab.input instanceof vscode.TabInputText){
-                const treeItem = new vscode.TreeItem(tab.input.uri, vscode.TreeItemCollapsibleState.None);
+            if (tab.input instanceof vscode.TabInputText) {
+                const treeItem = new vscode.TreeItem(
+                    tab.input.uri,
+                    vscode.TreeItemCollapsibleState.None
+                );
                 treeItem.command = {
                     command: "vscode.open",
                     title: "Open File",
-                    arguments: [  tab.input.uri   ],
+                    arguments: [tab.input.uri],
                 };
                 return treeItem;
-            } else{
+            } else {
                 // 이게 뭘까?
                 return null;
             }
-           
         });
     }
 
