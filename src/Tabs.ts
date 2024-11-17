@@ -2,19 +2,19 @@ import * as vscode from "vscode";
 
 import { CommandManager } from "./CommandManager";
 
-import { TabsDataManager } from "./state/TabsDataManager";
+import { TreeDataManager } from "./state/TreeDataManager";
 import { TabsGroupView } from "./enums";
 
 export class Tabs extends CommandManager {
-    private TDManager: TabsDataManager;
+    private TDManager: TreeDataManager;
 
     constructor() {
         super();
 
         const initalState = this.getOpenTabs();
 
-        this.TDManager = new TabsDataManager();
-        this.TDManager.setTabsData(initalState);
+        this.TDManager = new TreeDataManager();
+        this.TDManager.setTreeData(initalState);
 
         //트리 뷰 생성
         vscode.window.createTreeView(TabsGroupView, {
@@ -37,7 +37,7 @@ export class Tabs extends CommandManager {
 
                 //console.log("열린탭", openTabs);
 
-                this.TDManager.setTabsData(openTabs);
+                this.TDManager.setTreeData(openTabs);
             })
         );
     }

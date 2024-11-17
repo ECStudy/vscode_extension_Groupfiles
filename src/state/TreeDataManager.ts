@@ -1,12 +1,12 @@
 import * as vscode from "vscode";
 
-import { TabsData } from "./TabsData";
+import { TreeData } from "./TreeData";
 import { Group } from "../types";
 
-export class TabsDataManager
+export class TreeDataManager
     implements vscode.TreeDataProvider<vscode.TreeItem>
 {
-    private tabsData: any;
+    private treeData: any;
 
     // EventEmitter를 정의
     private _onDidChangeTreeData: vscode.EventEmitter<
@@ -19,16 +19,16 @@ export class TabsDataManager
     > = this._onDidChangeTreeData.event;
 
     constructor() {
-        this.tabsData = new TabsData();
+        this.treeData = new TreeData();
     }
 
-    setTabsData(data: any) {
-        this.tabsData.setData(data);
+    setTreeData(data: any) {
+        this.treeData.setData(data);
         this.triggerRerender();
     }
 
-    getTabsData() {
-        return this.tabsData.getData();
+    getTreeData() {
+        return this.treeData.getData();
     }
 
     addTabs(nativeTabs: readonly vscode.Tab[]) {
@@ -36,7 +36,7 @@ export class TabsDataManager
             console.log("네이티브 패스", (nativeTab as any).input.uri.path);
             const tabId = (nativeTab as any).input.uri.path;
             if (tabId) {
-                this.tabsData.addTab(tabId);
+                this.treeData.addTab(tabId);
             }
         });
     }
@@ -45,9 +45,9 @@ export class TabsDataManager
         nativeTabs.forEach((nativeTab) => {
             console.log("네이티브 패스", (nativeTab as any).input.uri.path);
             const tabId = (nativeTab as any).input.uri.path;
-            const tab = this.tabsData.getTab(tabId);
+            const tab = this.treeData.getTab(tabId);
             if (tab && nativeTabs.length === 0) {
-                this.tabsData.deleteTab(tabId);
+                this.treeData.deleteTab(tabId);
             }
         });
     }
@@ -80,13 +80,13 @@ export class TabsDataManager
     ): vscode.ProviderResult<vscode.TreeItem[]> {
         console.log("getChildren", element);
         if (!element) {
-            return this.getTreeItemByTabsData(); // 루트 레벨 요소 반환
+            return this.getTreeItemByTreeData(); // 루트 레벨 요소 반환
         }
         return []; // 자식 요소가 없으므로 빈 배열 반환
     }
 
-    getTreeItemByTabsData(): vscode.TreeItem[] {
-        const tabs = this.tabsData.getData() || [];
+    getTreeItemByTreeData(): vscode.TreeItem[] {
+        const tabs = this.treeData.getData() || [];
         return tabs.map((tab: vscode.Tab) => {
             if (tab.input instanceof vscode.TabInputText) {
                 const treeItem = new vscode.TreeItem(
