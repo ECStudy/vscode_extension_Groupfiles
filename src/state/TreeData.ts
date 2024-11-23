@@ -11,10 +11,12 @@ export class TreeData {
     }
 
     setData(data: any) {
+        console.log();
+
         this.root = data;
     }
 
-    getData() {
+    getTreeRootData() {
         return this.root;
     }
 
@@ -32,7 +34,7 @@ export class TreeData {
      * onDidChangeTabs(e.opened) 통해서 열린 tab 저장
      * @param tabId
      */
-    addTab(tabId: string) {
+    appendTab(tabId: string) {
         if (!this.tabMap[tabId]) {
             this.tabMap[tabId] = {
                 id: tabId,
@@ -40,17 +42,19 @@ export class TreeData {
                 groupId: null,
             };
 
+            //[{key : 전체 path : {id, type, groupId}}, {}, {}]
             this.root.push(this.tabMap[tabId]);
         }
 
         console.log("root-->", this.root);
+        console.log("this.tabMap-->", this.tabMap);
     }
 
     deleteTab(tabId: string) {
         const tab = this.tabMap[tabId];
         delete this.tabMap[tabId];
 
-        console.log("root-->", this.root);
+        console.log("root-->", this.tabMap);
     }
 
     public getTab(tabId: string): Tab | undefined {

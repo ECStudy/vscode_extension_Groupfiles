@@ -1,11 +1,11 @@
 import * as vscode from "vscode";
 import { WorkspaceState } from "./state/WorkspaceState";
-import { Tabs } from "./Tabs";
+import { TabView } from "./TabView";
 import { BookMark } from "./BookMark";
 
 export function activate(context: vscode.ExtensionContext) {
     WorkspaceState.initState(context);
-    context.subscriptions.push(new Tabs());
+    context.subscriptions.push(new TabView());
     //context.subscriptions.push(new BookMark());
     // BookmarkProvider 등록
     const bookmarkProvider = new BookMark();
