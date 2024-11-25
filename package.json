@@ -28,7 +28,8 @@
                 {
                     "id": "TabsTreeView",
                     "name": "Tabs",
-                    "type": "tree"
+                    "type": "tree",
+                    "contextualTitle": "Tabs"
                 },
                 {
                     "id": "bookmark-view",
@@ -41,8 +42,42 @@
             {
                 "command": "tabView.refresh",
                 "title": "Refresh Open Files"
+            },
+            {
+                "command": "tabView.createGroup",
+                "title": "Create Group",
+                "icon": "$(add)"
+            },
+            {
+                "command": "tabView.deleteGroup",
+                "title": "Delete Group",
+                "icon": "$(remove)"
+            },
+            {
+                "command": "tabView.openAll",
+                "title": "Delete Group",
+                "icon": "$(eye)"
             }
-        ]
+        ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "tabView.createGroup",
+                    "when": "view == TabsTreeView",
+                    "group": "navigation"
+                },
+                {
+                    "command": "tabView.deleteGroup",
+                    "when": "view == TabsTreeView",
+                    "group": "navigation"
+                },
+                {
+                    "command": "tabView.openAll",
+                    "when": "view == TabsTreeView",
+                    "group": "navigation"
+                }
+            ]
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

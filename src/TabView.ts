@@ -26,6 +26,19 @@ export class TabView extends CommandManager {
             treeDataProvider: this.treeDataProvider,
             canSelectMany: true,
         });
+
+        //그룹 생성 명려어
+        this.registerCommandHandler();
+    }
+
+    private registerCommandHandler() {
+        vscode.commands.registerCommand("tabView.createGroup", () => {
+            this.createGroup();
+        });
+
+        vscode.commands.registerCommand("tabView.deleteGroup", () => {
+            this.deleteGroup();
+        });
     }
 
     initializeState() {
@@ -56,5 +69,44 @@ export class TabView extends CommandManager {
         });
 
         return tabs;
+    }
+
+    async createGroup(arg1?: any, arg2?: any) {
+        // 명령 실행 시 실제로 사용하는 코드만 유지
+        const groupName = await vscode.window.showInputBox({
+            prompt: "Enter a name for the new group",
+            placeHolder: "Group Name",
+        });
+
+        if (!groupName) {
+            vscode.window.showErrorMessage("Group name cannot be empty.");
+            return;
+        }
+
+        const groupId = `group-${Date.now()}`; // 고유 ID 생성
+        const colorId = "chartreuse"; // 그룹 색상 (예시)
+
+        const newGroup: Group = {
+            type: TreeItemType.Group,
+            id: groupId,
+            colorId: colorId,
+            label: groupName,
+            children: [],
+            collapsed: true,
+        };
+
+        console.log("🎈그룹 groupName", groupName);
+        console.log("🎈그룹 newGroup", newGroup);
+
+        // const currentState = this.treeDataProvider.getState();
+        // currentState.push(newGroup);
+        // this.treeDataProvider.setState(currentState);
+
+        vscode.window.showInformationMessage(`Group "${groupName}" created!`);
+    }
+
+    private deleteGroup() {
+        // 그룹 삭제 로직 추가
+        vscode.window.showInformationMessage("Delete Group clicked!");
     }
 }
