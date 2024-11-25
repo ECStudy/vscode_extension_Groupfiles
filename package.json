@@ -26,7 +26,7 @@
         "views": {
             "vscode-tabgroup-and-bookmark": [
                 {
-                    "id": "TabsGroupView",
+                    "id": "TabsTreeView",
                     "name": "Tabs",
                     "type": "tree"
                 },
