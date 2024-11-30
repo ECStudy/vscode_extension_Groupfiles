@@ -60,4 +60,14 @@ export class TreeData {
         this.root.push(group);
         vscode.window.showInformationMessage(`Group "${groupName}" created!`);
     }
+
+    public addTabToGroup(groupId: string, tab: Tab): void {
+        const group = this.groupMap[groupId];
+        if (group) {
+            group.children.push(tab);
+            console.log(`📝 그룹 "${group.label}"에 탭 추가됨:`, tab);
+        } else {
+            console.error("그룹을 찾을 수 없습니다:", groupId);
+        }
+    }
 }

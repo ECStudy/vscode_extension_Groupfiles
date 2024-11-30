@@ -57,6 +57,11 @@
                 "command": "tabView.openAll",
                 "title": "Delete Group",
                 "icon": "$(eye)"
+            },
+            {
+                "command": "tabView.addToGroup",
+                "title": "추가추가추가추가",
+                "category": "Tabs"
             }
         ],
         "menus": {
@@ -74,6 +79,18 @@
                 {
                     "command": "tabView.openAll",
                     "when": "view == TabsTreeView",
+                    "group": "navigation"
+                }
+            ],
+            "editor/title/context": [
+                {
+                    "command": "tabView.addToGroup",
+                    "group": "navigation"
+                }
+            ],
+            "explorer/context": [
+                {
+                    "command": "tabView.addToGroup",
                     "group": "navigation"
                 }
             ]

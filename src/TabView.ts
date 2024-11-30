@@ -39,6 +39,17 @@ export class TabView extends CommandManager {
         vscode.commands.registerCommand("tabView.deleteGroup", () => {
             this.deleteGroup();
         });
+
+        vscode.commands.registerCommand(
+            "tabView.addToGroup",
+            (uri: vscode.Uri) => {
+                console.log(
+                    "🩳🩳🩳🩳🩳🩳🩳🩳🩳컨텍스트 메뉴 '추가' 실행됨, URI:",
+                    uri
+                );
+                this.addTabToGroup(uri);
+            }
+        );
     }
 
     initializeState() {
@@ -89,5 +100,60 @@ export class TabView extends CommandManager {
     private deleteGroup() {
         // 그룹 삭제 로직 추가
         vscode.window.showInformationMessage("Delete Group clicked!");
+    }
+
+    async addTabToGroup(uri?: vscode.Uri) {
+        if (!uri) {
+            vscode.window.showErrorMessage("No file selected.");
+            return;
+        }
+
+        console.log("선택된 URI:", uri.path);
+
+        // 현재 존재하는 그룹 가져오기
+        const groups = this.treeDataProvider.getGroups();
+
+        if (groups.length === 0) {
+            vscode.window.showErrorMessage(
+                "No groups available. Create a group first."
+            );
+            return;
+        }
+
+        // QuickPick으로 그룹 선택
+        const selectedGroupName = await vscode.window.showQuickPick(
+            groups.map((group) => group.label),
+            { placeHolder: "Select a group to add the tab" }
+        );
+
+        if (!selectedGroupName) {
+            vscode.window.showErrorMessage("No group selected.");
+            return;
+        }
+
+        // 선택된 그룹 찾기
+        const selectedGroup = groups.find(
+            (group) => group.label === selectedGroupName
+        );
+
+        if (!selectedGroup) {
+            vscode.window.showErrorMessage("Selected group not found.");
+            return;
+        }
+
+        // 선택된 파일의 탭 객체 생성
+        const tab: Tab = {
+            type: TreeItemType.Tab,
+            id: uri.path,
+            groupId: selectedGroup.id,
+            uri: uri,
+        };
+
+        // 그룹에 탭 추가
+        this.treeDataProvider.addTabToGroup(selectedGroup.id, tab);
+
+        vscode.window.showInformationMessage(
+            `Tab "${uri.path}" added to group "${selectedGroup.label}".`
+        );
     }
 }

@@ -55,10 +55,7 @@ export class TreeDataProvider
             vscode.TreeItemCollapsibleState.Collapsed
         );
         treeItem.contextValue = "group";
-        treeItem.iconPath = new vscode.ThemeIcon(
-            "folder", // 그룹 아이콘
-            new vscode.ThemeColor("list.activeSelectionForeground")
-        );
+        treeItem.iconPath = new vscode.ThemeIcon("folder");
         return treeItem;
     }
 
@@ -147,5 +144,17 @@ export class TreeDataProvider
     public addGroup(groupName: string) {
         this.treeData.addGroup(groupName);
         this.triggerRerender();
+    }
+
+    addTabToGroup(groupId: string, tab: Tab): void {
+        this.treeData.addTabToGroup(groupId, tab);
+        this.refreshFilePathTree();
+    }
+
+    getGroups(): Group[] {
+        const state = this.treeData.getState();
+        return state.filter(
+            (item) => item.type === TreeItemType.Group
+        ) as Group[];
     }
 }
