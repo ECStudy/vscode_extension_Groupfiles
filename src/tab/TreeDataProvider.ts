@@ -13,6 +13,8 @@ export class TreeDataProvider
         vscode.TreeItem | undefined | void
     > = new vscode.EventEmitter<vscode.TreeItem | undefined | void>();
 
+    private treeItemMap: Record<string, vscode.TreeItem> = {};
+
     // EventEmitter의 event 속성을 사용하여 이벤트를 외부로 노출
     readonly onDidChangeTreeData: vscode.Event<
         vscode.TreeItem | undefined | void
@@ -25,13 +27,6 @@ export class TreeDataProvider
             (tabGroup) => tabGroup.tabs
         );
         const nativeTabs = currentNativeTabs.filter((nativeTab) => {
-            console.log(
-                "비교 ->",
-                tab.id,
-                "nativeTab.input.uri.path",
-                (nativeTab as any).input.uri.path
-            );
-
             return tab.id === `${(nativeTab as any).input.uri.path}`;
         });
         return nativeTabs;
@@ -53,6 +48,20 @@ export class TreeDataProvider
         return treeItem;
     }
 
+    createGroup(element: any) {
+        // 그룹 트리 항목 생성
+        const treeItem = new vscode.TreeItem(
+            element.label,
+            vscode.TreeItemCollapsibleState.Collapsed
+        );
+        treeItem.contextValue = "group";
+        treeItem.iconPath = new vscode.ThemeIcon(
+            "folder", // 그룹 아이콘
+            new vscode.ThemeColor("list.activeSelectionForeground")
+        );
+        return treeItem;
+    }
+
     createTabTreeItem(tab: Tab): vscode.TreeItem {
         //console.log("생성", tab);
         const nativeTabs = this.getNativeTabs(tab);
@@ -67,18 +76,24 @@ export class TreeDataProvider
         return treeItem;
     }
 
-    getTreeItem(element: Tab): vscode.TreeItem {
-        console.log("getTreeItem 호출됨, element:", element);
-
-        if (element.type === TreeItemType.Tab) {
+    getTreeItem(element: Group | Tab): vscode.TreeItem {
+        //그룹
+        if (element.type === TreeItemType.Group) {
+            // 그룹 트리 항목 생성
+            const groupItem = this.createGroup(element);
+            return groupItem;
+        }
+        //탭
+        else if (element.type === TreeItemType.Tab) {
             const newTreeItem = this.createTabTreeItem(element);
             console.log("새로 생성된 TreeItem:", newTreeItem);
 
             return newTreeItem;
         }
 
-        return {};
+        return new vscode.TreeItem("Unknown");
     }
+
     //getChildren과 getTreeItem은 독립적으로 작동하지만,
     //getChildren에서 반환한 데이터는 반드시 getTreeItem의 입력으로 전달됩니다.
     getChildren(element?: vscode.TreeItem): any {
@@ -127,5 +142,10 @@ export class TreeDataProvider
         });
 
         //getTreeItem()
+    }
+
+    public addGroup(groupName: string) {
+        this.treeData.addGroup(groupName);
+        this.triggerRerender();
     }
 }

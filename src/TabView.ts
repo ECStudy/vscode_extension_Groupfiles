@@ -83,26 +83,7 @@ export class TabView extends CommandManager {
             return;
         }
 
-        const groupId = `group-${Date.now()}`; // 고유 ID 생성
-        const colorId = "chartreuse"; // 그룹 색상 (예시)
-
-        const newGroup: Group = {
-            type: TreeItemType.Group,
-            id: groupId,
-            colorId: colorId,
-            label: groupName,
-            children: [],
-            collapsed: true,
-        };
-
-        console.log("🎈그룹 groupName", groupName);
-        console.log("🎈그룹 newGroup", newGroup);
-
-        // const currentState = this.treeDataProvider.getState();
-        // currentState.push(newGroup);
-        // this.treeDataProvider.setState(currentState);
-
-        vscode.window.showInformationMessage(`Group "${groupName}" created!`);
+        this.treeDataProvider.addGroup(groupName);
     }
 
     private deleteGroup() {
