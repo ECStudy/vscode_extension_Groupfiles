@@ -13,7 +13,7 @@ import {
     TabItem,
     TreeItemType,
 } from "../type/types";
-import { TabViewCloseTab } from "../type/command";
+import { TabViewCloseTab, TabViewCreateGroup } from "../type/command";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider = new TreeDataProvider();
@@ -39,6 +39,10 @@ export class TabView extends CommandManager {
     private registerCommandHandler() {
         vscode.commands.registerCommand(TabViewCloseTab, (tabItem: TabItem) => {
             this.handleCloseTab(tabItem);
+        });
+
+        vscode.commands.registerCommand(TabViewCreateGroup, () => {
+            this.handleCreateGroup();
         });
 
         this.registerCommand(
@@ -91,6 +95,21 @@ export class TabView extends CommandManager {
             tabItem.uri
         );
         this.treeDataProvider.closeTab(tabItem);
+    }
+
+    async handleCreateGroup() {
+        // 명령 실행 시 실제로 사용하는 코드만 유지
+        const groupName = await vscode.window.showInputBox({
+            prompt: "Enter a name for the new group",
+            placeHolder: "새 그룹 이름 추가",
+        });
+
+        if (!groupName) {
+            vscode.window.showErrorMessage("Group name cannot be empty.");
+            return;
+        }
+
+        this.treeDataProvider.createGroup(groupName);
     }
 }
 

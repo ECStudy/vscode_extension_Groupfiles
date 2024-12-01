@@ -44,4 +44,21 @@ export class TreeData {
 
         return null; // 탭은 자식이 없음
     }
+
+    createGroup(groupName: string) {
+        const groupId = `group-${uuidv4()}`; // 고유 ID 생성
+
+        const newGroup: GroupItem = {
+            type: TreeItemType.Group,
+            id: groupId,
+            colorId: "chartreuse",
+            label: groupName,
+            children: [],
+            collapsed: true,
+        };
+
+        this.groupMap[newGroup.id] = newGroup;
+        this.root.push(newGroup);
+        vscode.window.showInformationMessage(`Group "${groupName}" 생성!`);
+    }
 }

@@ -60,9 +60,22 @@ export class TreeDataProvider
         return treeItem;
     }
 
+    createGroupTreeItem(element: any) {
+        // 그룹 item 생성
+        const treeItem = new vscode.TreeItem(
+            element.label,
+            vscode.TreeItemCollapsibleState.Collapsed
+        );
+        treeItem.contextValue = "group";
+        treeItem.iconPath = new vscode.ThemeIcon("folder");
+        return treeItem;
+    }
+
     getTreeItem(element: GroupItem | TabItem): vscode.TreeItem {
         if (element.type === TreeItemType.Group) {
             // 그룹 트리 항목 생성
+            const groupItem = this.createGroupTreeItem(element);
+            return groupItem;
         }
         //탭
         else if (element.type === TreeItemType.Tab) {
@@ -102,6 +115,11 @@ export class TreeDataProvider
         const updatedData = leafNodes.filter((item) => item.id !== tabItem.id);
 
         this.setData(updatedData);
+        this.triggerRerender();
+    }
+
+    public createGroup(groupName: string) {
+        this.treeData.createGroup(groupName);
         this.triggerRerender();
     }
 }

@@ -39,7 +39,13 @@
             ]
         },
         "menus": {
-            "view/title": [],
+            "view/title": [
+                {
+                    "command": "tab-and-bookmark.tabview.create.group",
+                    "when": "view == tabview",
+                    "group": "navigation"
+                }
+            ],
             "view/item/context": [
                 {
                     "command": "tab-and-bookmark.tabview.close.tab",
@@ -55,6 +61,11 @@
                 "command": "tab-and-bookmark.tabview.close.tab",
                 "title": "Close Tab",
                 "icon": "$(close)"
+            },
+            {
+                "command": "tab-and-bookmark.tabview.create.group",
+                "title": "Create Group",
+                "icon": "$(add)"
             }
         ]
     },
