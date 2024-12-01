@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 
-import { Tab, Group, TreeItemType } from "../types";
+import { Tab, Group, TreeItemType } from "../type/types";
+
+import { v4 as uuidv4 } from "uuid";
 
 export class TreeData {
     private root: Array<Tab | Group> = [];
@@ -43,8 +45,7 @@ export class TreeData {
     }
 
     public addGroup(groupName: string) {
-        const groupId = `group-${Date.now()}`; // 고유 ID 생성
-
+        const groupId = `group-${uuidv4()}`; // 고유 ID 생성
         const group: Group = {
             type: TreeItemType.Group,
             id: groupId,
@@ -53,8 +54,6 @@ export class TreeData {
             children: [],
             collapsed: true,
         };
-
-        console.log("🎈그룹 newGroup", group);
 
         this.groupMap[group.id] = group;
         this.root.push(group);
@@ -65,9 +64,7 @@ export class TreeData {
         const group = this.groupMap[groupId];
         if (group) {
             group.children.push(tab);
-            console.log(`📝 그룹 "${group.label}"에 탭 추가됨:`, tab);
         } else {
-            console.error("그룹을 찾을 수 없습니다:", groupId);
         }
     }
 }

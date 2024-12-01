@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
 import { TreeData } from "./TreeData";
-import { Group, Tab, TreeItemType } from "../types";
+import { Group, Tab, TreeItemType } from "../type/types";
 import { getNormalizedId } from "../util";
 
 export class TreeDataProvider
@@ -74,6 +74,8 @@ export class TreeDataProvider
     }
 
     getTreeItem(element: Group | Tab): vscode.TreeItem {
+        console.log();
+
         //그룹
         if (element.type === TreeItemType.Group) {
             // 그룹 트리 항목 생성

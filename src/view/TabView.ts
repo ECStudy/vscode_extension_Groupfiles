@@ -1,11 +1,13 @@
 import * as vscode from "vscode";
 
-import { CommandManager } from "./CommandManager";
+import { v4 as uuidv4 } from 'uuid';
 
-import { TreeDataProvider } from "./tab/TreeDataProvider";
-import { TabsTreeView } from "./enums";
-import { getNormalizedId } from "./util";
-import { Group, Tab, TreeItemType } from "./types";
+import { CommandManager } from "../command/CommandManager";
+
+import { TreeDataProvider } from "../tab/TreeDataProvider";
+import { TabsTreeView } from "../type/enums";
+import { getNormalizedId } from "../util";
+import { Group, Tab, TreeItemType } from "../type/types";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider = new TreeDataProvider();
@@ -15,8 +17,6 @@ export class TabView extends CommandManager {
 
         //1. 열려있는 tabs 정보 가져오기
         const initialState = this.initializeState();
-
-        console.log(initialState);
 
         //2. tabs 정보 저장해두기
         this.treeDataProvider.setState(initialState);
@@ -43,10 +43,13 @@ export class TabView extends CommandManager {
         vscode.commands.registerCommand(
             "tabView.addToGroup",
             (uri: vscode.Uri) => {
-                console.log(
-                    "🩳🩳🩳🩳🩳🩳🩳🩳🩳컨텍스트 메뉴 '추가' 실행됨, URI:",
-                    uri
-                );
+                this.addTabToGroup(uri);
+            }
+        );
+
+        vscode.commands.registerCommand(
+            "tabView.addToGroup.context",
+            (uri: vscode.Uri) => {
                 this.addTabToGroup(uri);
             }
         );
@@ -108,7 +111,7 @@ export class TabView extends CommandManager {
             return;
         }
 
-        console.log("선택된 URI:", uri.path);
+        console.log("👚👚👚선택된 URI:", uri.path);
 
         // 현재 존재하는 그룹 가져오기
         const groups = this.treeDataProvider.getGroups();
@@ -141,10 +144,13 @@ export class TabView extends CommandManager {
             return;
         }
 
+        //left로 추가하는 경우 지금 컨버팅된 type으로 가져와서 id에 있음
+        const id = uri.path || (uri as any).id;
+
         // 선택된 파일의 탭 객체 생성
         const tab: Tab = {
             type: TreeItemType.Tab,
-            id: uri.path,
+            id: id,
             groupId: selectedGroup.id,
             uri: uri,
         };
@@ -153,7 +159,9 @@ export class TabView extends CommandManager {
         this.treeDataProvider.addTabToGroup(selectedGroup.id, tab);
 
         vscode.window.showInformationMessage(
-            `Tab "${uri.path}" added to group "${selectedGroup.label}".`
+            `Tab "${uri.path || (uri as any).id}" added to group "${
+                selectedGroup.label
+            }".`
         );
     }
 }
