@@ -1,17 +1,17 @@
-import { TabView, BookmartView } from "./enums";
+import { TAB_VIEW, BOOKMARK_VIEW } from "./enums";
 
 //tabView.
-export const TabViewRefresh = `${TabView}.refresh` as const;
+export const TabViewRefresh = `${TAB_VIEW}.refresh` as const;
 
 //CRUD - tab
-export const TabViewCreateTab = `${TabView}.create.tab` as const;
-export const TabViewDeleteTab = `${TabView}.delete.tab` as const;
+export const TabViewCreateTab = `${TAB_VIEW}.create.tab` as const;
+export const TabViewDeleteTab = `${TAB_VIEW}.delete.tab` as const;
 
 //CRUD - group
-export const TabViewCreateGroup = `${TabView}.create.group` as const;
-export const TabViewDeleteGroup = `${TabView}.delete.group` as const;
+export const TabViewCreateGroup = `${TAB_VIEW}.create.group` as const;
+export const TabViewDeleteGroup = `${TAB_VIEW}.delete.group` as const;
 
 //Open
-export const TabViewOpenAll = `${TabView}.open.all` as const;
-export const TabViewOpenTab = `${TabView}.open.tab` as const;
-export const TabViewOpenGroup = `${TabView}.open.group` as const;
+export const TabViewOpenAll = `${TAB_VIEW}.open.all` as const;
+export const TabViewOpenTab = `${TAB_VIEW}.open.tab` as const;
+export const TabViewOpenGroup = `${TAB_VIEW}.open.group` as const;

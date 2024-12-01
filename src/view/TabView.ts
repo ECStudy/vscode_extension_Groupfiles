@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import { v4 as uuidv4 } from "uuid";
+import { TAB_VIEW } from "../type/enums";
 
 import { CommandManager } from "../command/CommandManager";
 
@@ -11,6 +12,12 @@ export class TabView extends CommandManager {
 
     constructor() {
         super();
+
+        //트리 뷰 생성
+        vscode.window.createTreeView(TAB_VIEW, {
+            treeDataProvider: this.treeDataProvider,
+            canSelectMany: true,
+        });
 
         this.registerCommandHandler();
     }

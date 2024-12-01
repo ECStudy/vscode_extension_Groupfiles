@@ -1,2 +1,2 @@
-export const TabView = "tabView" as const;
-export const BookmartView = "bookmartView" as const;
+export const TAB_VIEW = "tabView" as const;
+export const BOOKMARK_VIEW = "bookmartView" as const;
