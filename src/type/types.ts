@@ -1,20 +1,24 @@
+import { TabInputText } from "vscode";
+
 export const enum TreeItemType {
     Tab,
     Group,
 }
 
-export type Group = {
+export type GroupItem = {
     readonly type: TreeItemType.Group;
     readonly id: string;
     colorId: string;
     label: string;
-    children: Tab[];
+    children: TabItem[];
     collapsed: boolean;
 };
 
-export type Tab = {
+export type TabItem = {
     readonly type: TreeItemType.Tab;
     groupId: string | null;
     id: string;
     uri?: any;
 };
+
+export type NativeTabInput = TabInputText;
