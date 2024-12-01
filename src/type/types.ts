@@ -1,7 +1,6 @@
 export const enum TreeItemType {
     Tab,
     Group,
-    Slot,
 }
 
 export type Group = {
@@ -18,10 +17,4 @@ export type Tab = {
     groupId: string | null;
     id: string;
     uri?: any;
-};
-
-export type Slot = {
-    type: TreeItemType.Slot;
-    index: number;
-    groupId: string | null;
 };
