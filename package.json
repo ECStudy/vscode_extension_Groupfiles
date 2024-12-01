@@ -1,6 +1,6 @@
 {
-    "name": "tab-group-and-bookmark",
-    "displayName": "tab-group-and-bookmark",
+    "name": "tab-and-bookmark",
+    "displayName": "tab-and-bookmark",
     "description": "",
     "version": "0.0.1",
     "engines": {
@@ -17,95 +17,33 @@
         "viewsContainers": {
             "activitybar": [
                 {
-                    "id": "tab-group-and-bookmark",
+                    "id": "tab-and-bookmark",
                     "title": "Package Explorer",
                     "icon": "images/my-icon.svg"
                 }
             ]
         },
         "views": {
-            "tab-group-and-bookmark": [
+            "tab-and-bookmark": [
                 {
-                    "id": "TabsTreeView",
-                    "name": "Tabs",
+                    "id": "tabView",
+                    "name": "tab",
                     "type": "tree",
-                    "contextualTitle": "Tabs"
+                    "contextualTitle": "tab"
                 },
                 {
-                    "id": "bookmark-view",
-                    "name": "Bookmarks",
+                    "id": "bookmartView",
+                    "name": "bookmarks",
                     "type": "tree"
                 }
             ]
         },
-        "commands": [
-            {
-                "command": "tabView.refresh",
-                "title": "Refresh Open Files"
-            },
-            {
-                "command": "tabView.createGroup",
-                "title": "Create Group",
-                "icon": "$(add)"
-            },
-            {
-                "command": "tabView.deleteGroup",
-                "title": "Delete Group",
-                "icon": "$(remove)"
-            },
-            {
-                "command": "tabView.openAll",
-                "title": "Delete Group",
-                "icon": "$(eye)"
-            },
-            {
-                "command": "tabView.addToGroup",
-                "title": "추가추가추가추가",
-                "category": "Tabs"
-            },
-            {
-                "command": "tabView.addToGroup.context",
-                "title": "추가추가추가추가_왼쪽",
-                "category": "Tabs"
-            }
-        ],
+        "commands": [],
         "menus": {
-            "view/title": [
-                {
-                    "command": "tabView.createGroup",
-                    "when": "view == TabsTreeView",
-                    "group": "navigation"
-                },
-                {
-                    "command": "tabView.deleteGroup",
-                    "when": "view == TabsTreeView",
-                    "group": "navigation"
-                },
-                {
-                    "command": "tabView.openAll",
-                    "when": "view == TabsTreeView",
-                    "group": "navigation"
-                }
-            ],
-            "view/item/context": [
-                {
-                    "command": "tabView.addToGroup.context",
-                    "when": "view == TabsTreeView",
-                    "group": "navigation"
-                }
-            ],
-            "editor/title/context": [
-                {
-                    "command": "tabView.addToGroup",
-                    "group": "navigation"
-                }
-            ],
-            "explorer/context": [
-                {
-                    "command": "tabView.addToGroup",
-                    "group": "navigation"
-                }
-            ]
+            "view/title": [],
+            "view/item/context": [],
+            "editor/title/context": [],
+            "explorer/context": []
         }
     },
     "scripts": {

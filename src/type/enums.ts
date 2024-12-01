@@ -1,2 +1,2 @@
-export const TabsTreeView = "TabsTreeView" as const;
-export const BookMarkView = "BookMarkBiew" as const;
+export const TabView = "tabView" as const;
+export const BookmartView = "bookmartView" as const;

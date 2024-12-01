@@ -12,14 +12,4 @@ export class TreeData {
     constructor() {
         this.root;
     }
-
-    setState(data: Array<Tab | Group>) {}
-
-    getChildren(element: any) {}
-
-    getState() {}
-
-    public addGroup(groupName: string) {}
-
-    public addTabToGroup(groupId: string, tab: Tab): void {}
 }
