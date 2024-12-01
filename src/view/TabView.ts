@@ -38,9 +38,22 @@ export class TabView extends CommandManager {
 
     private registerCommandHandler() {
         vscode.commands.registerCommand(TabViewCloseTab, (tabItem: TabItem) => {
-            console.log("탭 x 버튼 클릭", tabItem);
             this.handleCloseTab(tabItem);
         });
+
+        this.registerCommand(
+            vscode.window.tabGroups.onDidChangeTabs((e) => {
+                // console.log("탭 변화 이벤트 변화", e.changed);
+                console.log("탭 변화 이벤트 열림", e.opened);
+                // console.log("탭 변화 이벤트 닫힘", e.closed);
+
+                const openTab = e.opened[0]; //탭 열때는 무조건 1개이거나 0개이거나
+                //const activeTabItem = this.getinitializeTabItems();
+
+                //2. tabItems 저장
+                //this.treeDataProvider.setData(activeTabItem);
+            })
+        );
     }
 
     getinitializeTabItems(): Array<TabItem> {

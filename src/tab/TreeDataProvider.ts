@@ -67,8 +67,6 @@ export class TreeDataProvider
         //탭
         else if (element.type === TreeItemType.Tab) {
             const newTreeItem = this.createTabTreeItem(element);
-            console.log("새로 생성된 TreeItem:", newTreeItem);
-
             return newTreeItem;
         }
 
@@ -86,7 +84,6 @@ export class TreeDataProvider
     }
 
     public triggerRerender() {
-        console.log("새로고침");
         this._onDidChangeTreeData.fire();
         this.refreshFilePathTree();
     }
