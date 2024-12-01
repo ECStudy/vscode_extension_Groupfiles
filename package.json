@@ -26,7 +26,7 @@
         "views": {
             "tab-and-bookmark": [
                 {
-                    "id": "tabView",
+                    "id": "tabview",
                     "name": "tab",
                     "type": "tree",
                     "contextualTitle": "tab"
@@ -38,13 +38,25 @@
                 }
             ]
         },
-        "commands": [],
         "menus": {
             "view/title": [],
-            "view/item/context": [],
+            "view/item/context": [
+                {
+                    "command": "tab-and-bookmark.tabview.close.tab",
+                    "when": "viewItem == closableTab",
+                    "group": "inline"
+                }
+            ],
             "editor/title/context": [],
             "explorer/context": []
-        }
+        },
+        "commands": [
+            {
+                "command": "tab-and-bookmark.tabview.close.tab",
+                "title": "Close Tab",
+                "icon": "$(close)"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

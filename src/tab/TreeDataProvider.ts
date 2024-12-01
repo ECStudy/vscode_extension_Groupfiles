@@ -80,7 +80,7 @@ export class TreeDataProvider
         return children;
     }
 
-    setData(data: TabItem[]) {
+    setData(data: (GroupItem | TabItem)[]) {
         this.treeData.setData(data);
         this.triggerRerender();
     }
@@ -98,5 +98,13 @@ export class TreeDataProvider
             const tabId = leafNode.id;
             this.getTreeItem(leafNode);
         });
+    }
+
+    public closeTab(tabItem: TabItem) {
+        const leafNodes = this.treeData.getData();
+        const updatedData = leafNodes.filter((item) => item.id !== tabItem.id);
+
+        this.setData(updatedData);
+        this.triggerRerender();
     }
 }

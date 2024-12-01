@@ -13,6 +13,7 @@ import {
     TabItem,
     TreeItemType,
 } from "../type/types";
+import { TabViewCloseTab } from "../type/command";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider = new TreeDataProvider();
@@ -35,7 +36,12 @@ export class TabView extends CommandManager {
         this.registerCommandHandler();
     }
 
-    private registerCommandHandler() {}
+    private registerCommandHandler() {
+        vscode.commands.registerCommand(TabViewCloseTab, (tabItem: TabItem) => {
+            console.log("탭 x 버튼 클릭", tabItem);
+            this.handleCloseTab(tabItem);
+        });
+    }
 
     getinitializeTabItems(): Array<TabItem> {
         //native tab 가져옴
@@ -63,6 +69,15 @@ export class TabView extends CommandManager {
             }
         });
         return tabItems;
+    }
+
+    private handleCloseTab(tabItem: TabItem) {
+        // 탭 닫기
+        vscode.commands.executeCommand(
+            "workbench.action.closeActiveEditor",
+            tabItem.uri
+        );
+        this.treeDataProvider.closeTab(tabItem);
     }
 }
 
