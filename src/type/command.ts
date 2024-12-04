@@ -9,6 +9,11 @@ export const TabViewCreateTab =
 export const TabViewDeleteTab =
     `${EXTENSION_ID}.${TAB_VIEW}.delete.tab` as const;
 
+export const TabViewCreateTabToGroup =
+    `${EXTENSION_ID}.${TAB_VIEW}.${ACTION.CREATE}.TabToGroup` as const;
+export const TabViewCreateTabToGroupContext =
+    `${EXTENSION_ID}.${TAB_VIEW}.${ACTION.CREATE}.TabToGroupContext` as const;
+
 //CRUD - group
 export const TabViewCreateGroup =
     `${EXTENSION_ID}.${TAB_VIEW}.${ACTION.CREATE}.group` as const;

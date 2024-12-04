@@ -54,11 +54,31 @@ export class TreeData {
             colorId: "chartreuse",
             label: groupName,
             children: [],
-            collapsed: true,
+            collapsed: false,
         };
 
         this.groupMap[newGroup.id] = newGroup;
         this.root.push(newGroup);
         vscode.window.showInformationMessage(`Group "${groupName}" 생성!`);
+    }
+
+    createTabToGroup(groupId: string, tab: TabItem): boolean {
+        const group = this.groupMap[groupId];
+        if (group) {
+            //이거 클래스로 객체로 빼던
+            //TabView에서 만들던거 분리 필요함
+            const newTab = {
+                type: TreeItemType.Tab,
+                groupId: null,
+                path: tab.path,
+                id: tab.id,
+                uri: tab?.uri,
+            } as TabItem;
+
+            group.children.push(newTab);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

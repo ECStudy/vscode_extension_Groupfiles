@@ -13,7 +13,12 @@ import {
     TabItem,
     TreeItemType,
 } from "../type/types";
-import { TabViewCloseTab, TabViewCreateGroup } from "../type/command";
+import {
+    TabViewCloseTab,
+    TabViewCreateGroup,
+    TabViewCreateTabToGroup,
+    TabViewCreateTabToGroupContext,
+} from "../type/command";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider = new TreeDataProvider();
@@ -44,6 +49,22 @@ export class TabView extends CommandManager {
         vscode.commands.registerCommand(TabViewCreateGroup, () => {
             this.handleCreateGroup();
         });
+
+        //네이티브, 추가
+        vscode.commands.registerCommand(
+            TabViewCreateTabToGroup,
+            (uri: vscode.Uri) => {
+                this.handleCreateTabToGroup(uri);
+            }
+        );
+
+        //만든 탭으로 추가하기
+        vscode.commands.registerCommand(
+            TabViewCreateTabToGroupContext,
+            (tabItem: any) => {
+                this.handleCreateTabToGroup(tabItem.uri);
+            }
+        );
 
         this.registerCommand(
             vscode.window.tabGroups.onDidChangeTabs((e) => {
@@ -112,6 +133,71 @@ export class TabView extends CommandManager {
         }
 
         this.treeDataProvider.createGroup(groupName);
+    }
+
+    async handleCreateTabToGroup(uri: vscode.Uri) {
+        // console.log(
+        //     "handleCreateTabToGroup 넘어 오는 값 봐야함,🎈🎈🎈🎈",
+        //     value
+        // );
+        //tab-context : 네이티브
+        //탐색기 : 네이티브
+        //tabView : tabItem
+
+        // 현재 존재하는 그룹 가져오기
+        const currentGroups = this.treeDataProvider.getGroups();
+
+        console.log("🎈🎈🎈🎈 현재 만들어진 그룹 정보", currentGroups);
+        if (currentGroups.length === 0) {
+            //그룹이 하나도 없으면 그룹 만어라
+            this.handleCreateGroup();
+            //추가하는 과정도 들어가야한다.
+            //handleCreateTabToGroup() 이게 분리 되어야함
+            return;
+        }
+
+        // QuickPick으로 그룹 선택
+        const selectedGroupName = await vscode.window.showQuickPick(
+            currentGroups.map((group) => group.label),
+            { placeHolder: "그룹을 선택해주세요" }
+        );
+        if (!selectedGroupName) {
+            vscode.window.showErrorMessage("그룹을 선택하지 않았습니다.");
+            return;
+        }
+
+        // 선택된 그룹 찾기
+        const selectedGroup = currentGroups.find(
+            (group) => group.label === selectedGroupName
+        );
+
+        if (!selectedGroup) {
+            vscode.window.showErrorMessage("Selected group not found.");
+            return;
+        }
+
+        const tab = {
+            groupId: selectedGroup.id,
+            uri: uri,
+            path: uri.path,
+        };
+
+        console.log("🎄🎄🎄", uri);
+
+        const result = this.treeDataProvider.createTabToGroup(
+            selectedGroup.id,
+            tab
+        );
+
+        if (result) {
+            selectedGroup.collapsed = false; // 그룹 상태를 열림으로 설정
+            this.treeDataProvider.triggerRerender();
+            vscode.window.showErrorMessage(
+                `${selectedGroup.id} 그룹에 추가 완료`
+            );
+        } else {
+            vscode.window.showErrorMessage("그룹 추가 실패");
+        }
     }
 }
 

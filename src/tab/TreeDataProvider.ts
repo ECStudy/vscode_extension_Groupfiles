@@ -75,6 +75,9 @@ export class TreeDataProvider
         if (element.type === TreeItemType.Group) {
             // 그룹 트리 항목 생성
             const groupItem = this.createGroupTreeItem(element);
+            groupItem.collapsibleState = element.collapsed
+                ? vscode.TreeItemCollapsibleState.Collapsed
+                : vscode.TreeItemCollapsibleState.Expanded; // 상태 반영
             return groupItem;
         }
         //탭
@@ -118,8 +121,22 @@ export class TreeDataProvider
         this.triggerRerender();
     }
 
+    public getGroups(): GroupItem[] {
+        const state = this.treeData.getData();
+        return state.filter(
+            (item) => item.type === TreeItemType.Group
+        ) as GroupItem[];
+    }
+
     public createGroup(groupName: string) {
         this.treeData.createGroup(groupName);
         this.triggerRerender();
+    }
+
+    public createTabToGroup(groupId: string, tab: any) {
+        const result = this.treeData.createTabToGroup(groupId, tab);
+        this.triggerRerender();
+
+        return result;
     }
 }
