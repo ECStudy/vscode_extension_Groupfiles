@@ -14,10 +14,11 @@ export const getNativeTabs = (): vscode.Tab[] => {
     return vscode.window.tabGroups.all.flatMap((tabGroup) => tabGroup.tabs);
 };
 
-export const getNativeTabByTabItemId = (id: string): vscode.Tab => {
+export const getNativeTabByTabItemPath = (path: string): vscode.Tab => {
     const currentNativeTabs = getNativeTabs();
     const currentNativeTab = currentNativeTabs.filter(
-        (nativeTab) => id === `${(nativeTab.input as NativeTabInput).uri.path}`
+        (nativeTab) =>
+            path === `${(nativeTab.input as NativeTabInput).uri.path}`
     );
     return currentNativeTab[0];
 };

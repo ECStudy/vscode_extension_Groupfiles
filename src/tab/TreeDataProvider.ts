@@ -7,7 +7,7 @@ import {
     TabItem,
     TreeItemType,
 } from "../type/types";
-import { getNativeTabByTabItemId, getNormalizedId } from "../util";
+import { getNativeTabByTabItemPath, getNormalizedId } from "../util";
 
 export class TreeDataProvider
     implements vscode.TreeDataProvider<vscode.TreeItem>
@@ -50,7 +50,7 @@ export class TreeDataProvider
     createTabTreeItem(tabItem: TabItem): vscode.TreeItem {
         console.log("createTabTreeItem tabItem --> ", tabItem);
 
-        const nativeTab = getNativeTabByTabItemId(tabItem.id);
+        const nativeTab = getNativeTabByTabItemPath(tabItem?.path);
 
         if (!nativeTab) {
             return {};

@@ -71,14 +71,16 @@ export class TabView extends CommandManager {
         const tabItems: Array<TabItem> = [];
 
         nativeTabs.forEach((nativeTab: vscode.Tab) => {
-            const tabItemId = getNormalizedId(nativeTab);
+            const path = getNormalizedId(nativeTab);
+            const id = `tab_${uuidv4()}`;
 
             const nativeTabInput = nativeTab.input as NativeTabInput;
             if (nativeTabInput) {
                 const tabItem = {
                     type: TreeItemType.Tab,
                     groupId: null,
-                    id: tabItemId,
+                    path: path,
+                    id: id,
                     uri: nativeTabInput?.uri,
                 } as TabItem;
 

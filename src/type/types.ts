@@ -19,6 +19,7 @@ export type TabItem = {
     groupId: string | null;
     id: string;
     uri?: any;
+    path: string;
 };
 
 export type NativeTabInput = TabInputText;
