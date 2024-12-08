@@ -50,6 +50,14 @@ export class TabView extends CommandManager {
                 this.handleCreateTabToGroup(tab.uri); // Tab 객체로부터 URI 가져옴
             }
         );
+
+        vscode.commands.registerCommand(
+            "tab-and-bookmark.tabview.create.TabToNewGroup",
+            (uri: vscode.Uri) => {
+                //그룹 생성
+                this.handleCreateGroupAndCreateTab(uri);
+            }
+        );
     }
     private handleCloseTab(tab: any) {
         vscode.commands.executeCommand(
@@ -57,6 +65,28 @@ export class TabView extends CommandManager {
             tab.uri
         );
         this.treeDataProvider.closeTab(tab);
+    }
+
+    async handleCreateGroupAndCreateTab(uri: vscode.Uri) {
+        const groupName = await vscode.window.showInputBox({
+            prompt: "Enter a name for the new group",
+            placeHolder: "새 그룹 이름 추가",
+        });
+
+        if (!groupName) {
+            vscode.window.showErrorMessage("그룹 이름을 입력해주세요.");
+            return;
+        }
+
+        this.treeDataProvider.createGroup(groupName);
+        const groups = this.treeDataProvider["treeData"].getData(); // getData로 그룹 리스트 가져오기
+        const selectedGroup = groups.find((group) => group.label === groupName);
+        if (!selectedGroup) {
+            vscode.window.showErrorMessage("선택된 그룹을 찾을 수 없습니다.");
+            return;
+        }
+
+        this.treeDataProvider.createTabToGroup(selectedGroup.id, uri);
     }
 
     async handleCreateGroup() {
@@ -118,7 +148,3 @@ export class TabView extends CommandManager {
         }
     }
 }
-
-//nativeTabs
-//tabItem
-//tabsItem

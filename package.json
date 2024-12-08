@@ -56,17 +56,30 @@
                     "command": "tab-and-bookmark.tabview.create.TabToGroupContext",
                     "when": "view == tabview",
                     "group": "navigation"
+                },
+                {
+                    "command": "tab-and-bookmark.tabview.create.TabToNewGroup",
+                    "when": "view == tabview",
+                    "group": "navigation"
                 }
             ],
             "editor/title/context": [
                 {
                     "command": "tab-and-bookmark.tabview.create.TabToGroup",
                     "group": "navigation"
+                },
+                {
+                    "command": "tab-and-bookmark.tabview.create.TabToNewGroup",
+                    "group": "navigation"
                 }
             ],
             "explorer/context": [
                 {
                     "command": "tab-and-bookmark.tabview.create.TabToGroup",
+                    "group": "navigation"
+                },
+                {
+                    "command": "tab-and-bookmark.tabview.create.TabToNewGroup",
                     "group": "navigation"
                 }
             ]
@@ -90,6 +103,11 @@
             {
                 "command": "tab-and-bookmark.tabview.create.TabToGroupContext",
                 "title": "추가추가추가추가",
+                "category": "tab"
+            },
+            {
+                "command": "tab-and-bookmark.tabview.create.TabToNewGroup",
+                "title": "새 그룹에 추가",
                 "category": "tab"
             }
         ]
