@@ -1,3 +1,5 @@
+import * as vscode from "vscode";
+
 import { TabInputText } from "vscode";
 
 export const enum TreeItemType {
@@ -16,10 +18,10 @@ export type GroupItem = {
 
 export type TabItem = {
     readonly type: TreeItemType.Tab;
+    readonly id: string;
     groupId: string | null;
-    id: string;
-    uri?: any;
     path: string;
+    uri: vscode.Uri;
 };
 
 export type NativeTabInput = TabInputText;

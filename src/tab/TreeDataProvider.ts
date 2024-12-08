@@ -1,13 +1,11 @@
 import * as vscode from "vscode";
 
 import { TreeData } from "./TreeData";
-import {
-    GroupItem,
-    NativeTabInput,
-    TabItem,
-    TreeItemType,
-} from "../type/types";
+import { GroupItem, TabItem, TreeItemType } from "../type/types";
 import { getNativeTabByTabItemPath, getNormalizedId } from "../util";
+
+import { Group } from "./Group";
+import { Tab } from "./Tab";
 
 export class TreeDataProvider
     implements vscode.TreeDataProvider<vscode.TreeItem>
@@ -26,117 +24,72 @@ export class TreeDataProvider
 
     constructor() {}
 
-    createTreeItemByNativeTab(nativeTab: vscode.Tab): vscode.TreeItem {
-        if (!(nativeTab.input instanceof vscode.TabInputText)) {
-            return new vscode.TreeItem("Invalid Tab");
-        }
-        const treeItem = new vscode.TreeItem(
-            nativeTab.input.uri,
-            vscode.TreeItemCollapsibleState.None
-        );
-
-        treeItem.command = {
-            command: "vscode.open",
-            title: "Open Tab",
-            // 클릭 시 파일 열기
-            arguments: [nativeTab.input.uri],
-        };
-
-        //x 버튼 닫기
-        treeItem.contextValue = "closableTab";
-
-        return treeItem;
+    getTreeItem(element: Group | Tab): vscode.TreeItem {
+        // Tab 또는 Group 클래스의 toTreeItem 메서드를 활용
+        return element.toTreeItem();
     }
-    createTabTreeItem(tabItem: TabItem): vscode.TreeItem {
-        console.log("createTabTreeItem tabItem --> ", tabItem);
 
-        const nativeTab = getNativeTabByTabItemPath(tabItem?.path);
-
-        if (!nativeTab) {
-            return {};
+    getChildren(element?: Group | Tab): Array<Group | Tab> {
+        if (!element) {
+            // 최상위 레벨: 그룹 목록 반환
+            return this.treeData.getData();
         }
 
-        const treeItem = this.createTreeItemByNativeTab(nativeTab);
-        return treeItem;
-    }
-
-    createGroupTreeItem(element: any) {
-        // 그룹 item 생성
-        const treeItem = new vscode.TreeItem(
-            element.label,
-            vscode.TreeItemCollapsibleState.Collapsed
-        );
-        treeItem.contextValue = "group";
-        treeItem.iconPath = new vscode.ThemeIcon("folder");
-        return treeItem;
-    }
-
-    getTreeItem(element: GroupItem | TabItem): vscode.TreeItem {
-        if (element.type === TreeItemType.Group) {
-            // 그룹 트리 항목 생성
-            const groupItem = this.createGroupTreeItem(element);
-            groupItem.collapsibleState = element.collapsed
-                ? vscode.TreeItemCollapsibleState.Collapsed
-                : vscode.TreeItemCollapsibleState.Expanded; // 상태 반영
-            return groupItem;
-        }
-        //탭
-        else if (element.type === TreeItemType.Tab) {
-            const newTreeItem = this.createTabTreeItem(element);
-            return newTreeItem;
+        if (element instanceof Group) {
+            // 그룹의 자식 탭 반환
+            return element.children as any;
         }
 
-        return new vscode.TreeItem("Unknown");
+        // 탭은 자식이 없음
+        return [];
     }
 
-    getChildren(element?: TabItem | GroupItem): any {
-        const children = this.treeData.getChildren(element);
-        return children;
-    }
-
-    setData(data: (GroupItem | TabItem)[]) {
+    setData(data: Group[]) {
         this.treeData.setData(data);
         this.triggerRerender();
     }
 
     public triggerRerender() {
         this._onDidChangeTreeData.fire();
-        this.refreshFilePathTree();
     }
 
-    private refreshFilePathTree() {
-        const leafNodes = this.treeData.getData();
-
-        leafNodes.forEach((leafNode) => {
-            const tabId = leafNode.id;
-            this.getTreeItem(leafNode);
+    public closeTab(tab: Tab) {
+        const updatedData = this.treeData.getData().map((group) => {
+            group.children = group.children.filter(
+                (child) => child.id !== tab.id
+            );
+            return group;
         });
-    }
-
-    public closeTab(tabItem: TabItem) {
-        const leafNodes = this.treeData.getData();
-        const updatedData = leafNodes.filter((item) => item.id !== tabItem.id);
 
         this.setData(updatedData);
-        this.triggerRerender();
-    }
-
-    public getGroups(): GroupItem[] {
-        const state = this.treeData.getData();
-        return state.filter(
-            (item) => item.type === TreeItemType.Group
-        ) as GroupItem[];
+        vscode.window.showInformationMessage("탭이 닫혔습니다.");
     }
 
     public createGroup(groupName: string) {
         this.treeData.createGroup(groupName);
         this.triggerRerender();
+        vscode.window.showInformationMessage(`그룹 "${groupName}" 생성 완료!`);
     }
 
-    public createTabToGroup(groupId: string, tab: any) {
-        const result = this.treeData.createTabToGroup(groupId, tab);
-        this.triggerRerender();
+    public createTabToGroup(groupId: string, uri: vscode.Uri) {
+        try {
+            // TreeData에 탭 생성 요청
+            const success = this.treeData.createTabToGroup(groupId, uri);
 
-        return result;
+            if (success) {
+                this.triggerRerender();
+                vscode.window.showInformationMessage(
+                    "탭이 그룹에 추가되었습니다."
+                );
+            } else {
+                vscode.window.showErrorMessage(
+                    `그룹 ID ${groupId}를 찾을 수 없습니다.`
+                );
+            }
+        } catch (error: any) {
+            vscode.window.showErrorMessage(
+                `탭 추가 중 오류 발생: ${error.message}`
+            );
+        }
     }
 }

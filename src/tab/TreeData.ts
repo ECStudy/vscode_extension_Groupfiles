@@ -1,84 +1,54 @@
 import * as vscode from "vscode";
 
-import { TabItem, GroupItem, TreeItemType } from "../type/types";
+import { TabItem } from "../type/types";
 
-import { v4 as uuidv4 } from "uuid";
+import { Group } from "./Group";
+import { Tab } from "./Tab";
 
 export class TreeData {
-    private root: Array<TabItem | GroupItem> = [];
+    private root: Array<Group> = [];
     private tabMap: Record<string, TabItem> = {};
-    private groupMap: Record<string, GroupItem> = {};
+    private groupMap: Record<string, Group> = {};
 
-    constructor() {
-        this.root;
-    }
-
-    getData(): Array<TabItem | GroupItem> {
+    getData(): Array<Group> {
         return this.root;
     }
 
-    setData(data: Array<TabItem | GroupItem>) {
-        this.root = data;
+    setData(groups: Array<Group>) {
+        this.root = groups;
+        this.tabMap = {};
+        this.groupMap = {};
 
-        //빠른 처리를 위해서 map에 각각 저장
-        for (const item of this.root) {
-            //TreeItemType.Tab
-            if (item.type === TreeItemType.Tab) {
-                this.tabMap[item.id] = item;
-            }
-            //TreeItemType.Group
-            else if (item.type === TreeItemType.Group) {
-                this.groupMap[item.id] = item;
-            }
-        }
+        groups.forEach((group) => {
+            this.groupMap[group.id] = group;
+            group.children.forEach((tab) => {
+                this.tabMap[tab.id] = tab;
+            });
+        });
     }
 
-    getChildren(element?: TabItem | GroupItem) {
-        if (!element) {
-            return this.root; // 최상위 레벨
-        }
-
-        if (element.type === TreeItemType.Group) {
-            return element.children; // 그룹 내부의 탭 반환
-        }
-
-        return null; // 탭은 자식이 없음
+    createGroup(label: string): Group {
+        const group = new Group(label);
+        this.root.push(group);
+        this.groupMap[group.id] = group;
+        return group;
     }
 
-    createGroup(groupName: string) {
-        const groupId = `group-${uuidv4()}`; // 고유 ID 생성
-
-        const newGroup: GroupItem = {
-            type: TreeItemType.Group,
-            id: groupId,
-            colorId: "chartreuse",
-            label: groupName,
-            children: [],
-            collapsed: false,
-        };
-
-        this.groupMap[newGroup.id] = newGroup;
-        this.root.push(newGroup);
-        vscode.window.showInformationMessage(`Group "${groupName}" 생성!`);
-    }
-
-    createTabToGroup(groupId: string, tab: TabItem): boolean {
+    createTabToGroup(groupId: string, uri: vscode.Uri): boolean {
         const group = this.groupMap[groupId];
-        if (group) {
-            //이거 클래스로 객체로 빼던
-            //TabView에서 만들던거 분리 필요함
-            const newTab = {
-                type: TreeItemType.Tab,
-                groupId: null,
-                path: tab.path,
-                id: tab.id,
-                uri: tab?.uri,
-            } as TabItem;
-
-            group.children.push(newTab);
-            return true;
-        } else {
+        if (!group) {
+            console.error(`Group with ID ${groupId} not found.`);
             return false;
         }
+
+        const nativeTab: vscode.Tab = {
+            input: { uri },
+            label: uri.path.split("/").pop() || "Unknown",
+        } as vscode.Tab;
+
+        const tab = new Tab(nativeTab, groupId);
+        group.addTab(tab);
+        this.tabMap[tab.id] = tab;
+        return true;
     }
 }
