@@ -111,9 +111,7 @@ export class TabView extends CommandManager {
         const groups = this.treeDataProvider["treeData"].getData(); // getData로 그룹 리스트 가져오기
 
         if (groups.length === 0) {
-            vscode.window.showErrorMessage(
-                "그룹이 없습니다. 먼저 그룹을 생성해주세요."
-            );
+            this.handleCreateGroupAndCreateTab(uri);
             return;
         }
 
