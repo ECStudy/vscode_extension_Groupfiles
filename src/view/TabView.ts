@@ -80,6 +80,15 @@ export class TabView extends CommandManager {
                 this.handleUpdateGroup(groupItem);
             }
         );
+
+        //그룹 열기 변경
+        vscode.commands.registerCommand(
+            "tab-and-bookmark.tabview.open.group",
+            (groupItem: GroupItem) => {
+                //그룹 열기 변경
+                this.handleOpenGroup(groupItem);
+            }
+        );
     }
     private handleCloseTab(tab: any) {
         vscode.commands.executeCommand(
@@ -185,5 +194,13 @@ export class TabView extends CommandManager {
         }
 
         this.treeDataProvider.updateGroupLabel(groupItem.id, groupName);
+    }
+
+    async handleOpenGroup(groupItem: GroupItem) {
+        const tabs = groupItem.children; //그룹에 속한 탭 리스트
+        for (const tab of tabs) {
+            //탭 열기
+            await vscode.commands.executeCommand("vscode.open", tab.uri);
+        }
     }
 }

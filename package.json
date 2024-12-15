@@ -63,6 +63,11 @@
                     "group": "inline"
                 },
                 {
+                    "command": "tab-and-bookmark.tabview.open.group",
+                    "when": "viewItem == group",
+                    "group": "inline"
+                },
+                {
                     "command": "tab-and-bookmark.tabview.create.TabToGroupContext",
                     "when": "view == tabview",
                     "group": "navigation"
@@ -109,6 +114,11 @@
                 "command": "tab-and-bookmark.tabview.delete.group",
                 "title": "Close Group",
                 "icon": "$(close)"
+            },
+            {
+                "command": "tab-and-bookmark.tabview.open.group",
+                "title": "Open Group",
+                "icon": "$(eye)"
             },
             {
                 "command": "tab-and-bookmark.tabview.create.group",
