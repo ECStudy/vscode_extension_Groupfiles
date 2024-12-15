@@ -51,4 +51,26 @@ export class TreeData {
         this.tabMap[tab.id] = tab;
         return true;
     }
+
+    deleteGroup(targetGroupId: string) {
+        if (!targetGroupId) {
+            console.error(`Group with ID ${targetGroupId} not found.`);
+            return false;
+        }
+
+        this.root = this.root.filter((group) => group.id !== targetGroupId);
+        delete this.groupMap[targetGroupId];
+
+        return true;
+    }
+
+    updateGroupLabel(targetGroupId: string, newGroupName: string) {
+        const group = this.groupMap[targetGroupId];
+        if (!group) {
+            return false;
+        }
+
+        group.setLabel(newGroupName); // 그룹 이름 변경
+        return true;
+    }
 }

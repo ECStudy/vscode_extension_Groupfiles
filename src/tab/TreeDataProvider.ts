@@ -71,6 +71,11 @@ export class TreeDataProvider
         vscode.window.showInformationMessage(`그룹 "${groupName}" 생성 완료!`);
     }
 
+    public deleteGroup(groupId: string) {
+        this.treeData.deleteGroup(groupId);
+        this.triggerRerender();
+    }
+
     public createTabToGroup(groupId: string, uri: vscode.Uri) {
         try {
             // TreeData에 탭 생성 요청
@@ -91,5 +96,21 @@ export class TreeDataProvider
                 `탭 추가 중 오류 발생: ${error.message}`
             );
         }
+    }
+
+    public updateGroupLabel(targetGroupId: string, newGroupName: string) {
+        const result = this.treeData.updateGroupLabel(
+            targetGroupId,
+            newGroupName
+        );
+        if (result) {
+            this.triggerRerender();
+            vscode.window.showInformationMessage(
+                `탭 이름 변경 ${newGroupName}`
+            );
+        } else {
+            vscode.window.showInformationMessage(`탭 이름 변경 실패`);
+        }
+        this.triggerRerender();
     }
 }

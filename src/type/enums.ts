@@ -6,6 +6,7 @@ export const BOOKMARK_VIEW = "bookmartview" as const;
 
 export enum ACTION {
     CREATE = "create",
+    DELETE = "delete",
     CLOSE = "close",
     OPEN = "open",
 }

@@ -14,6 +14,7 @@ import {
     TabViewCreateTabToGroupContext,
 } from "../type/command";
 import { Tab } from "../tab/Tab";
+import { GroupItem } from "../type/types";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider = new TreeDataProvider();
@@ -29,6 +30,7 @@ export class TabView extends CommandManager {
     }
 
     private registerCommandHandler() {
+        //탭 닫기
         vscode.commands.registerCommand(TabViewCloseTab, (tab: Tab) => {
             this.handleCloseTab(tab);
         });
@@ -44,6 +46,7 @@ export class TabView extends CommandManager {
             }
         );
 
+        //context 메뉴 통해서 그룹에 탭 넣기
         vscode.commands.registerCommand(
             TabViewCreateTabToGroupContext,
             (tab: any) => {
@@ -51,11 +54,30 @@ export class TabView extends CommandManager {
             }
         );
 
+        //새로 그룹 만들고, 탭 넣기
         vscode.commands.registerCommand(
             "tab-and-bookmark.tabview.create.TabToNewGroup",
             (uri: vscode.Uri) => {
                 //그룹 생성
                 this.handleCreateGroupAndCreateTab(uri);
+            }
+        );
+
+        //그룹 모두 삭제
+        vscode.commands.registerCommand(
+            "tab-and-bookmark.tabview.delete.group",
+            (uri: GroupItem) => {
+                //그룹 모두 삭제
+                this.handleDeleteGroup(uri);
+            }
+        );
+
+        //그룹 이름 변경
+        vscode.commands.registerCommand(
+            "tab-and-bookmark.tabview.update.group",
+            (uri: GroupItem) => {
+                //그룹 이름 변경 삭제
+                this.handleUpdateGroup(uri);
             }
         );
     }
@@ -144,5 +166,24 @@ export class TabView extends CommandManager {
                 `탭 추가 중 오류 발생: ${error.message}`
             );
         }
+    }
+
+    async handleDeleteGroup(uri: GroupItem) {
+        this.treeDataProvider.deleteGroup(uri.id);
+    }
+
+    async handleUpdateGroup(uri: GroupItem) {
+        const groupName = await vscode.window.showInputBox({
+            prompt: "Enter a name for the new group",
+            placeHolder: "수정할 그룹 이름 입력",
+        });
+        console.log("🎄🎄🎄 이름 변경", uri);
+
+        if (!groupName) {
+            vscode.window.showErrorMessage("그룹 이름을 입력해주세요.");
+            return;
+        }
+
+        this.treeDataProvider.updateGroupLabel(uri.id, groupName);
     }
 }

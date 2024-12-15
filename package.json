@@ -53,6 +53,16 @@
                     "group": "inline"
                 },
                 {
+                    "command": "tab-and-bookmark.tabview.update.group",
+                    "when": "viewItem == group",
+                    "group": "inline"
+                },
+                {
+                    "command": "tab-and-bookmark.tabview.delete.group",
+                    "when": "viewItem == group",
+                    "group": "inline"
+                },
+                {
                     "command": "tab-and-bookmark.tabview.create.TabToGroupContext",
                     "when": "view == tabview",
                     "group": "navigation"
@@ -88,6 +98,16 @@
             {
                 "command": "tab-and-bookmark.tabview.close.tab",
                 "title": "Close Tab",
+                "icon": "$(close)"
+            },
+            {
+                "command": "tab-and-bookmark.tabview.update.group",
+                "title": "Edit Group",
+                "icon": "$(edit)"
+            },
+            {
+                "command": "tab-and-bookmark.tabview.delete.group",
+                "title": "Close Group",
                 "icon": "$(close)"
             },
             {

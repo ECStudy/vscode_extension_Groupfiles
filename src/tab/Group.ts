@@ -44,4 +44,8 @@ export class Group {
 
         this.children.push(tab);
     }
+
+    setLabel(newLabel: string) {
+        this.label = newLabel;
+    }
 }
