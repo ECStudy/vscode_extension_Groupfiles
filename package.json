@@ -117,12 +117,12 @@
             },
             {
                 "command": "tab-and-bookmark.tabview.create.TabToGroup",
-                "title": "추가추가추가추가",
+                "title": "기존 그룹에 탭 추가",
                 "category": "tab"
             },
             {
                 "command": "tab-and-bookmark.tabview.create.TabToGroupContext",
-                "title": "추가추가추가추가",
+                "title": "기존 그룹에 탭 추가",
                 "category": "tab"
             },
             {
