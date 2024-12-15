@@ -8,19 +8,23 @@ import { Group } from "./Group";
 import { Tab } from "./Tab";
 
 export class TreeDataProvider
-    implements vscode.TreeDataProvider<vscode.TreeItem>
+    implements
+        vscode.TreeDataProvider<vscode.TreeItem>,
+        vscode.TreeDragAndDropController<Group | Tab>
 {
     private treeData: TreeData = new TreeData();
+
     // EventEmitter를 정의
     private _onDidChangeTreeData: vscode.EventEmitter<
         vscode.TreeItem | undefined | void
     > = new vscode.EventEmitter<vscode.TreeItem | undefined | void>();
 
-    private treeItemMap: Record<string, vscode.TreeItem> = {};
-
     readonly onDidChangeTreeData: vscode.Event<
         vscode.TreeItem | undefined | void
     > = this._onDidChangeTreeData.event;
+
+    readonly dropMimeTypes: string[] = ["application/vnd.code.tree.tab"];
+    readonly dragMimeTypes: string[] = ["application/vnd.code.tree.tab"];
 
     constructor() {}
 
@@ -111,6 +115,75 @@ export class TreeDataProvider
         } else {
             vscode.window.showInformationMessage(`탭 이름 변경 실패`);
         }
+        this.triggerRerender();
+    }
+
+    async handleDrag(
+        source: readonly (Group | Tab)[],
+        dataTransfer: vscode.DataTransfer,
+        token: vscode.CancellationToken
+    ): Promise<void> {
+        if (source.some((item) => !(item instanceof Tab))) {
+            vscode.window.showInformationMessage(
+                `선택아이템에 그룹이 포함 되어있습니다, 탭만 이동 가능합니다.`
+            );
+            return;
+        }
+
+        const tabIds = source.map((tab) => tab.id).join(",");
+        dataTransfer.set(
+            "application/vnd.code.tree.tab",
+            new vscode.DataTransferItem(tabIds)
+        );
+        console.log("이동할 탭 id", tabIds);
+    }
+
+    async handleDrop(
+        target: Group | Tab | undefined,
+        dataTransfer: vscode.DataTransfer,
+        token: vscode.CancellationToken
+    ): Promise<void> {
+        console.log("target", target);
+        console.log("dataTransfer", dataTransfer);
+        console.log("token", token);
+
+        const dataTransferItem = dataTransfer.get(
+            "application/vnd.code.tree.tab"
+        );
+        if (!dataTransferItem) {
+            console.error("DataTransferItem is undefined.");
+            return;
+        }
+
+        // DataTransferItem의 값을 비동기적으로 가져오기
+        const draggedTabIds = await dataTransferItem.asString();
+
+        if (!draggedTabIds) {
+            console.error("No draggedTabIds found.");
+            return;
+        }
+
+        const tabIds = draggedTabIds.split(",");
+        //타겟이 Group
+        let groupId: string | undefined | null;
+        if (target instanceof Group) {
+            groupId = target.id;
+        }
+        //타겟이 tab
+        else if (target instanceof Tab) {
+            groupId = target.groupId;
+        }
+
+        if (!groupId) {
+            return;
+        }
+        tabIds.forEach((tabId) => {
+            const tabItem = this.treeData.getTabById(tabId);
+            if (tabItem) {
+                console.log();
+                this.treeData.moveTabToGroup(tabItem, groupId); // 그룹으로 이동
+            }
+        });
         this.triggerRerender();
     }
 }

@@ -24,6 +24,7 @@ export class TabView extends CommandManager {
         vscode.window.createTreeView(TAB_VIEW, {
             treeDataProvider: this.treeDataProvider,
             canSelectMany: true,
+            dragAndDropController: this.treeDataProvider, // Drag & Drop 활성화
         });
 
         this.registerCommandHandler();

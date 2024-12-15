@@ -73,4 +73,28 @@ export class TreeData {
         group.setLabel(newGroupName); // 그룹 이름 변경
         return true;
     }
+
+    getTabById(tabId: string): TabItem {
+        return this.tabMap[tabId];
+    }
+
+    moveTabToGroup(tabItem: TabItem, targetGroupId: string) {
+        const tab = this.tabMap[tabItem.id];
+        if (!tab) {
+            console.error(`Tab with ID ${tabItem.id} not found.`);
+            return;
+        }
+
+        const currentGroup = this.root.find((group) =>
+            group.children.some((child) => child.id === tabItem.id)
+        );
+
+        if (currentGroup) {
+            currentGroup.children = currentGroup.children.filter(
+                (child) => child.id !== tabItem.id
+            );
+        }
+        const targetGroup = this.groupMap[targetGroupId];
+        targetGroup.addTab(tab);
+    }
 }
