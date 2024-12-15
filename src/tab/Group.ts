@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import { v4 as uuidv4 } from "uuid";
 
 import { TabItem, TreeItemType } from "../type/types";
+import { createColorGroupIcon } from "../color";
 
 export class Group {
     readonly type = TreeItemType.Group;
@@ -27,7 +28,7 @@ export class Group {
                 : vscode.TreeItemCollapsibleState.Expanded
         );
         treeItem.contextValue = "group";
-        treeItem.iconPath = new vscode.ThemeIcon("folder");
+        treeItem.iconPath = createColorGroupIcon();
         return treeItem;
     }
 
