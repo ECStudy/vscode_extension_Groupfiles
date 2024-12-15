@@ -66,18 +66,18 @@ export class TabView extends CommandManager {
         //그룹 모두 삭제
         vscode.commands.registerCommand(
             "tab-and-bookmark.tabview.delete.group",
-            (uri: GroupItem) => {
+            (groupItem: GroupItem) => {
                 //그룹 모두 삭제
-                this.handleDeleteGroup(uri);
+                this.handleDeleteGroup(groupItem);
             }
         );
 
         //그룹 이름 변경
         vscode.commands.registerCommand(
             "tab-and-bookmark.tabview.update.group",
-            (uri: GroupItem) => {
+            (groupItem: GroupItem) => {
                 //그룹 이름 변경 삭제
-                this.handleUpdateGroup(uri);
+                this.handleUpdateGroup(groupItem);
             }
         );
     }
@@ -168,22 +168,22 @@ export class TabView extends CommandManager {
         }
     }
 
-    async handleDeleteGroup(uri: GroupItem) {
-        this.treeDataProvider.deleteGroup(uri.id);
+    async handleDeleteGroup(groupItem: GroupItem) {
+        this.treeDataProvider.deleteGroup(groupItem.id);
     }
 
-    async handleUpdateGroup(uri: GroupItem) {
+    async handleUpdateGroup(groupItem: GroupItem) {
         const groupName = await vscode.window.showInputBox({
             prompt: "Enter a name for the new group",
             placeHolder: "수정할 그룹 이름 입력",
+            value: groupItem.label,
         });
-        console.log("🎄🎄🎄 이름 변경", uri);
 
         if (!groupName) {
             vscode.window.showErrorMessage("그룹 이름을 입력해주세요.");
             return;
         }
 
-        this.treeDataProvider.updateGroupLabel(uri.id, groupName);
+        this.treeDataProvider.updateGroupLabel(groupItem.id, groupName);
     }
 }
