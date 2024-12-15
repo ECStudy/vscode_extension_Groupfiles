@@ -29,7 +29,7 @@ export class Tab implements TabItem {
             this.uri,
             vscode.TreeItemCollapsibleState.None
         );
-        treeItem.contextValue = "closableTab";
+        treeItem.contextValue = "tab";
         treeItem.command = {
             command: "vscode.open",
             title: "Open Tab",

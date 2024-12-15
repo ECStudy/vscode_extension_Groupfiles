@@ -179,7 +179,18 @@ export class TabView extends CommandManager {
     }
 
     async handleDeleteGroup(groupItem: GroupItem) {
-        this.treeDataProvider.deleteGroup(groupItem.id);
+        const confirm = await vscode.window.showInformationMessage(
+            `Do you want to delete "${groupItem.label}" group and files?`,
+            "Delete",
+            "Cancel"
+        );
+
+        if (confirm === "Delete") {
+            this.treeDataProvider.deleteGroup(groupItem.id);
+            vscode.window.showInformationMessage(
+                `"${groupItem.label}" group has been deleted `
+            );
+        }
     }
 
     async handleUpdateGroup(groupItem: GroupItem) {

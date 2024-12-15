@@ -49,7 +49,7 @@
             "view/item/context": [
                 {
                     "command": "tab-and-bookmark.tabview.close.tab",
-                    "when": "viewItem == closableTab",
+                    "when": "viewItem == tab",
                     "group": "inline"
                 },
                 {
@@ -69,12 +69,12 @@
                 },
                 {
                     "command": "tab-and-bookmark.tabview.create.TabToGroupContext",
-                    "when": "view == tabview",
+                    "when": "viewItem == tab",
                     "group": "navigation"
                 },
                 {
                     "command": "tab-and-bookmark.tabview.create.TabToNewGroup",
-                    "when": "view == tabview",
+                    "when": "viewItem == tab",
                     "group": "navigation"
                 }
             ],
