@@ -68,6 +68,11 @@
                     "group": "inline"
                 },
                 {
+                    "command": "tab-and-bookmark.tabview.open.newWorkSpace",
+                    "when": "viewItem == group",
+                    "group": "navigation"
+                },
+                {
                     "command": "tab-and-bookmark.tabview.create.TabToGroupContext",
                     "when": "viewItem == tab",
                     "group": "navigation"
@@ -139,8 +144,24 @@
                 "command": "tab-and-bookmark.tabview.create.TabToNewGroup",
                 "title": "새 그룹에 추가",
                 "category": "tab"
+            },
+            {
+                "command": "tab-and-bookmark.tabview.open.newWorkSpace",
+                "title": "새로운 WorkSpace 열기",
+                "category": "tab"
             }
-        ]
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Tab and Bookmark",
+            "properties": {
+                "openFilesAtStartup": {
+                    "type": "array",
+                    "description": "List of file paths to open when the workspace starts.",
+                    "default": []
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
