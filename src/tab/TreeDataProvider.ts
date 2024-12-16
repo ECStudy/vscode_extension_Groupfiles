@@ -29,8 +29,13 @@ export class TreeDataProvider
     constructor() {}
 
     getTreeItem(element: Group | Tab): vscode.TreeItem {
-        // Tab 또는 Group 클래스의 toTreeItem 메서드를 활용
-        return element.toTreeItem();
+        const treeItem = element.toTreeItem();
+        if (element instanceof Group) {
+            treeItem.collapsibleState = element.collapsed
+                ? vscode.TreeItemCollapsibleState.Collapsed
+                : vscode.TreeItemCollapsibleState.Expanded;
+        }
+        return treeItem;
     }
 
     getChildren(element?: Group | Tab): Array<Group | Tab> {
@@ -77,6 +82,11 @@ export class TreeDataProvider
 
     public deleteGroup(groupId: string) {
         this.treeData.deleteGroup(groupId);
+        this.triggerRerender();
+    }
+
+    public deleteAllGroup() {
+        this.treeData.deleteAllGroup();
         this.triggerRerender();
     }
 
@@ -185,5 +195,21 @@ export class TreeDataProvider
             }
         });
         this.triggerRerender();
+    }
+
+    public collapseAllGroups(isCollapse: boolean) {
+        const groups = this.treeData.getData(); // 트리 데이터 가져오기
+        groups.forEach((group) => {
+            group.setCollapsed(isCollapse); // 그룹의 collapsed 상태 변경
+        });
+
+        console.log(
+            `[collapseAllGroups] 모든 그룹 ${
+                isCollapse ? "접힘" : "펼침"
+            } 상태로 설정`
+        );
+
+        // 트리 데이터 갱신 (강제로 UI 업데이트)
+        this._onDidChangeTreeData.fire(undefined);
     }
 }

@@ -64,6 +64,12 @@ export class TreeData {
         return true;
     }
 
+    deleteAllGroup() {
+        this.root = [];
+        this.groupMap = {};
+        this.tabMap = {};
+    }
+
     updateGroupLabel(targetGroupId: string, newGroupName: string) {
         const group = this.groupMap[targetGroupId];
         if (!group) {

@@ -17,16 +17,17 @@ export class Group {
         this.id = `group_${uuidv4()}`;
         this.label = label;
         this.colorId = colorId;
-        this.collapsed = false;
+        this.collapsed = false; // 기본적으로 열림 상태
     }
 
     toTreeItem(): vscode.TreeItem {
         const treeItem = new vscode.TreeItem(
             this.label,
             this.collapsed
-                ? vscode.TreeItemCollapsibleState.Collapsed
-                : vscode.TreeItemCollapsibleState.Expanded
+                ? vscode.TreeItemCollapsibleState.Collapsed //접힘
+                : vscode.TreeItemCollapsibleState.Expanded //열림
         );
+        treeItem.id = this.id;
         treeItem.contextValue = "group";
         treeItem.iconPath = createColorGroupIcon();
         return treeItem;
@@ -48,5 +49,9 @@ export class Group {
 
     setLabel(newLabel: string) {
         this.label = newLabel;
+    }
+
+    setCollapsed(isCollapsed: boolean) {
+        this.collapsed = isCollapsed;
     }
 }

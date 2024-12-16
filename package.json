@@ -44,6 +44,21 @@
                     "command": "tab-and-bookmark.tabview.create.group",
                     "when": "view == tabview",
                     "group": "navigation"
+                },
+                {
+                    "command": "tab-and-bookmark.tabview.delete.allgroup",
+                    "when": "view == tabview",
+                    "group": "navigation"
+                },
+                {
+                    "command": "tab-and-bookmark.tabview.fold.group",
+                    "when": "view == tabview",
+                    "group": "navigation"
+                },
+                {
+                    "command": "tab-and-bookmark.tabview.unfold.group",
+                    "when": "view == tabview",
+                    "group": "navigation"
                 }
             ],
             "view/item/context": [
@@ -129,6 +144,21 @@
                 "command": "tab-and-bookmark.tabview.create.group",
                 "title": "Create Group",
                 "icon": "$(add)"
+            },
+            {
+                "command": "tab-and-bookmark.tabview.delete.allgroup",
+                "title": "Delete All Group",
+                "icon": "$(trash)"
+            },
+            {
+                "command": "tab-and-bookmark.tabview.fold.group",
+                "title": "Fold All Group",
+                "icon": "$(fold)"
+            },
+            {
+                "command": "tab-and-bookmark.tabview.unfold.group",
+                "title": "unFold All Group",
+                "icon": "$(unfold)"
             },
             {
                 "command": "tab-and-bookmark.tabview.create.TabToGroup",

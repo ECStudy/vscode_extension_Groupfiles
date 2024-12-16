@@ -68,12 +68,21 @@ export class TabView extends CommandManager {
             }
         );
 
-        //그룹 모두 삭제
+        //그룹 삭제
         vscode.commands.registerCommand(
             "tab-and-bookmark.tabview.delete.group",
             (groupItem: GroupItem) => {
                 //그룹 모두 삭제
                 this.handleDeleteGroup(groupItem);
+            }
+        );
+
+        //그룹 모두 삭제
+        vscode.commands.registerCommand(
+            "tab-and-bookmark.tabview.delete.allgroup",
+            () => {
+                //그룹 모두 삭제
+                this.handleDeleteAllGroup();
             }
         );
 
@@ -101,6 +110,24 @@ export class TabView extends CommandManager {
             (groupItem: GroupItem) => {
                 //그룹 열기 변경
                 this.handleOpenNewWorkspace(groupItem);
+            }
+        );
+
+        //전체 그룹 접기
+        vscode.commands.registerCommand(
+            "tab-and-bookmark.tabview.fold.group",
+            () => {
+                //전체 그룹 접기
+                this.handleFoldGroup(true);
+            }
+        );
+
+        //전체 그룹 접기
+        vscode.commands.registerCommand(
+            "tab-and-bookmark.tabview.unfold.group",
+            () => {
+                //전체 그룹 접기
+                this.handleFoldGroup(false);
             }
         );
     }
@@ -206,6 +233,18 @@ export class TabView extends CommandManager {
         }
     }
 
+    async handleDeleteAllGroup() {
+        const confirm = await vscode.window.showInformationMessage(
+            `Do you want to delete All group and files?`,
+            "Delete",
+            "Cancel"
+        );
+
+        if (confirm === "Delete") {
+            this.treeDataProvider.deleteAllGroup();
+        }
+    }
+
     async handleUpdateGroup(groupItem: GroupItem) {
         const groupName = await vscode.window.showInputBox({
             prompt: "Enter a name for the new group",
@@ -227,6 +266,11 @@ export class TabView extends CommandManager {
             //탭 열기
             await vscode.commands.executeCommand("vscode.open", tab.uri);
         }
+    }
+
+    //동작하지 않음
+    async handleFoldGroup(isCollapse: boolean) {
+        this.treeDataProvider.collapseAllGroups(isCollapse);
     }
 
     /**

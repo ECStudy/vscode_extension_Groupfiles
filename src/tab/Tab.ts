@@ -29,6 +29,7 @@ export class Tab implements TabItem {
             this.uri,
             vscode.TreeItemCollapsibleState.None
         );
+        treeItem.id = this.id;
         treeItem.contextValue = "tab";
         treeItem.command = {
             command: "vscode.open",
