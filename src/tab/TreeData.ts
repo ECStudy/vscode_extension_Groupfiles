@@ -87,7 +87,7 @@ export class TreeData {
             return false;
         }
 
-        group.setIcon(newGroupIcon);
+        group.setColor(newGroupIcon);
         return true;
     }
 

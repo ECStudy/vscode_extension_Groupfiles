@@ -1,9 +1,20 @@
 import * as vscode from "vscode";
+import * as path from "path";
 
 import { v4 as uuidv4 } from "uuid";
 
 import { TabItem, TreeItemType } from "../type/types";
-import { createColorGroupIcon } from "../color";
+
+const groupIconPaths: { [key: string]: string } = {
+    default: "images/group_icon_default.svg",
+    red: "images/group_icon_red.svg",
+    blue: "images/group_icon_blue.svg",
+    yellow: "images/group_icon_yellow.svg",
+    pink: "images/group_icon_black.svg",
+    green: "images/group_icon_green.svg",
+    purple: "images/group_icon_purple.svg",
+    orange: "images/group_icon_orange.svg",
+};
 
 export class Group {
     readonly type = TreeItemType.Group;
@@ -12,26 +23,32 @@ export class Group {
     colorId: string;
     collapsed: boolean;
     children: TabItem[] = [];
-    iconPath: any;
 
-    constructor(label: string, colorId = "chartreuse") {
+    constructor(label: string, colorId: string = "default") {
         this.id = `group_${uuidv4()}`;
         this.label = label;
         this.colorId = colorId;
         this.collapsed = false; // 기본적으로 열림 상태
-        this.iconPath = createColorGroupIcon(); //
     }
 
-    toTreeItem(): vscode.TreeItem {
+    toTreeItem(context: vscode.ExtensionContext): vscode.TreeItem {
         const treeItem = new vscode.TreeItem(
             this.label,
             this.collapsed
-                ? vscode.TreeItemCollapsibleState.Collapsed //접힘
-                : vscode.TreeItemCollapsibleState.Expanded //열림
+                ? vscode.TreeItemCollapsibleState.Collapsed
+                : vscode.TreeItemCollapsibleState.Expanded
         );
+
         treeItem.id = this.id;
         treeItem.contextValue = "group";
-        treeItem.iconPath = createColorGroupIcon();
+
+        const iconPath =
+            groupIconPaths[this.colorId] || groupIconPaths["default"];
+        treeItem.iconPath = {
+            light: path.join(context.extensionPath, iconPath),
+            dark: path.join(context.extensionPath, iconPath),
+        };
+
         return treeItem;
     }
 
@@ -52,10 +69,9 @@ export class Group {
     setLabel(newLabel: string) {
         this.label = newLabel;
     }
-    setIcon(icon: string) {
-        console.log("--->", icon);
 
-        this.iconPath = createColorGroupIcon(icon);
+    setColor(newColor: string) {
+        this.colorId = newColor; // 색상 ID 갱신
     }
 
     setCollapsed(isCollapsed: boolean) {

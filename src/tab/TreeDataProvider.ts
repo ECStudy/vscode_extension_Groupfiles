@@ -26,24 +26,23 @@ export class TreeDataProvider
     readonly dropMimeTypes: string[] = ["application/vnd.code.tree.tab"];
     readonly dragMimeTypes: string[] = ["application/vnd.code.tree.tab"];
 
-    constructor() {}
+    private context: any;
+
+    constructor(context: any) {
+        this.context = context;
+    }
 
     getTreeItem(element: Group | Tab): vscode.TreeItem {
-        console.log("getTreeItem 🍟", element);
-
-        const treeItem = element.toTreeItem();
+        const treeItem = element.toTreeItem(this.context);
         if (element instanceof Group) {
             treeItem.collapsibleState = element.collapsed
                 ? vscode.TreeItemCollapsibleState.Collapsed
                 : vscode.TreeItemCollapsibleState.Expanded;
         }
-        console.log("getTreeItem 🥚", treeItem);
         return treeItem;
     }
 
     getChildren(element?: Group | Tab): Array<Group | Tab> {
-        console.log("getChildren🍕", element);
-
         if (!element) {
             // 최상위 레벨: 그룹 목록 반환
             return this.treeData.getData();
@@ -217,13 +216,13 @@ export class TreeDataProvider
         this._onDidChangeTreeData.fire(undefined);
     }
 
-    public updateGroupIcon(groupId: string, color: string) {
-        const result = this.treeData.updateGroupIcon(groupId, color);
+    public updateGroupIcon(groupId: string, newColor: string) {
+        const groups = this.treeData.getData();
+        const targetGroup = groups.find((group) => group.id === groupId);
 
-        if (result) {
-            this.triggerRerender();
-        } else {
-            vscode.window.showInformationMessage(`탭 이름 변경 실패`);
+        if (targetGroup) {
+            targetGroup.setColor(newColor); // 색상 업데이트
+            this._onDidChangeTreeData.fire(targetGroup); // UI 리렌더링
         }
     }
 }

@@ -22,10 +22,11 @@ import { GroupItem } from "../type/types";
 import { colorPalette } from "../color";
 
 export class TabView extends CommandManager {
-    private treeDataProvider: TreeDataProvider = new TreeDataProvider();
+    private treeDataProvider: TreeDataProvider;
 
-    constructor() {
+    constructor(context: vscode.ExtensionContext) {
         super();
+        this.treeDataProvider = new TreeDataProvider(context);
         vscode.window.createTreeView(TAB_VIEW, {
             treeDataProvider: this.treeDataProvider,
             canSelectMany: true,
@@ -332,21 +333,20 @@ export class TabView extends CommandManager {
     }
 
     async handleUpdateGroupIcon(groupItem: GroupItem) {
-        const colorPalette: { color: string; svg: string }[] = [
-            { color: "#1A73E8", svg: "🔵" },
-            { color: "#D93025", svg: "🔴" },
-            { color: "#F9AB00", svg: "🟡" },
-            { color: "#188038", svg: "🟢" },
-            { color: "#D01884", svg: "🟣" },
-            { color: "#A142F4", svg: "🟤" },
-            { color: "#007B83", svg: "⚫" },
-            { color: "#FA903E", svg: "🟠" },
+        const colorPalette = [
+            { label: "red", description: "Red", svg: "🔴" },
+            { label: "orange", description: "Orange", svg: "🟠" },
+            { label: "yellow", description: "Yellow", svg: "🟡" },
+            { label: "green", description: "Green", svg: "🟢" },
+            { label: "blue", description: "Blue", svg: "🔵" },
+            { label: "purple", description: "Purple", svg: "🟣" },
+            { label: "black", description: "Black", svg: "⚫" },
         ];
 
         const quickPickItems = colorPalette.map((item) => ({
-            label: `${item.svg} ${item.color}`, // SVG처럼 보이는 emoji 추가
-            description: `Choose ${item.color}`,
-            color: item.color, // 선택된 색상 값
+            label: `${item.svg} ${item.description}`,
+            description: `Choose ${item.label}`,
+            color: item.label, // 색상 키를 전달
         }));
 
         const selectedColor = await vscode.window.showQuickPick(
@@ -360,7 +360,7 @@ export class TabView extends CommandManager {
         if (selectedColor) {
             this.treeDataProvider.updateGroupIcon(
                 groupItem.id,
-                selectedColor.label
+                selectedColor.color
             );
         }
     }
