@@ -88,6 +88,11 @@
                     "group": "navigation"
                 },
                 {
+                    "command": "tab-and-bookmark.tabview.update.groupicon",
+                    "when": "viewItem == group",
+                    "group": "navigation"
+                },
+                {
                     "command": "tab-and-bookmark.tabview.create.TabToGroupContext",
                     "when": "viewItem == tab",
                     "group": "navigation"
@@ -178,6 +183,11 @@
             {
                 "command": "tab-and-bookmark.tabview.open.newWorkSpace",
                 "title": "새로운 WorkSpace 열기",
+                "category": "tab"
+            },
+            {
+                "command": "tab-and-bookmark.tabview.update.groupicon",
+                "title": "그룹 아이콘 변경",
                 "category": "tab"
             }
         ],

@@ -29,16 +29,21 @@ export class TreeDataProvider
     constructor() {}
 
     getTreeItem(element: Group | Tab): vscode.TreeItem {
+        console.log("getTreeItem 🍟", element);
+
         const treeItem = element.toTreeItem();
         if (element instanceof Group) {
             treeItem.collapsibleState = element.collapsed
                 ? vscode.TreeItemCollapsibleState.Collapsed
                 : vscode.TreeItemCollapsibleState.Expanded;
         }
+        console.log("getTreeItem 🥚", treeItem);
         return treeItem;
     }
 
     getChildren(element?: Group | Tab): Array<Group | Tab> {
+        console.log("getChildren🍕", element);
+
         if (!element) {
             // 최상위 레벨: 그룹 목록 반환
             return this.treeData.getData();
@@ -118,14 +123,13 @@ export class TreeDataProvider
             newGroupName
         );
         if (result) {
-            this.triggerRerender();
+            //this.triggerRerender();
             vscode.window.showInformationMessage(
                 `탭 이름 변경 ${newGroupName}`
             );
         } else {
             vscode.window.showInformationMessage(`탭 이름 변경 실패`);
         }
-        this.triggerRerender();
     }
 
     async handleDrag(
@@ -211,5 +215,15 @@ export class TreeDataProvider
 
         // 트리 데이터 갱신 (강제로 UI 업데이트)
         this._onDidChangeTreeData.fire(undefined);
+    }
+
+    public updateGroupIcon(groupId: string, color: string) {
+        const result = this.treeData.updateGroupIcon(groupId, color);
+
+        if (result) {
+            this.triggerRerender();
+        } else {
+            vscode.window.showInformationMessage(`탭 이름 변경 실패`);
+        }
     }
 }

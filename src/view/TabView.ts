@@ -19,6 +19,7 @@ import {
 } from "../type/command";
 import { Tab } from "../tab/Tab";
 import { GroupItem } from "../type/types";
+import { colorPalette } from "../color";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider = new TreeDataProvider();
@@ -128,6 +129,15 @@ export class TabView extends CommandManager {
             () => {
                 //전체 그룹 접기
                 this.handleFoldGroup(false);
+            }
+        );
+
+        //그룹 아이콘 변경
+        vscode.commands.registerCommand(
+            "tab-and-bookmark.tabview.update.groupicon",
+            (groupItem: GroupItem) => {
+                //전체 그룹 접기
+                this.handleUpdateGroupIcon(groupItem);
             }
         );
     }
@@ -319,5 +329,39 @@ export class TabView extends CommandManager {
         //vscode.workspace.getConfiguration().get<string[]>("openFilesAtStartup")를 통해
         //.code-workspace 파일에서 지정된 openFilesAtStartup 설정을 읽기
         //해당 파일 경로를 순회하며 vscode.open 명령어를 사용해 파일을 열기
+    }
+
+    async handleUpdateGroupIcon(groupItem: GroupItem) {
+        const colorPalette: { color: string; svg: string }[] = [
+            { color: "#1A73E8", svg: "🔵" },
+            { color: "#D93025", svg: "🔴" },
+            { color: "#F9AB00", svg: "🟡" },
+            { color: "#188038", svg: "🟢" },
+            { color: "#D01884", svg: "🟣" },
+            { color: "#A142F4", svg: "🟤" },
+            { color: "#007B83", svg: "⚫" },
+            { color: "#FA903E", svg: "🟠" },
+        ];
+
+        const quickPickItems = colorPalette.map((item) => ({
+            label: `${item.svg} ${item.color}`, // SVG처럼 보이는 emoji 추가
+            description: `Choose ${item.color}`,
+            color: item.color, // 선택된 색상 값
+        }));
+
+        const selectedColor = await vscode.window.showQuickPick(
+            quickPickItems,
+            {
+                placeHolder: "Choose a color for the group icon",
+                canPickMany: false,
+            }
+        );
+
+        if (selectedColor) {
+            this.treeDataProvider.updateGroupIcon(
+                groupItem.id,
+                selectedColor.label
+            );
+        }
     }
 }

@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { TabItem } from "../type/types";
+import { GroupItem, TabItem } from "../type/types";
 
 import { Group } from "./Group";
 import { Tab } from "./Tab";
@@ -80,8 +80,23 @@ export class TreeData {
         return true;
     }
 
+    updateGroupIcon(targetGroupId: string, newGroupIcon: string) {
+        const group = this.groupMap[targetGroupId];
+
+        if (!group) {
+            return false;
+        }
+
+        group.setIcon(newGroupIcon);
+        return true;
+    }
+
     getTabById(tabId: string): TabItem {
         return this.tabMap[tabId];
+    }
+
+    getGroupById(groupId: string): GroupItem {
+        return this.groupMap[groupId];
     }
 
     moveTabToGroup(tabItem: TabItem, targetGroupId: string) {

@@ -12,12 +12,14 @@ export class Group {
     colorId: string;
     collapsed: boolean;
     children: TabItem[] = [];
+    iconPath: any;
 
     constructor(label: string, colorId = "chartreuse") {
         this.id = `group_${uuidv4()}`;
         this.label = label;
         this.colorId = colorId;
         this.collapsed = false; // 기본적으로 열림 상태
+        this.iconPath = createColorGroupIcon(); //
     }
 
     toTreeItem(): vscode.TreeItem {
@@ -49,6 +51,11 @@ export class Group {
 
     setLabel(newLabel: string) {
         this.label = newLabel;
+    }
+    setIcon(icon: string) {
+        console.log("--->", icon);
+
+        this.iconPath = createColorGroupIcon(icon);
     }
 
     setCollapsed(isCollapsed: boolean) {
