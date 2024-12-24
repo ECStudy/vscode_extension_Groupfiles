@@ -1,32 +1,63 @@
-import { EXTENSION_ID, TAB_VIEW, BOOKMARK_VIEW, ACTION } from "./enums";
-
 //tabview.
-export const TabViewRefresh = `${EXTENSION_ID}.${TAB_VIEW}.refresh` as const;
+export const TabViewRefresh = `tab-and-bookmark.tabview.refresh` as const;
 
 //CRUD - tab
-export const TabViewCreateTab =
-    `${EXTENSION_ID}.${TAB_VIEW}.${ACTION.CREATE}.tab` as const;
-export const TabViewDeleteTab =
-    `${EXTENSION_ID}.${TAB_VIEW}.delete.tab` as const;
+export const TabViewCreateTab = `tab-and-bookmark.tabview.create.tab` as const;
+export const TabViewDeleteTab = `tab-and-bookmark.tabview.delete.tab` as const;
 
 export const TabViewCreateTabToGroup =
-    `${EXTENSION_ID}.${TAB_VIEW}.${ACTION.CREATE}.TabToGroup` as const;
+    `tab-and-bookmark.tabview.create.TabToGroup` as const;
 export const TabViewCreateTabToGroupContext =
-    `${EXTENSION_ID}.${TAB_VIEW}.${ACTION.CREATE}.TabToGroupContext` as const;
+    `tab-and-bookmark.tabview.create.TabToGroupContext` as const;
 
 //CRUD - group
 export const TabViewCreateGroup =
-    `${EXTENSION_ID}.${TAB_VIEW}.${ACTION.CREATE}.group` as const;
+    `tab-and-bookmark.tabview.create.group` as const;
 export const TabViewDeleteGroup =
-    `${EXTENSION_ID}.${TAB_VIEW}.delete.group` as const;
+    `tab-and-bookmark.tabview.delete.group` as const;
 
 //Open
-export const TabViewOpenAll =
-    `${EXTENSION_ID}.${TAB_VIEW}.${ACTION.OPEN}.all` as const;
-export const TabViewOpenTab =
-    `${EXTENSION_ID}.${TAB_VIEW}.${ACTION.OPEN}.tab` as const;
-export const TabViewOpenGroup =
-    `${EXTENSION_ID}.${TAB_VIEW}.${ACTION.OPEN}.group` as const;
+export const TabViewOpenAll = `tab-and-bookmark.tabview.open.all` as const;
+export const TabViewOpenTab = `tab-and-bookmark.tabview.open.tab` as const;
+export const TabViewOpenGroup = `tab-and-bookmark.tabview.open.group` as const;
 
 //close
-export const TabViewCloseTab = `${EXTENSION_ID}.${TAB_VIEW}.${ACTION.CLOSE}.tab`;
+export const TabViewCloseTab = `tab-and-bookmark.tabview.close.tab`;
+
+export const tab1 = "tab-and-bookmark.tabview.create.TabToNewGroup";
+export const tab2 = "tab-and-bookmark.tabview.delete.group";
+export const tab3 = "tab-and-bookmark.tabview.delete.allgroup";
+export const tab4 = "tab-and-bookmark.tabview.update.group";
+export const tab5 = "tab-and-bookmark.tabview.open.group";
+export const tab6 = "tab-and-bookmark.tabview.open.newWorkSpace";
+export const tab7 = "tab-and-bookmark.tabview.fold.group";
+export const tab8 = "tab-and-bookmark.tabview.unfold.group";
+export const tab9 = "tab-and-bookmark.tabview.update.groupicon";
+export const tab10 = "workbench.action.closeActiveEditor";
+
+const temp = `
+
+view.fold
+view.unfold
+
+create.tab
+create.tab.tab-to-group
+create.tab.tab-to-group.context
+create.group
+
+create.tab.group-to-group
+
+open.tab
+open.group
+open.group.new-workspace
+
+update.group
+update.group.label
+update.group.icon
+
+delete.tab
+delete.tab.all
+delete.group
+delete.group.all
+
+`;

@@ -19,7 +19,6 @@ import {
 } from "../type/command";
 import { Tab } from "../tab/Tab";
 import { GroupItem } from "../type/types";
-import { colorPalette } from "../color";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
@@ -27,7 +26,7 @@ export class TabView extends CommandManager {
 
     constructor(context: vscode.ExtensionContext) {
         super();
-        this.context = context; 
+        this.context = context;
         this.treeDataProvider = new TreeDataProvider(context);
         vscode.window.createTreeView(TAB_VIEW, {
             treeDataProvider: this.treeDataProvider,
@@ -40,7 +39,8 @@ export class TabView extends CommandManager {
     }
 
     private async initializeGlobalState() {
-        const existingGroups = this.context.globalState.get<string>("tabGroups");
+        const existingGroups =
+            this.context.globalState.get<string>("tabGroups");
         if (!existingGroups) {
             await this.context.globalState.update("tabGroups", "[]");
             console.log("Initialized tabGroups with empty array.");
