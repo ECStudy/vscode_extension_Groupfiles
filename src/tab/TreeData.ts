@@ -15,15 +15,22 @@ export class TreeData {
     }
 
     setData(groups: Array<Group>) {
-        this.root = groups;
-        this.tabMap = {};
-        this.groupMap = {};
+        this.root = groups.map((group) => {
+            const restoredGroup = new Group(group.label, group.colorId);
+            restoredGroup.id = group.id;
+            restoredGroup.collapsed = group.collapsed;
+            restoredGroup.children = group.children.map((tab) => {
+                const nativeTab: vscode.Tab = {
+                    input: { uri: vscode.Uri.parse(tab.path) },
+                    label: tab.path.split("/").pop() || "Unknown",
+                } as vscode.Tab;
 
-        groups.forEach((group) => {
-            this.groupMap[group.id] = group;
-            group.children.forEach((tab) => {
-                this.tabMap[tab.id] = tab;
+                const restoredTab = new Tab(nativeTab, group.id);
+                restoredTab.id = tab.id;
+                return restoredTab;
             });
+            this.groupMap[restoredGroup.id] = restoredGroup; // groupMap 갱신
+            return restoredGroup;
         });
     }
 

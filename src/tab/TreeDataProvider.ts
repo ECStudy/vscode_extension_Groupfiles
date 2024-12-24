@@ -30,6 +30,25 @@ export class TreeDataProvider
 
     constructor(context: any) {
         this.context = context;
+
+        // VS Code가 시작될 때 저장된 데이터를 불러옴
+        this.loadData();
+    }
+
+    private saveData() {
+        const serializedData = JSON.stringify(this.treeData.getData());
+        this.context.globalState.update("tabGroups", serializedData);
+    }
+
+    // `globalState`에서 데이터를 불러옴
+    private loadData() {
+        const serializedData = this.context.globalState.get(
+            "tabGroups"
+        ) as string;
+        if (serializedData) {
+            const parsedData = JSON.parse(serializedData);
+            this.treeData.setData(parsedData);
+        }
     }
 
     getTreeItem(element: Group | Tab): vscode.TreeItem {
@@ -80,17 +99,20 @@ export class TreeDataProvider
 
     public createGroup(groupName: string) {
         this.treeData.createGroup(groupName);
+        this.saveData(); // 변경 후 저장
         this.triggerRerender();
         vscode.window.showInformationMessage(`그룹 "${groupName}" 생성 완료!`);
     }
 
     public deleteGroup(groupId: string) {
         this.treeData.deleteGroup(groupId);
+        this.saveData(); // 변경 후 저장
         this.triggerRerender();
     }
 
     public deleteAllGroup() {
         this.treeData.deleteAllGroup();
+        this.saveData(); // 변경 후 저장
         this.triggerRerender();
     }
 
@@ -100,6 +122,7 @@ export class TreeDataProvider
             const success = this.treeData.createTabToGroup(groupId, uri);
 
             if (success) {
+                this.saveData(); // 변경 후 저장
                 this.triggerRerender();
                 vscode.window.showInformationMessage(
                     "탭이 그룹에 추가되었습니다."

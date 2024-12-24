@@ -8,7 +8,7 @@ import { getNormalizedId } from "../util";
 
 export class Tab implements TabItem {
     readonly type = TreeItemType.Tab;
-    readonly id: string;
+    id: string;
     groupId: string | null;
     path: string;
     uri: vscode.Uri;
