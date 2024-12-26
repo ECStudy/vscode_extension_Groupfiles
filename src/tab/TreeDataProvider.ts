@@ -12,7 +12,7 @@ export class TreeDataProvider
         vscode.TreeDataProvider<vscode.TreeItem>,
         vscode.TreeDragAndDropController<Group | Tab>
 {
-    private treeData: Tree = new Tree();
+    private tree: Tree = new Tree();
 
     // EventEmitter를 정의
     private _onDidChangeTreeData: vscode.EventEmitter<
@@ -26,9 +26,9 @@ export class TreeDataProvider
     readonly dropMimeTypes: string[] = ["application/vnd.code.tree.tab"];
     readonly dragMimeTypes: string[] = ["application/vnd.code.tree.tab"];
 
-    private context: any;
+    private context: vscode.ExtensionContext;
 
-    constructor(context: any) {
+    constructor(context: vscode.ExtensionContext) {
         this.context = context;
     }
 
@@ -38,5 +38,9 @@ export class TreeDataProvider
 
     getChildren(element?: Group | Tab): Array<Group | Tab> {
         return [];
+    }
+
+    createEmptyGroup(label: string) {
+        this.tree.createEmptyGroup(label);
     }
 }

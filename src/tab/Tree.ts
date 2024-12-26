@@ -9,4 +9,8 @@ export class Tree {
     private root: Array<Group> = [];
     private tabMap: Record<string, TabItem> = {};
     private groupMap: Record<string, Group> = {};
+
+    createEmptyGroup(label: string) {
+        const group = new Group(label);
+    }
 }

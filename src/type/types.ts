@@ -12,7 +12,7 @@ export type GroupItem = {
     readonly id: string;
     colorId: string;
     label: string;
-    children: TabItem[];
+    children: TabItem | GroupItem;
     collapsed: boolean;
 };
 
@@ -25,3 +25,4 @@ export type TabItem = {
 };
 
 export type NativeTabInput = TabInputText;
+type Item = TabItem | GroupItem;

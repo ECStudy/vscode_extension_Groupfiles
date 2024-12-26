@@ -38,5 +38,26 @@ export class TabView extends CommandManager {
     }
 
     //command 추가
-    private registerCommandHandler() {}
+    private registerCommandHandler() {
+        vscode.commands.registerCommand("create.group", () => {
+            this.handleCreateGroup();
+        });
+    }
+
+    async handleCreateGroup() {
+        const groupName = await vscode.window.showInputBox({
+            prompt: "Enter a name for the new group",
+            placeHolder: "새 그룹 이름 추가",
+        });
+
+        if (!groupName) {
+            vscode.window.showErrorMessage("그룹 이름을 입력해주세요.");
+            return;
+        }
+
+        this.treeDataProvider.createEmptyGroup(groupName);
+        vscode.window.showInformationMessage(
+            `그룹 "${groupName}"이 생성되었습니다.`
+        );
+    }
 }

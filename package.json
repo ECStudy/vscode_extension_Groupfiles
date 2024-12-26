@@ -34,12 +34,24 @@
             ]
         },
         "menus": {
-            "view/title": [],
+            "view/title": [
+                {
+                    "command": "create.group",
+                    "when": "view == tabview",
+                    "group": "navigation"
+                }
+            ],
             "view/item/context": [],
             "editor/title/context": [],
             "explorer/context": []
         },
-        "commands": [],
+        "commands": [
+            {
+                "command": "create.group",
+                "title": "Create Group",
+                "icon": "$(add)"
+            }
+        ],
         "configuration": {
             "type": "object",
             "title": "Tab and Bookmark",
