@@ -1,6 +1,6 @@
 {
-    "name": "tab-and-bookmark",
-    "displayName": "tab-and-bookmark",
+    "name": "tab-group-bookmark",
+    "displayName": "Tab Group Bookmark",
     "description": "",
     "version": "0.0.1",
     "engines": {
@@ -17,180 +17,29 @@
         "viewsContainers": {
             "activitybar": [
                 {
-                    "id": "tab-and-bookmark",
+                    "id": "tab-group-bookmark",
                     "title": "Package Explorer",
                     "icon": "images/my-icon.svg"
                 }
             ]
         },
         "views": {
-            "tab-and-bookmark": [
+            "tab-group-bookmark": [
                 {
                     "id": "tabview",
                     "name": "tab",
                     "type": "tree",
                     "contextualTitle": "tab"
-                },
-                {
-                    "id": "bookmartView",
-                    "name": "bookmarks",
-                    "type": "tree"
                 }
             ]
         },
         "menus": {
-            "view/title": [
-                {
-                    "command": "tab-and-bookmark.tabview.create.group",
-                    "when": "view == tabview",
-                    "group": "navigation"
-                },
-                {
-                    "command": "tab-and-bookmark.tabview.delete.allgroup",
-                    "when": "view == tabview",
-                    "group": "navigation"
-                },
-                {
-                    "command": "tab-and-bookmark.tabview.fold.group",
-                    "when": "view == tabview",
-                    "group": "navigation"
-                },
-                {
-                    "command": "tab-and-bookmark.tabview.unfold.group",
-                    "when": "view == tabview",
-                    "group": "navigation"
-                }
-            ],
-            "view/item/context": [
-                {
-                    "command": "tab-and-bookmark.tabview.close.tab",
-                    "when": "viewItem == tab",
-                    "group": "inline"
-                },
-                {
-                    "command": "tab-and-bookmark.tabview.update.group",
-                    "when": "viewItem == group",
-                    "group": "inline"
-                },
-                {
-                    "command": "tab-and-bookmark.tabview.delete.group",
-                    "when": "viewItem == group",
-                    "group": "inline"
-                },
-                {
-                    "command": "tab-and-bookmark.tabview.open.group",
-                    "when": "viewItem == group",
-                    "group": "inline"
-                },
-                {
-                    "command": "tab-and-bookmark.tabview.open.newWorkSpace",
-                    "when": "viewItem == group",
-                    "group": "navigation"
-                },
-                {
-                    "command": "tab-and-bookmark.tabview.update.groupicon",
-                    "when": "viewItem == group",
-                    "group": "navigation"
-                },
-                {
-                    "command": "tab-and-bookmark.tabview.create.TabToGroupContext",
-                    "when": "viewItem == tab",
-                    "group": "navigation"
-                },
-                {
-                    "command": "tab-and-bookmark.tabview.create.TabToNewGroup",
-                    "when": "viewItem == tab",
-                    "group": "navigation"
-                }
-            ],
-            "editor/title/context": [
-                {
-                    "command": "tab-and-bookmark.tabview.create.TabToGroup",
-                    "group": "navigation"
-                },
-                {
-                    "command": "tab-and-bookmark.tabview.create.TabToNewGroup",
-                    "group": "navigation"
-                }
-            ],
-            "explorer/context": [
-                {
-                    "command": "tab-and-bookmark.tabview.create.TabToGroup",
-                    "group": "navigation"
-                },
-                {
-                    "command": "tab-and-bookmark.tabview.create.TabToNewGroup",
-                    "group": "navigation"
-                }
-            ]
+            "view/title": [],
+            "view/item/context": [],
+            "editor/title/context": [],
+            "explorer/context": []
         },
-        "commands": [
-            {
-                "command": "tab-and-bookmark.tabview.close.tab",
-                "title": "Close Tab",
-                "icon": "$(close)"
-            },
-            {
-                "command": "tab-and-bookmark.tabview.update.group",
-                "title": "Edit Group",
-                "icon": "$(edit)"
-            },
-            {
-                "command": "tab-and-bookmark.tabview.delete.group",
-                "title": "Close Group",
-                "icon": "$(close)"
-            },
-            {
-                "command": "tab-and-bookmark.tabview.open.group",
-                "title": "Open Group",
-                "icon": "$(eye)"
-            },
-            {
-                "command": "tab-and-bookmark.tabview.create.group",
-                "title": "Create Group",
-                "icon": "$(add)"
-            },
-            {
-                "command": "tab-and-bookmark.tabview.delete.allgroup",
-                "title": "Delete All Group",
-                "icon": "$(trash)"
-            },
-            {
-                "command": "tab-and-bookmark.tabview.fold.group",
-                "title": "Fold All Group",
-                "icon": "$(fold)"
-            },
-            {
-                "command": "tab-and-bookmark.tabview.unfold.group",
-                "title": "unFold All Group",
-                "icon": "$(unfold)"
-            },
-            {
-                "command": "tab-and-bookmark.tabview.create.TabToGroup",
-                "title": "기존 그룹에 탭 추가",
-                "category": "tab"
-            },
-            {
-                "command": "tab-and-bookmark.tabview.create.TabToGroupContext",
-                "title": "기존 그룹에 탭 추가",
-                "category": "tab"
-            },
-            {
-                "command": "tab-and-bookmark.tabview.create.TabToNewGroup",
-                "title": "새 그룹에 추가",
-                "category": "tab"
-            },
-            {
-                "command": "tab-and-bookmark.tabview.open.newWorkSpace",
-                "title": "새로운 WorkSpace 열기",
-                "category": "tab"
-            },
-            {
-                "command": "tab-and-bookmark.tabview.update.groupicon",
-                "title": "그룹 아이콘 변경",
-                "category": "tab"
-            }
-        ],
+        "commands": [],
         "configuration": {
             "type": "object",
             "title": "Tab and Bookmark",
