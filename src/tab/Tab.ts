@@ -23,19 +23,4 @@ export class Tab implements TabItem {
         this.path = getNormalizedId(nativeTab);
         this.uri = (nativeTab.input as NativeTabInput)?.uri;
     }
-
-    toTreeItem(): vscode.TreeItem {
-        const treeItem = new vscode.TreeItem(
-            this.uri,
-            vscode.TreeItemCollapsibleState.None
-        );
-        treeItem.id = this.id;
-        treeItem.contextValue = "tab";
-        treeItem.command = {
-            command: "vscode.open",
-            title: "Open Tab",
-            arguments: [this.uri],
-        };
-        return treeItem;
-    }
 }
