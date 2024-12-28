@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import * as path from "path";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -22,5 +23,12 @@ export class Tab implements TabItem {
         this.groupId = groupId;
         this.path = getNormalizedId(nativeTab);
         this.uri = (nativeTab.input as NativeTabInput)?.uri;
+    }
+
+    render(): vscode.TreeItem {
+        console.log("render Tab : this --->", this);
+        console.log("render Tab : context", context);
+
+        return {};
     }
 }

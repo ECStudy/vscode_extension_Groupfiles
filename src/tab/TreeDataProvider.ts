@@ -45,10 +45,27 @@ export class TreeDataProvider
     }
 
     getTreeItem(element: Group | Tab): vscode.TreeItem {
-        return {};
+        console.log("getTreeItem-->", element);
+
+        const treeItem = element.render(this.context);
+        //접혔다 펼쳤다 하는 기능
+        //this.context에 collapsed를 넣어야할거고, 그걸 통해서 여기서 렌더시칼 때 group에 전부 반영 시켜서 렌더링 시켜줘야할거같음
+
+        return treeItem;
     }
 
-    getChildren(element?: Group | Tab): Array<Group | Tab> {
+    getChildren(element?: Group | Tab): Group[] {
+        if (!element) {
+            // 최상위 레벨: 그룹 목록 반환
+            return this.tree.getTree();
+        }
+
+        if (element instanceof Group) {
+            // 그룹의 자식 탭 반환
+            return element.children;
+        }
+
+        // 탭은 자식이 없음
         return [];
     }
 

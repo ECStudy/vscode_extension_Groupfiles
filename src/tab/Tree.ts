@@ -12,6 +12,10 @@ export class Tree extends EventHandler {
     private tabMap: Record<string, TabItem> = {};
     private groupMap: Record<string, Group> = {};
 
+    getTree(): Group[] {
+        return this.root;
+    }
+
     createEmptyGroup(payload: ICreateGroup) {
         const group = new Group(payload.label, payload.parentId);
         this.root.push(group);
@@ -23,5 +27,3 @@ export class Tree extends EventHandler {
         this.triggerEvent("create");
     }
 }
-
-//트리에 이벤트 등록해

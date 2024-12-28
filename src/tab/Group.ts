@@ -27,7 +27,7 @@ export class Group {
     // 접기 펼치기 여부
     collapsed: boolean;
     // 자식
-    children: TabItem[] = [];
+    children: Group[] = [];
     // 부모 ID
     parentId: string;
     // 자식 목록
@@ -40,5 +40,29 @@ export class Group {
         this.collapsed = false; // 기본적으로 열림 상태
         this.parentId = parentId;
         this.childrenList = [];
+    }
+
+    render(context: vscode.ExtensionContext): vscode.TreeItem {
+        console.log("render Group : this --->", this);
+        console.log("render Group : context", context);
+
+        const groupItem = new vscode.TreeItem(
+            this.label,
+            this.collapsed
+                ? vscode.TreeItemCollapsibleState.Collapsed
+                : vscode.TreeItemCollapsibleState.Expanded
+        );
+
+        groupItem.id = this.id;
+        groupItem.contextValue = "group";
+
+        const iconPath =
+            groupIconPaths[this.colorId] || groupIconPaths["default"];
+        groupItem.iconPath = {
+            light: path.join(context.extensionPath, iconPath),
+            dark: path.join(context.extensionPath, iconPath),
+        };
+
+        return groupItem;
     }
 }
