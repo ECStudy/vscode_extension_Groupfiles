@@ -27,9 +27,9 @@ class Group {
         this.children = [];
     }
 
-    addItem(item: Item): void {
+    addEventItem(item: Item): void {
         if (!(item instanceof Tab || item instanceof Group)) {
-            throw new Error("Only tabs or groups can be added.");
+            throw new Error("Only tabs or groups can be addEvented.");
         }
         this.children.push(item);
     }
@@ -62,10 +62,10 @@ class Tree {
         this.root = new Group(rootName);
     }
 
-    addEmptyGroup(groupName: string, newGroupName: string): boolean {
+    addEventEmptyGroup(groupName: string, newGroupName: string): boolean {
         const group = this.root.findByName(groupName);
         if (group instanceof Group) {
-            group.addItem(new Group(newGroupName));
+            group.addEventItem(new Group(newGroupName));
             return true;
         } else {
             console.error(`Group "${groupName}" not found or is not a group.`);
@@ -73,10 +73,10 @@ class Tree {
         }
     }
 
-    addItemToGroup(groupName: string, item: Item): boolean {
+    addEventItemToGroup(groupName: string, item: Item): boolean {
         const group = this.root.findByName(groupName);
         if (group instanceof Group) {
-            group.addItem(item);
+            group.addEventItem(item);
             return true;
         } else {
             console.error(`Group "${groupName}" not found or is not a group.`);
@@ -100,8 +100,8 @@ class TreeDataProvider {
         this.trees = new Map();
     }
 
-    // Add a new tree
-    addTree(treeName: string): Tree {
+    // addEvent a new tree
+    addEventTree(treeName: string): Tree {
         if (this.trees.has(treeName)) {
             throw new Error(`Tree with name "${treeName}" already exists.`);
         }
@@ -132,17 +132,17 @@ class TreeDataProvider {
 // Example usage:
 const dataProvider = new TreeDataProvider();
 
-// Add trees
-const tree1 = dataProvider.addTree("Tree1");
-const tree2 = dataProvider.addTree("Tree2");
+// addEvent trees
+const tree1 = dataProvider.addEventTree("Tree1");
+const tree2 = dataProvider.addEventTree("Tree2");
 
-// Add items to Tree1
-tree1.addEmptyGroup("Tree1", "Group1");
-tree1.addItemToGroup("Group1", new Tab("Tab1"));
+// addEvent items to Tree1
+tree1.addEventEmptyGroup("Tree1", "Group1");
+tree1.addEventItemToGroup("Group1", new Tab("Tab1"));
 
-// Add items to Tree2
-tree2.addEmptyGroup("Tree2", "GroupA");
-tree2.addItemToGroup("GroupA", new Tab("TabA"));
+// addEvent items to Tree2
+tree2.addEventEmptyGroup("Tree2", "GroupA");
+tree2.addEventItemToGroup("GroupA", new Tab("TabA"));
 
 // Display all trees
 dataProvider.displayAllTrees();

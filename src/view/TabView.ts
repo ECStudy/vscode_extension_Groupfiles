@@ -7,16 +7,13 @@ import * as fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import { TAB_VIEW } from "../type/enums";
 
-import { CommandManager } from "../command/CommandManager";
-
 import { TreeDataProvider } from "../tab/TreeDataProvider";
 
-export class TabView extends CommandManager {
+export class TabView {
     private treeDataProvider: TreeDataProvider;
     private context: vscode.ExtensionContext;
 
     constructor(context: vscode.ExtensionContext) {
-        super();
         this.context = context;
         this.treeDataProvider = new TreeDataProvider(context);
         vscode.window.createTreeView(TAB_VIEW, {
@@ -55,7 +52,12 @@ export class TabView extends CommandManager {
             return;
         }
 
-        this.treeDataProvider.createEmptyGroup(groupName);
+        const groupInfo = {
+            label: groupName,
+            parentId: "root",
+        };
+
+        this.treeDataProvider.createEmptyGroup(groupInfo);
         vscode.window.showInformationMessage(
             `그룹 "${groupName}"이 생성되었습니다.`
         );

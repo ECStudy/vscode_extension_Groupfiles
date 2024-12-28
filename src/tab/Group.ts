@@ -18,7 +18,7 @@ const groupIconPaths: { [key: string]: string } = {
 
 export class Group {
     readonly type = TreeItemType.Group;
-    //고유 id
+    // 고유 id
     id: string;
     // 그룹 이름
     label: string;
@@ -28,17 +28,17 @@ export class Group {
     collapsed: boolean;
     // 자식
     children: TabItem[] = [];
-    //
+    // 부모 ID
     parentId: string;
-    //
+    // 자식 목록
     childrenList: string[];
 
-    constructor(label: string, colorId: string = "default") {
+    constructor(label: string, parentId: string, colorId: string = "default") {
         this.id = `group_${uuidv4()}`;
         this.label = label;
         this.colorId = colorId;
         this.collapsed = false; // 기본적으로 열림 상태
-        this.parentId = "";
+        this.parentId = parentId;
         this.childrenList = [];
     }
 }
