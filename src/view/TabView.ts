@@ -8,43 +8,23 @@ import { v4 as uuidv4 } from "uuid";
 import { TAB_VIEW } from "../type/enums";
 import { TreeDataProvider } from "../provider/TreeDataProvider";
 import { CommandManager } from "../CommandManager";
-import { Node } from "../node/Node";
-import { Group } from "../node/Group";
-import { Tab } from "../node/Tab";
 
-export class TabView
-    extends CommandManager
-    implements
-        vscode.TreeDataProvider<vscode.TreeItem>,
-        vscode.TreeDragAndDropController<Group | Tab>
-{
+export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
-    context: vscode.ExtensionContext;
-
-    readonly dropMimeTypes: string[] = ["application/vnd.code.tree.tab"];
-    readonly dragMimeTypes: string[] = ["application/vnd.code.tree.tab"];
-
-    // EventEmitter를 정의
-    public _onDidChangeTreeData: vscode.EventEmitter<
-        vscode.TreeItem | undefined | void
-    > = new vscode.EventEmitter<vscode.TreeItem | undefined | void>();
-
-    readonly onDidChangeTreeData: vscode.Event<
-        vscode.TreeItem | undefined | void
-    > = this._onDidChangeTreeData.event;
+    private context: vscode.ExtensionContext;
 
     constructor(context: vscode.ExtensionContext) {
         super();
         this.context = context;
-        this.treeDataProvider = new TreeDataProvider(this);
+        this.treeDataProvider = new TreeDataProvider(context);
         vscode.window.createTreeView(TAB_VIEW, {
-            treeDataProvider: this,
+            treeDataProvider: this.treeDataProvider,
             canSelectMany: true,
-            dragAndDropController: this, // Drag & Drop 활성화
+            dragAndDropController: this.treeDataProvider, // Drag & Drop 활성화
         });
 
         this.initializeGlobalState();
-        this.treeDataProvider.initialize();
+        this.registerCommandHandler();
     }
 
     private async initializeGlobalState() {
@@ -55,8 +35,20 @@ export class TabView
         }
     }
 
-    registerCommandHandler(key: string, handler: (...args: any[]) => any) {
-        vscode.commands.registerCommand(key, handler);
+    //command 추가
+    private registerCommandHandler() {
+        // + 버튼 : 빈 그룹 추가
+        vscode.commands.registerCommand("create.group", () => {
+            this.handleCreateGroup();
+        });
+
+        //새 그룹에 추가
+        vscode.commands.registerCommand(
+            "create.tab.new-group",
+            (uri: vscode.Uri) => {
+                this.handleCreateGroupAndCreateTab(uri);
+            }
+        );
     }
 
     async inputGroupPromptInputBox(mode = "new") {
@@ -75,15 +67,59 @@ export class TabView
         return { label: groupName, result: true };
     }
 
-    showInformationMessage(message: string) {
-        vscode.window.showInformationMessage(message);
+    async handleCreateGroup() {
+        const inputResult = await this.inputGroupPromptInputBox("new");
+
+        if (inputResult.result) {
+            const groupInfo = {
+                label: inputResult.label,
+                parentId: "root",
+            };
+
+            this.treeDataProvider.createGroup(groupInfo);
+            vscode.window.showInformationMessage(
+                `그룹 "${inputResult}"이 생성되었습니다.`
+            );
+        }
     }
 
-    getTreeItem(element: Group | Tab): vscode.TreeItem {
-        return this.treeDataProvider.getTreeItem(elem);
-    }
+    async handleCreateGroupAndCreateTab(uri: vscode.Uri) {
+        // const quickPickItems = this.treeDataProvider
+        //     .getGroups()
+        //     .map((group: any) => {
+        //         return {
+        //             label: `${group.getName()}`,
+        //             description: `${group.getPath()}`,
+        //         };
+        //     });
 
-    getChildren(element?: Group | Tab): Group[] {
-        return this.treeDataProvider.getChildren(element);
+        // const selectedColor = await vscode.window.showQuickPick(
+        //     quickPickItems,
+        //     {
+        //         placeHolder: "Choose a color for the group icon",
+        //         canPickMany: false,
+        //     }
+        // );
+
+        const inputResult = await this.inputGroupPromptInputBox("new");
+        if (inputResult) {
+            const groupInfo = {
+                label: inputResult.label,
+                parentId: "root",
+            };
+
+            //1. 빈 그룹 추가
+            const newGroup = this.treeDataProvider.createGroup(groupInfo);
+
+            //newGroup.add(uri)
+            //2. 추가된 그룹 목록 가져오기
+            //  const groupMap = this.treeDataProvider.getGroupMap(); // getData로 그룹 리스트 가져오기
+
+            // console.log("그룹 모음", groupMap);
+
+            // vscode.window.showInformationMessage(
+            //     `파일 {} 가 그룹 "${selectedColor.label}"에 추가 되었습니다.`
+            // );
+        }
     }
 }
