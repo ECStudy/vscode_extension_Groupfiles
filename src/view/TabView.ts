@@ -59,18 +59,18 @@ export class TabView {
 
         if (!groupName) {
             vscode.window.showErrorMessage("그룹 이름을 입력해주세요.");
-            return;
+            return { label: "", result: false };
         }
 
-        return groupName;
+        return { label: groupName, result: true };
     }
 
     async handleCreateGroup() {
         const inputResult = await this.inputGroupPromptInputBox("new");
 
-        if (inputResult) {
+        if (inputResult.result) {
             const groupInfo = {
-                label: inputResult,
+                label: inputResult.label,
                 parentId: "root",
             };
 
@@ -82,40 +82,42 @@ export class TabView {
     }
 
     async handleCreateGroupAndCreateTab(uri: vscode.Uri) {
-        const quickPickItems = this.treeDataProvider
-            .getGroups()
-            .map((group: any) => {
-                return {
-                    label: `${group.getName()}`,
-                    description: `${group.getPath()}`,
-                };
-            });
+        // const quickPickItems = this.treeDataProvider
+        //     .getGroups()
+        //     .map((group: any) => {
+        //         return {
+        //             label: `${group.getName()}`,
+        //             description: `${group.getPath()}`,
+        //         };
+        //     });
 
-        const selectedColor = await vscode.window.showQuickPick(
-            quickPickItems,
-            {
-                placeHolder: "Choose a color for the group icon",
-                canPickMany: false,
-            }
-        );
+        // const selectedColor = await vscode.window.showQuickPick(
+        //     quickPickItems,
+        //     {
+        //         placeHolder: "Choose a color for the group icon",
+        //         canPickMany: false,
+        //     }
+        // );
 
-        if (selectedColor) {
+        const inputResult = await this.inputGroupPromptInputBox("new");
+        if (inputResult) {
             const groupInfo = {
-                label: selectedColor.label,
+                label: inputResult.label,
                 parentId: "root",
             };
 
             //1. 빈 그룹 추가
-            this.treeDataProvider.createGroup(groupInfo);
+            const newGroup = this.treeDataProvider.createGroup(groupInfo);
 
+            //newGroup.add(uri)
             //2. 추가된 그룹 목록 가져오기
             //  const groupMap = this.treeDataProvider.getGroupMap(); // getData로 그룹 리스트 가져오기
 
             // console.log("그룹 모음", groupMap);
 
-            vscode.window.showInformationMessage(
-                `파일 {} 가 그룹 "${selectedColor.label}"에 추가 되었습니다.`
-            );
+            // vscode.window.showInformationMessage(
+            //     `파일 {} 가 그룹 "${selectedColor.label}"에 추가 되었습니다.`
+            // );
         }
     }
 }

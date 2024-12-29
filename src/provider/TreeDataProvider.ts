@@ -72,5 +72,7 @@ export class TreeDataProvider
         this.tree.add(group);
 
         this.triggerEventRerender();
+
+        return group;
     }
 }
