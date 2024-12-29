@@ -17,11 +17,7 @@ export class Tree extends EventHandler {
     }
 
     createEmptyGroup(payload: ICreateGroup) {
-        const group = new Group(
-            payload.label,
-            payload.parentId,
-            payload.parentLabel
-        );
+        const group = new Group(payload.label, payload.parentId);
         this.root.push(group);
         this.groupMap[group.id] = group;
         console.log("createEmptyGroup -> this.root-->", this.root);

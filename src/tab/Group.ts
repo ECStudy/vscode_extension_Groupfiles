@@ -30,27 +30,22 @@ export class Group {
     children: Group[] = [];
     // 부모 ID
     parentId: string;
-    // 부모 라벨
-    parentLabel: string;
     // 자식 목록
     childrenList: string[];
     // 경로
     path: string;
+    //
+    parentLabel: string;
 
-    constructor(
-        label: string,
-        parentId: string,
-        parentLabel: string,
-        colorId: string = "default"
-    ) {
+    constructor(label: string, parentId: string, colorId: string = "default") {
         this.id = `group_${uuidv4()}`;
         this.label = label;
         this.colorId = colorId;
         this.collapsed = false; // 기본적으로 열림 상태
         this.parentId = parentId;
-        this.parentLabel = parentLabel;
         this.childrenList = [];
-        this.path = this.createPath();
+        this.path = "";
+        this.parentLabel = "";
     }
 
     createPath() {
