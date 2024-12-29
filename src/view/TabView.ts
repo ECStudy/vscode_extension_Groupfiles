@@ -7,12 +7,14 @@ import * as fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import { TAB_VIEW } from "../type/enums";
 import { TreeDataProvider } from "../provider/TreeDataProvider";
+import { CommandManager } from "../CommandManager";
 
-export class TabView {
+export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
     private context: vscode.ExtensionContext;
 
     constructor(context: vscode.ExtensionContext) {
+        super();
         this.context = context;
         this.treeDataProvider = new TreeDataProvider(context);
         vscode.window.createTreeView(TAB_VIEW, {
