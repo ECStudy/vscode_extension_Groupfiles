@@ -1,13 +1,14 @@
 import * as vscode from "vscode";
 
-import { Tree } from "./Tree";
+import { Tree } from "../node/Tree";
 import { GroupItem, TabItem, TreeItemType } from "../type/types";
 import { getNativeTabByTabItemPath, getNormalizedId } from "../util";
 
-import { Group } from "./Group";
-import { Tab } from "./Tab";
+import { Group } from "../node/Group";
+import { Tab } from "../node/Tab";
 import { ICreateGroup } from "../type/group";
 import { EventHandler } from "../EventHandler";
+import { Node } from "../node/Node";
 
 export class TreeDataProvider
     implements
@@ -34,18 +35,17 @@ export class TreeDataProvider
         this.context = context;
         this.tree = new Tree();
         //
-        this.tree.addEvent("create", () => this.triggerEventRerender());
-        this.tree.addEvent("delete", () => this.triggerEventRerender());
-        this.tree.addEvent("update", () => this.triggerEventRerender());
+        //this.tree.addEvent("create", () => this.triggerEventRerender());
+        //this.tree.addEvent("delete", () => this.triggerEventRerender());
+        //this.tree.addEvent("update", () => this.triggerEventRerender());
     }
 
     public triggerEventRerender() {
-        console.log("리렌더");
         this._onDidChangeTreeData.fire();
     }
 
     getTreeItem(element: Group | Tab): vscode.TreeItem {
-        console.log("getTreeItem-->", element);
+        //console.log("getTreeItem-->", element);
 
         const treeItem = element.render(this.context);
         //접혔다 펼쳤다 하는 기능
@@ -55,26 +55,22 @@ export class TreeDataProvider
     }
 
     getChildren(element?: Group | Tab): Group[] {
-        if (!element) {
-            // 최상위 레벨: 그룹 목록 반환
-            return this.tree.getTree();
+        if (element instanceof Tab) {
+            return [];
         }
 
-        if (element instanceof Group) {
-            // 그룹의 자식 탭 반환
-            return element.children;
-        }
-
-        // 탭은 자식이 없음
-        return [];
+        const target = element ?? this.tree;
+        return target.getChildren();
     }
 
-    getGroupMap() {
-        return this.tree.getGroupMap();
+    getGroups() {
+        return this.tree.getAllGroups();
     }
 
-    createEmptyGroup(payload: ICreateGroup) {
-        //여기서 그룹 생성이 적절할거같음
-        this.tree.createEmptyGroup(payload);
+    createGroup(payload: ICreateGroup) {
+        const group = new Group(payload.label, payload.parentId);
+        this.tree.add(group);
+
+        this.triggerEventRerender();
     }
 }

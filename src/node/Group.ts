@@ -4,6 +4,7 @@ import * as path from "path";
 import { v4 as uuidv4 } from "uuid";
 
 import { TabItem, TreeItemType } from "../type/types";
+import { Node } from "./Node";
 
 const groupIconPaths: { [key: string]: string } = {
     default: "images/group_icon_default.svg",
@@ -16,7 +17,7 @@ const groupIconPaths: { [key: string]: string } = {
     orange: "images/group_icon_orange.svg",
 };
 
-export class Group {
+export class Group extends Node {
     readonly type = TreeItemType.Group;
     // 고유 id
     id: string;
@@ -26,8 +27,6 @@ export class Group {
     colorId: string;
     // 접기 펼치기 여부
     collapsed: boolean;
-    // 자식
-    children: Group[] = [];
     // 부모 ID
     parentId: string;
     // 자식 목록
@@ -38,6 +37,7 @@ export class Group {
     parentLabel: string;
 
     constructor(label: string, parentId: string, colorId: string = "default") {
+        super();
         this.id = `group_${uuidv4()}`;
         this.label = label;
         this.colorId = colorId;
@@ -46,10 +46,6 @@ export class Group {
         this.childrenList = [];
         this.path = "";
         this.parentLabel = "";
-    }
-
-    createPath() {
-        return `${this.parentLabel}/${this.label}`;
     }
 
     render(context: vscode.ExtensionContext): vscode.TreeItem {
@@ -74,5 +70,9 @@ export class Group {
         };
 
         return groupItem;
+    }
+
+    getName(): string {
+        return this.label;
     }
 }

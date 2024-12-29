@@ -6,8 +6,7 @@ import * as fs from "fs";
 
 import { v4 as uuidv4 } from "uuid";
 import { TAB_VIEW } from "../type/enums";
-
-import { TreeDataProvider } from "../tab/TreeDataProvider";
+import { TreeDataProvider } from "../provider/TreeDataProvider";
 
 export class TabView {
     private treeDataProvider: TreeDataProvider;
@@ -75,7 +74,7 @@ export class TabView {
                 parentId: "root",
             };
 
-            this.treeDataProvider.createEmptyGroup(groupInfo);
+            this.treeDataProvider.createGroup(groupInfo);
             vscode.window.showInformationMessage(
                 `그룹 "${inputResult}"이 생성되었습니다.`
             );
@@ -83,24 +82,39 @@ export class TabView {
     }
 
     async handleCreateGroupAndCreateTab(uri: vscode.Uri) {
-        const inputResult = await this.inputGroupPromptInputBox("new");
+        const quickPickItems = this.treeDataProvider
+            .getGroups()
+            .map((group: any) => {
+                return {
+                    label: `${group.getName()}`,
+                    description: `${group.getPath()}`,
+                };
+            });
 
-        if (inputResult) {
+        const selectedColor = await vscode.window.showQuickPick(
+            quickPickItems,
+            {
+                placeHolder: "Choose a color for the group icon",
+                canPickMany: false,
+            }
+        );
+
+        if (selectedColor) {
             const groupInfo = {
-                label: inputResult,
+                label: selectedColor.label,
                 parentId: "root",
             };
 
             //1. 빈 그룹 추가
-            this.treeDataProvider.createEmptyGroup(groupInfo);
+            this.treeDataProvider.createGroup(groupInfo);
 
             //2. 추가된 그룹 목록 가져오기
-            const groupMap = this.treeDataProvider.getGroupMap(); // getData로 그룹 리스트 가져오기
+            //  const groupMap = this.treeDataProvider.getGroupMap(); // getData로 그룹 리스트 가져오기
 
-            console.log("그룹 모음", groupMap);
+            // console.log("그룹 모음", groupMap);
 
             vscode.window.showInformationMessage(
-                `파일 {} 가 그룹 "${inputResult}"에 추가 되었습니다.`
+                `파일 {} 가 그룹 "${selectedColor.label}"에 추가 되었습니다.`
             );
         }
     }
