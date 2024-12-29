@@ -41,11 +41,13 @@ view.fold
 view.unfold
 
 create.tab
-create.tab.tab-to-group
-create.tab.tab-to-group.context
+create.tab.new-group
+create.tab.new-group.context
+create.tab.prev-group
+create.tab.prev-group.context
 create.group
 
-create.tab.group-to-group
+create.tab.group-group
 
 open.tab
 open.group

@@ -41,15 +41,30 @@
                     "group": "navigation"
                 }
             ],
+            "explorer/context": [
+                {
+                    "command": "create.tab.new-group",
+                    "group": "navigation"
+                }
+            ],
             "view/item/context": [],
-            "editor/title/context": [],
-            "explorer/context": []
+            "editor/title/context": [
+                {
+                    "command": "create.tab.new-group",
+                    "group": "navigation"
+                }
+            ]
         },
         "commands": [
             {
                 "command": "create.group",
                 "title": "Create Group",
                 "icon": "$(add)"
+            },
+            {
+                "command": "create.tab.new-group",
+                "title": "새 그룹에 추가",
+                "category": "tab"
             }
         ],
         "configuration": {

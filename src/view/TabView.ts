@@ -36,15 +36,26 @@ export class TabView {
 
     //command 추가
     private registerCommandHandler() {
+        // + 버튼 : 빈 그룹 추가
         vscode.commands.registerCommand("create.group", () => {
             this.handleCreateGroup();
         });
+
+        //새 그룹에 추가
+        vscode.commands.registerCommand(
+            "create.tab.new-group",
+            (uri: vscode.Uri) => {
+                this.handleCreateGroupAndCreateTab(uri);
+            }
+        );
     }
 
-    async handleCreateGroup() {
+    async inputGroupPromptInputBox(mode = "new") {
+        const dispaly_placeHolder =
+            mode === "new" ? "새 그룹 이름 추가" : "수정할 그룹 이름 입력";
         const groupName = await vscode.window.showInputBox({
             prompt: "Enter a name for the new group",
-            placeHolder: "새 그룹 이름 추가",
+            placeHolder: dispaly_placeHolder,
         });
 
         if (!groupName) {
@@ -52,14 +63,45 @@ export class TabView {
             return;
         }
 
-        const groupInfo = {
-            label: groupName,
-            parentId: "root",
-        };
+        return groupName;
+    }
 
-        this.treeDataProvider.createEmptyGroup(groupInfo);
-        vscode.window.showInformationMessage(
-            `그룹 "${groupName}"이 생성되었습니다.`
-        );
+    async handleCreateGroup() {
+        const inputResult = await this.inputGroupPromptInputBox("new");
+
+        if (inputResult) {
+            const groupInfo = {
+                label: inputResult,
+                parentId: "root",
+            };
+
+            this.treeDataProvider.createEmptyGroup(groupInfo);
+            vscode.window.showInformationMessage(
+                `그룹 "${inputResult}"이 생성되었습니다.`
+            );
+        }
+    }
+
+    async handleCreateGroupAndCreateTab(uri: vscode.Uri) {
+        const inputResult = await this.inputGroupPromptInputBox("new");
+
+        if (inputResult) {
+            const groupInfo = {
+                label: inputResult,
+                parentId: "root",
+            };
+
+            //1. 빈 그룹 추가
+            this.treeDataProvider.createEmptyGroup(groupInfo);
+
+            //2. 추가된 그룹 목록 가져오기
+            const groupMap = this.treeDataProvider.getGroupMap(); // getData로 그룹 리스트 가져오기
+
+            console.log("그룹 모음", groupMap);
+
+            vscode.window.showInformationMessage(
+                `파일 {} 가 그룹 "${inputResult}"에 추가 되었습니다.`
+            );
+        }
     }
 }

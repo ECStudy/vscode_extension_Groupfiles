@@ -69,7 +69,12 @@ export class TreeDataProvider
         return [];
     }
 
+    getGroupMap() {
+        return this.tree.getGroupMap();
+    }
+
     createEmptyGroup(payload: ICreateGroup) {
+        //여기서 그룹 생성이 적절할거같음
         this.tree.createEmptyGroup(payload);
     }
 }
