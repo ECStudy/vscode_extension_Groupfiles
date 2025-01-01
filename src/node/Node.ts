@@ -19,7 +19,12 @@ export class Node extends EventHandler {
             item.parentNode.remove(item);
         }
         //자식에 node 넣기
+        item.setParentNode(this);
         this.children.push(item);
+    }
+
+    setParentNode(parentNode: Node) {
+        this.parentNode = parentNode;
     }
 
     getName() {

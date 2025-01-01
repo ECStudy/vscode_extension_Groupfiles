@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import { TAB_VIEW } from "../type/enums";
 import { TreeDataProvider } from "../provider/TreeDataProvider";
 import { CommandManager } from "../CommandManager";
+import { getFileName } from "../util";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
@@ -106,20 +107,17 @@ export class TabView extends CommandManager {
             const groupInfo = {
                 label: inputResult.label,
                 parentId: "root",
+                uri: uri,
             };
 
-            //1. 빈 그룹 추가
-            const newGroup = this.treeDataProvider.createGroup(groupInfo);
+            //빈 그룹 추가 + 탭 추가
+            this.treeDataProvider.createGroup(groupInfo);
 
-            //newGroup.add(uri)
-            //2. 추가된 그룹 목록 가져오기
-            //  const groupMap = this.treeDataProvider.getGroupMap(); // getData로 그룹 리스트 가져오기
-
-            // console.log("그룹 모음", groupMap);
-
-            // vscode.window.showInformationMessage(
-            //     `파일 {} 가 그룹 "${selectedColor.label}"에 추가 되었습니다.`
-            // );
+            vscode.window.showInformationMessage(
+                `파일 ${getFileName(uri.path)} 가 그룹 ${
+                    inputResult.label
+                }에 추가 되었습니다.`
+            );
         }
     }
 }

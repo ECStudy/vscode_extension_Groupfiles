@@ -50,7 +50,7 @@ export class Group extends Node {
 
     render(context: vscode.ExtensionContext): vscode.TreeItem {
         console.log("render Group : this --->", this);
-        console.log("render Group : context", context);
+        //console.log("render Group : context", context);
 
         const groupItem = new vscode.TreeItem(
             this.label,

@@ -67,12 +67,27 @@ export class TreeDataProvider
         return this.tree.getAllGroups();
     }
 
+    /**
+     * 그룹 생성
+     */
     createGroup(payload: ICreateGroup) {
+        //그룹 생성
         const group = new Group(payload.label, payload.parentId);
         this.tree.add(group);
 
-        this.triggerEventRerender();
+        //탭 있는 경우 탭 생성
+        if (payload?.uri) {
+            const uri = payload.uri;
+            const nativeTab: vscode.Tab = {
+                input: { uri },
+                label: uri.path.split("/").pop() || "Unknown",
+            } as vscode.Tab;
 
-        return group;
+            const tab = new Tab(nativeTab);
+            group.add(tab);
+            this.triggerEventRerender();
+        }
+
+        this.triggerEventRerender();
     }
 }

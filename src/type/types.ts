@@ -19,7 +19,6 @@ export type GroupItem = {
 export type TabItem = {
     readonly type: TreeItemType.Tab;
     readonly id: string;
-    groupId: string | null;
     path: string;
     uri: vscode.Uri;
 };

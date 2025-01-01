@@ -5,37 +5,39 @@ import { v4 as uuidv4 } from "uuid";
 
 import { NativeTabInput, TabItem, TreeItemType } from "../type/types";
 
-import { getNormalizedId } from "../util";
+import { getFileName, getNormalizedId } from "../util";
 import { Node } from "./Node";
 
 export class Tab extends Node implements TabItem {
     readonly type = TreeItemType.Tab;
     id: string;
-    groupId: string | null;
     path: string;
     uri: vscode.Uri;
 
-    constructor(nativeTab: vscode.Tab, groupId: string | null = null) {
+    constructor(nativeTab: vscode.Tab) {
         super();
-        if (!nativeTab.input || !(nativeTab.input as NativeTabInput)?.uri) {
-            throw new Error("Invalid nativeTab: Missing input or uri");
-        }
-
         this.id = `tab_${uuidv4()}`;
-        this.groupId = groupId;
         this.path = getNormalizedId(nativeTab);
         this.uri = (nativeTab.input as NativeTabInput)?.uri;
     }
 
     render(): vscode.TreeItem {
         console.log("render Tab : this --->", this);
-        console.log("render Tab : context", context);
-
-        return {};
+        const treeItem = new vscode.TreeItem(
+            this.uri,
+            vscode.TreeItemCollapsibleState.None
+        );
+        treeItem.id = this.id;
+        treeItem.contextValue = "tab";
+        treeItem.command = {
+            command: "vscode.open",
+            title: "Open Tab",
+            arguments: [this.uri],
+        };
+        return treeItem;
     }
 
     getName(): string {
-        //잘라야함..
-        return "탭";
+        return getFileName(this.path);
     }
 }

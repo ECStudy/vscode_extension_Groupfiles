@@ -22,3 +22,7 @@ export const getNativeTabByTabItemPath = (path: string): vscode.Tab => {
     );
     return currentNativeTab[0];
 };
+
+export const getFileName = (path: string) => {
+    return path.substring(path.lastIndexOf("/") + 1);
+};
