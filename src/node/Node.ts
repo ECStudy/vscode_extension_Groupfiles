@@ -1,4 +1,5 @@
 import { EventHandler } from "../EventHandler";
+import { TreeItemType } from "../type/types";
 import { Tab } from "./Tab";
 
 export class Node extends EventHandler {
@@ -46,10 +47,13 @@ export class Node extends EventHandler {
             return items;
         }
         this.children.forEach((node) => {
-            items.push(node);
-            if (node instanceof Node) {
-                items.push(...node.getAllGroups());
+            const target = node as Tab;
+            if (target.type === TreeItemType.Tab) {
+                return;
             }
+
+            items.push(node);
+            items.push(...node.getAllGroups());
         });
         return items;
     }

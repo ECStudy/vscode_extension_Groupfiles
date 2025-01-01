@@ -19,8 +19,4 @@ export class Tree extends Node {
     createGroup(payload: ICreateGroup) {}
 
     getGroupMap() {}
-
-    getName(): string {
-        return "/";
-    }
 }

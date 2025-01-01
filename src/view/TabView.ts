@@ -9,6 +9,7 @@ import { TAB_VIEW } from "../type/enums";
 import { TreeDataProvider } from "../provider/TreeDataProvider";
 import { CommandManager } from "../CommandManager";
 import { getFileName } from "../util";
+import { Node } from "../node/Node";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
@@ -48,6 +49,14 @@ export class TabView extends CommandManager {
             "create.tab.new-group",
             (uri: vscode.Uri) => {
                 this.handleCreateGroupAndCreateTab(uri);
+            }
+        );
+
+        //기존 그룹에 추가
+        vscode.commands.registerCommand(
+            "create.tab.prev-group",
+            (uri: vscode.Uri) => {
+                this.handlePrebGroupAndCreateTab(uri);
             }
         );
     }
@@ -102,11 +111,11 @@ export class TabView extends CommandManager {
         //     }
         // );
 
-        const inputResult = await this.inputGroupPromptInputBox("new");
-        if (inputResult) {
+        const selectedGroup = await this.inputGroupPromptInputBox("new");
+        if (selectedGroup) {
             const groupInfo = {
-                label: inputResult.label,
-                parentId: "root",
+                label: selectedGroup.label,
+                //parentId: "root",
                 uri: uri,
             };
 
@@ -115,7 +124,41 @@ export class TabView extends CommandManager {
 
             vscode.window.showInformationMessage(
                 `파일 ${getFileName(uri.path)} 가 그룹 ${
-                    inputResult.label
+                    selectedGroup.label
+                }에 추가 되었습니다.`
+            );
+        }
+    }
+
+    async handlePrebGroupAndCreateTab(uri: vscode.Uri) {
+        const quickPickItems = this.treeDataProvider
+            .getGroups()
+            .map((group: Node) => {
+                return {
+                    label: `${group.getName()}`,
+                    description: `${group.getPath()}`,
+                    group: group,
+                };
+            });
+
+        const selectedGroup = await vscode.window.showQuickPick(
+            quickPickItems,
+            {
+                placeHolder: "Choose a color for the group icon",
+                canPickMany: false,
+            }
+        );
+
+        if (selectedGroup) {
+            const groupInfo = {
+                uri: uri,
+                group: selectedGroup.group,
+            };
+            this.treeDataProvider.addTabToPrevGroup(groupInfo);
+
+            vscode.window.showInformationMessage(
+                `파일 ${getFileName(uri.path)} 가 그룹 ${
+                    selectedGroup.label
                 }에 추가 되었습니다.`
             );
         }

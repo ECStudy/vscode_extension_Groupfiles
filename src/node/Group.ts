@@ -27,30 +27,21 @@ export class Group extends Node {
     colorId: string;
     // 접기 펼치기 여부
     collapsed: boolean;
-    // 부모 ID
-    parentId: string;
-    // 자식 목록
-    childrenList: string[];
     // 경로
     path: string;
-    //
-    parentLabel: string;
 
-    constructor(label: string, parentId: string, colorId: string = "default") {
+    constructor(label: string) {
         super();
         this.id = `group_${uuidv4()}`;
         this.label = label;
-        this.colorId = colorId;
+        this.colorId = "default";
         this.collapsed = false; // 기본적으로 열림 상태
-        this.parentId = parentId;
-        this.childrenList = [];
         this.path = "";
-        this.parentLabel = "";
     }
 
     render(context: vscode.ExtensionContext): vscode.TreeItem {
         console.log("render Group : this --->", this);
-        //console.log("render Group : context", context);
+        console.log("render Group : context", context);
 
         const groupItem = new vscode.TreeItem(
             this.label,

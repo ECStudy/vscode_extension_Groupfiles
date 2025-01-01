@@ -45,12 +45,20 @@
                 {
                     "command": "create.tab.new-group",
                     "group": "navigation"
+                },
+                {
+                    "command": "create.tab.prev-group",
+                    "group": "navigation"
                 }
             ],
             "view/item/context": [],
             "editor/title/context": [
                 {
                     "command": "create.tab.new-group",
+                    "group": "navigation"
+                },
+                {
+                    "command": "create.tab.prev-group",
                     "group": "navigation"
                 }
             ]
@@ -64,6 +72,11 @@
             {
                 "command": "create.tab.new-group",
                 "title": "새 그룹에 추가",
+                "category": "tab"
+            },
+            {
+                "command": "create.tab.prev-group",
+                "title": "기존 그룹에 추가",
                 "category": "tab"
             }
         ],
