@@ -5,11 +5,12 @@ import * as os from "os";
 import * as fs from "fs";
 
 import { v4 as uuidv4 } from "uuid";
-import { TAB_VIEW } from "../type/enums";
+import { Confirm, TAB_VIEW } from "../type/enums";
 import { TreeDataProvider } from "../provider/TreeDataProvider";
 import { CommandManager } from "../CommandManager";
 import { getFileName } from "../util";
 import { Node } from "../node/Node";
+import { Group } from "../node/Group";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
@@ -59,6 +60,12 @@ export class TabView extends CommandManager {
                 this.handlePrebGroupAndCreateTab(uri);
             }
         );
+
+        //모든 그룹 삭제
+        vscode.commands.registerCommand("delete.group.all", (group: Group) => {
+            //그룹 모두 삭제
+            this.handleDeleteAllGroup(group);
+        });
     }
 
     async inputGroupPromptInputBox(mode = "new") {
@@ -94,23 +101,6 @@ export class TabView extends CommandManager {
     }
 
     async handleCreateGroupAndCreateTab(uri: vscode.Uri) {
-        // const quickPickItems = this.treeDataProvider
-        //     .getGroups()
-        //     .map((group: any) => {
-        //         return {
-        //             label: `${group.getName()}`,
-        //             description: `${group.getPath()}`,
-        //         };
-        //     });
-
-        // const selectedColor = await vscode.window.showQuickPick(
-        //     quickPickItems,
-        //     {
-        //         placeHolder: "Choose a color for the group icon",
-        //         canPickMany: false,
-        //     }
-        // );
-
         const selectedGroup = await this.inputGroupPromptInputBox("new");
         if (selectedGroup) {
             const groupInfo = {
@@ -161,6 +151,24 @@ export class TabView extends CommandManager {
                     selectedGroup.label
                 }에 추가 되었습니다.`
             );
+        }
+    }
+
+    async handleDeleteAllGroup(group: Group) {
+        console.log(group);
+        const confirm = await vscode.window.showInformationMessage(
+            `전체 그룹을 삭제하시겠습니까?`,
+            Confirm.DELETE,
+            Confirm.Cancel
+        );
+
+        if (confirm === Confirm.DELETE) {
+            this.treeDataProvider.resetAll();
+            vscode.window.showInformationMessage(
+                `전체 그룹을 삭제했습니다. 복구하시겠습니까?`
+            );
+
+            //TODO 복구 기능 추가
         }
     }
 }

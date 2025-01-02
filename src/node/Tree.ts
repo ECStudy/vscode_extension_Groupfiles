@@ -8,10 +8,6 @@ import { ICreateGroup } from "../type/group";
 import { Node } from "./Node";
 
 export class Tree extends Node {
-    //private root: Array<Group> = [];
-    private tabMap: Record<string, TabItem> = {};
-    private groupMap: Record<string, Group> = {};
-
     getTree() {
         //return this.root;
     }
@@ -19,4 +15,6 @@ export class Tree extends Node {
     createGroup(payload: ICreateGroup) {}
 
     getGroupMap() {}
+
+    resetTree() {}
 }

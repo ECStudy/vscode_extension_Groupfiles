@@ -110,4 +110,9 @@ export class TreeDataProvider
 
         this.triggerEventRerender();
     }
+
+    resetAll() {
+        this.tree.reset();
+        this.triggerEventRerender();
+    }
 }

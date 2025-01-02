@@ -41,6 +41,10 @@ export class Node extends EventHandler {
 
     remove(item: Node) {}
 
+    reset() {
+        this.children = [];
+    }
+
     getAllGroups(): Node[] {
         const items: Node[] = [];
         if (this.children.length === 0) {

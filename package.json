@@ -39,6 +39,11 @@
                     "command": "create.group",
                     "when": "view == tabview",
                     "group": "navigation"
+                },
+                {
+                    "command": "delete.group.all",
+                    "when": "view == tabview",
+                    "group": "navigation"
                 }
             ],
             "explorer/context": [
@@ -78,6 +83,11 @@
                 "command": "create.tab.prev-group",
                 "title": "기존 그룹에 추가",
                 "category": "tab"
+            },
+            {
+                "command": "delete.group.all",
+                "title": "Delete All Group",
+                "icon": "$(trash)"
             }
         ],
         "configuration": {

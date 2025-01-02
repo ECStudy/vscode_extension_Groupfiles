@@ -10,3 +10,9 @@ export enum ACTION {
     CLOSE = "close",
     OPEN = "open",
 }
+
+export enum Confirm {
+    DELETE = "delete",
+    Cancel = "cancel",
+    OK = "ok",
+}
