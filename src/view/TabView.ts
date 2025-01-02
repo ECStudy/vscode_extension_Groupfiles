@@ -154,7 +154,7 @@ export class TabView extends CommandManager {
                 uri: uri,
                 group: selectedGroup.group,
             };
-            this.treeDataProvider.addTabToPrevGroup(groupInfo);
+            this.treeDataProvider.createGroup(groupInfo);
 
             vscode.window.showInformationMessage(
                 `파일 ${getFileName(uri.path)} 가 그룹 ${

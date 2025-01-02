@@ -72,38 +72,40 @@ export class TreeDataProvider
      * 그룹 생성
      */
     createGroup(payload: ICreateGroup) {
-        //그룹 생성
-        const group = new Group(payload.label);
-        // const group2 = new Group("child");
-        // group.add(group2);
-        this.tree.add(group);
+        //그룹이 이미 있는 경우
+        if (payload?.group) {
+            if (payload?.uri) {
+                const uri = payload.uri;
+                const nativeTab: vscode.Tab = {
+                    input: { uri },
+                    label: uri.path.split("/").pop() || "Unknown",
+                } as vscode.Tab;
 
-        //탭 있는 경우 탭 생성
-        if (payload?.uri) {
-            const uri = payload.uri;
-            const nativeTab: vscode.Tab = {
-                input: { uri },
-                label: uri.path.split("/").pop() || "Unknown",
-            } as vscode.Tab;
-
-            const tab = new Tab(nativeTab);
-            group.add(tab);
+                const tab = new Tab(nativeTab);
+                payload.group.add(tab);
+            }
         }
+        //그룹 신규 생성
+        else {
+            //그룹 생성
+            if (payload?.label) {
+                const group = new Group(payload?.label);
+                // const group2 = new Group("child");
+                // group.add(group2);
+                this.tree.add(group);
 
-        this.triggerEventRerender();
-    }
+                //탭 있는 경우 탭 생성
+                if (payload?.uri) {
+                    const uri = payload.uri;
+                    const nativeTab: vscode.Tab = {
+                        input: { uri },
+                        label: uri.path.split("/").pop() || "Unknown",
+                    } as vscode.Tab;
 
-    addTabToPrevGroup(payload: any) {
-        //그룹이 넘어온 경우 그 그룹에 추가하기
-        if (payload?.uri) {
-            const uri = payload.uri;
-            const nativeTab: vscode.Tab = {
-                input: { uri },
-                label: uri.path.split("/").pop() || "Unknown",
-            } as vscode.Tab;
-
-            const tab = new Tab(nativeTab);
-            payload.group.add(tab);
+                    const tab = new Tab(nativeTab);
+                    group.add(tab);
+                }
+            }
         }
 
         this.triggerEventRerender();
