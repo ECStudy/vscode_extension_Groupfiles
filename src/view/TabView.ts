@@ -85,13 +85,18 @@ export class TabView extends CommandManager {
         );
 
         //그룹 제거
-        vscode.commands.registerCommand("delete.group", (group: Group) => {
-            this.handleRemoveNode(group);
+        vscode.commands.registerCommand("delete.group", (node: Node) => {
+            this.handleRemoveNode(node);
         });
 
         //그룹에 있는 탭 제거
-        vscode.commands.registerCommand("delete.tab", (tab: Tab) => {
-            this.handleRemoveNode(tab);
+        vscode.commands.registerCommand("delete.tab", (node: Node) => {
+            this.handleRemoveNode(node);
+        });
+
+        //그룹에 있는 탭 열기
+        vscode.commands.registerCommand("open.group", (group: Group) => {
+            this.handleOpenGroupChildren(group);
         });
     }
 
@@ -237,8 +242,8 @@ export class TabView extends CommandManager {
         }
     }
 
-    //그룹 제거
-    async handleRemoveNode(node: Group | Tab) {
+    //그룹 제거 OR 탭 제거
+    async handleRemoveNode(node: Node) {
         if (node instanceof Group) {
             const confirm = await vscode.window.showInformationMessage(
                 `그룹을 삭제하시겠습니까?`,
@@ -252,6 +257,14 @@ export class TabView extends CommandManager {
             }
         } else if (node instanceof Tab) {
             this.treeDataProvider.remove(node);
+        }
+    }
+
+    //그룹에 속한 파일 열기
+    async handleOpenGroupChildren(group: Group) {
+        const tabs = group.getChildren();
+        for (const tab of tabs) {
+            await vscode.commands.executeCommand("vscode.open", tab.uri);
         }
     }
 }

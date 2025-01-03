@@ -73,6 +73,11 @@
                     "group": "inline"
                 },
                 {
+                    "command": "open.group",
+                    "when": "viewItem == group",
+                    "group": "inline"
+                },
+                {
                     "command": "delete.tab",
                     "when": "viewItem == tab",
                     "group": "inline"
@@ -129,6 +134,11 @@
                 "command": "delete.tab",
                 "title": "Delete Tab",
                 "icon": "$(trash)"
+            },
+            {
+                "command": "open.group",
+                "title": "Open Group In Tabs",
+                "icon": "$(eye)"
             }
         ],
         "configuration": {
