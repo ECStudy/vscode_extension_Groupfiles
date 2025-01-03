@@ -140,4 +140,9 @@ export class TreeDataProvider
         }
         this.triggerEventRerender();
     }
+
+    removeGroup(group: Group) {
+        group.remove(group);
+        this.triggerEventRerender();
+    }
 }

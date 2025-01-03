@@ -14,6 +14,10 @@ export class Node extends EventHandler {
         return this.children;
     }
 
+    getParentNode() {
+        return this.parentNode;
+    }
+
     add(item: Node) {
         //이미 부모가 존재하는 경우 부모 ㅈ거
         if (item.parentNode) {
@@ -26,6 +30,10 @@ export class Node extends EventHandler {
 
     setParentNode(parentNode: Node) {
         this.parentNode = parentNode;
+    }
+
+    setChildren(children: any) {
+        this.children = children;
     }
 
     getLabel() {

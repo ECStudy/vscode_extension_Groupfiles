@@ -82,6 +82,11 @@ export class TabView extends CommandManager {
                 this.handleUpdateGroup(group, UpdateAction.LABEL);
             }
         );
+
+        //그룹 제거
+        vscode.commands.registerCommand("delete.group", (group: Group) => {
+            this.handleDeleteGroup(group);
+        });
     }
 
     async inputGroupPromptInputBox(mode = "new") {
@@ -223,6 +228,20 @@ export class TabView extends CommandManager {
                 break;
             default:
                 break;
+        }
+    }
+
+    //그룹 제거
+    async handleDeleteGroup(group: Group) {
+        const confirm = await vscode.window.showInformationMessage(
+            `그룹을 삭제하시겠습니까?`,
+            Confirm.DELETE,
+            Confirm.Cancel
+        );
+
+        if (confirm === Confirm.DELETE) {
+            this.treeDataProvider.removeGroup(group);
+            //TODO 복구 기능 추가
         }
     }
 }

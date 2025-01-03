@@ -70,4 +70,18 @@ export class Group extends Node {
     setLabel(label: string) {
         this.label = label;
     }
+
+    remove(item: Group): void {
+        const targetId = item.id;
+        const parentNode = item.getParentNode();
+        const parentNodeChildren = parentNode?.getChildren();
+
+        if (parentNodeChildren?.length) {
+            const removedChildren = parentNodeChildren?.filter(
+                (group) => group.id !== targetId
+            );
+
+            parentNode?.setChildren(removedChildren);
+        }
+    }
 }
