@@ -81,6 +81,11 @@
                     "command": "delete.tab",
                     "when": "viewItem == tab",
                     "group": "inline"
+                },
+                {
+                    "command": "update.group.color",
+                    "when": "viewItem == group",
+                    "group": "navigation"
                 }
             ],
             "editor/title/context": [
@@ -139,6 +144,11 @@
                 "command": "open.group",
                 "title": "Open Group In Tabs",
                 "icon": "$(eye)"
+            },
+            {
+                "command": "update.group.color",
+                "title": "그룹 아이콘 변경",
+                "category": "tab"
             }
         ],
         "configuration": {

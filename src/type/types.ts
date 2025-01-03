@@ -10,7 +10,7 @@ export const enum TreeItemType {
 export type GroupItem = {
     readonly type: TreeItemType.Group;
     readonly id: string;
-    colorId: string;
+    color: string;
     label: string;
     children: TabItem | GroupItem;
     collapsed: boolean;

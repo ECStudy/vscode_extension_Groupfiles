@@ -24,7 +24,7 @@ export class Group extends Node {
     // 그룹 이름
     label: string;
     // 컬러코드
-    colorId: string;
+    color: string;
     // 접기 펼치기 여부
     collapsed: boolean;
     // 경로
@@ -34,7 +34,7 @@ export class Group extends Node {
         super();
         this.id = `group_${uuidv4()}`;
         this.label = label;
-        this.colorId = "default";
+        this.color = "default";
         this.collapsed = false; // 기본적으로 열림 상태
         this.path = "";
     }
@@ -54,7 +54,7 @@ export class Group extends Node {
         groupItem.contextValue = "group";
 
         const iconPath =
-            groupIconPaths[this.colorId] || groupIconPaths["default"];
+            groupIconPaths[this.color] || groupIconPaths["default"];
         groupItem.iconPath = {
             light: path.join(context.extensionPath, iconPath),
             dark: path.join(context.extensionPath, iconPath),
@@ -69,6 +69,10 @@ export class Group extends Node {
 
     setLabel(label: string) {
         this.label = label;
+    }
+
+    setColor(color: string) {
+        this.color = color;
     }
 
     //TODO. Tab과 로직이 동일함, 함께 가는 방법 고안

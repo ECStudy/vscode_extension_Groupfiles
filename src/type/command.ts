@@ -56,7 +56,7 @@ open.group.new-workspace
 
 update.group
 update.group.label
-update.group.icon
+update.group.color
 
 delete.tab
 delete.tab.all

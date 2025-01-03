@@ -12,6 +12,7 @@ import { getFileName } from "../util";
 import { Node } from "../node/Node";
 import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
+import { colorPalette } from "./color";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
@@ -98,6 +99,14 @@ export class TabView extends CommandManager {
         vscode.commands.registerCommand("open.group", (group: Group) => {
             this.handleOpenGroupChildren(group);
         });
+
+        //그룹 아이콘 변경
+        vscode.commands.registerCommand(
+            "update.group.color",
+            (group: Group) => {
+                this.handleUpdateGroup(group, UpdateAction.COLOR);
+            }
+        );
     }
 
     async inputGroupPromptInputBox(mode = "new") {
@@ -235,7 +244,37 @@ export class TabView extends CommandManager {
                     group,
                     action: UpdateAction.LABEL,
                 };
+
                 this.treeDataProvider.updateGroup(groupInfo);
+                break;
+            case UpdateAction.COLOR:
+                const quickPickItems = colorPalette.map((item) => ({
+                    label: `${item.svg} ${item.description}`,
+                    description: `Choose ${item.label}`,
+                    value: item.label, // 색상 키를 전달
+                }));
+
+                const selectedColor = await vscode.window.showQuickPick(
+                    quickPickItems,
+                    {
+                        placeHolder: "Choose a color for the group icon",
+                        canPickMany: false,
+                    }
+                );
+
+                if (!selectedColor) {
+                    vscode.window.showErrorMessage(
+                        "변경할 아이콘을 선택해주세요"
+                    );
+                    return;
+                }
+
+                const groupInfo2 = {
+                    group,
+                    action: UpdateAction.COLOR,
+                    color: selectedColor?.value,
+                };
+                this.treeDataProvider.updateGroup(groupInfo2);
                 break;
             default:
                 break;

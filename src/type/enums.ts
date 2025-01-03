@@ -19,5 +19,5 @@ export enum Confirm {
 
 export enum UpdateAction {
     LABEL = "label",
-    ICON = "icon",
+    COLOR = "color",
 }

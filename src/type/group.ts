@@ -13,4 +13,5 @@ export interface IUpdateGroup {
     action: UpdateAction;
     group: Group;
     label?: string;
+    color?: string;
 }

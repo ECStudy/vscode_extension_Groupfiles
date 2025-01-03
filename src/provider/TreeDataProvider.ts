@@ -132,9 +132,9 @@ export class TreeDataProvider
             case UpdateAction.LABEL:
                 payload?.label && payload.group.setLabel(payload?.label);
                 break;
-            case UpdateAction.ICON:
+            case UpdateAction.COLOR:
+                payload?.color && payload.group.setColor(payload?.color);
                 break;
-
             default:
                 break;
         }
