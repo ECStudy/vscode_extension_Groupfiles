@@ -63,7 +63,11 @@ export class Group extends Node {
         return groupItem;
     }
 
-    getName(): string {
+    getLabel(): string {
         return this.label;
+    }
+
+    setLabel(label: string) {
+        this.label = label;
     }
 }

@@ -6,9 +6,10 @@ import { getNativeTabByTabItemPath, getNormalizedId } from "../util";
 
 import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
-import { ICreateGroup } from "../type/group";
+import { ICreateGroup, IUpdateGroup } from "../type/group";
 import { EventHandler } from "../EventHandler";
 import { Node } from "../node/Node";
+import { UpdateAction } from "../type/enums";
 
 export class TreeDataProvider
     implements
@@ -123,6 +124,20 @@ export class TreeDataProvider
 
     resetAll() {
         this.tree.reset();
+        this.triggerEventRerender();
+    }
+
+    updateGroup(payload: IUpdateGroup) {
+        switch (payload.action) {
+            case UpdateAction.LABEL:
+                payload?.label && payload.group.setLabel(payload?.label);
+                break;
+            case UpdateAction.ICON:
+                break;
+
+            default:
+                break;
+        }
         this.triggerEventRerender();
     }
 }

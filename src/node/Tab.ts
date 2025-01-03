@@ -37,7 +37,7 @@ export class Tab extends Node implements TabItem {
         return treeItem;
     }
 
-    getName(): string {
+    getLabel(): string {
         return getFileName(this.path);
     }
 }

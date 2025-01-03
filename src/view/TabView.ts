@@ -5,7 +5,7 @@ import * as os from "os";
 import * as fs from "fs";
 
 import { v4 as uuidv4 } from "uuid";
-import { Confirm, TAB_VIEW } from "../type/enums";
+import { Confirm, TAB_VIEW, UpdateAction } from "../type/enums";
 import { TreeDataProvider } from "../provider/TreeDataProvider";
 import { CommandManager } from "../CommandManager";
 import { getFileName } from "../util";
@@ -74,22 +74,30 @@ export class TabView extends CommandManager {
                 this.handleCreateGroupAndCreateGroup(group);
             }
         );
+
+        //그룹 라벨 변경
+        vscode.commands.registerCommand(
+            "update.group.label",
+            (group: Group) => {
+                this.handleUpdateGroup(group, UpdateAction.LABEL);
+            }
+        );
     }
 
     async inputGroupPromptInputBox(mode = "new") {
         const dispaly_placeHolder =
             mode === "new" ? "새 그룹 이름 추가" : "수정할 그룹 이름 입력";
-        const groupName = await vscode.window.showInputBox({
+        const label = await vscode.window.showInputBox({
             prompt: "Enter a name for the new group",
             placeHolder: dispaly_placeHolder,
         });
 
-        if (!groupName) {
+        if (!label) {
             vscode.window.showErrorMessage("그룹 이름을 입력해주세요.");
             return { label: "", result: false };
         }
 
-        return { label: groupName, result: true };
+        return { label, result: true };
     }
 
     async handleCreateGroup() {
@@ -131,7 +139,7 @@ export class TabView extends CommandManager {
             .getGroups()
             .map((group: Node) => {
                 return {
-                    label: `${group.getName()}`,
+                    label: `${group.getLabel()}`,
                     description: `${group.getPath()}`,
                     group: group,
                 };
@@ -189,6 +197,32 @@ export class TabView extends CommandManager {
             };
 
             this.treeDataProvider.createGroupAndGroup(groupInfo);
+        }
+    }
+
+    async handleUpdateGroup(group: Group, action: UpdateAction) {
+        switch (action) {
+            case UpdateAction.LABEL:
+                const label = await vscode.window.showInputBox({
+                    prompt: "Enter a name for the new group",
+                    placeHolder: "수정할 그룹 이름 입력",
+                    value: group.label,
+                });
+
+                if (!label) {
+                    vscode.window.showErrorMessage("그룹 이름을 입력해주세요.");
+                    return;
+                }
+
+                const groupInfo = {
+                    label,
+                    group,
+                    action: UpdateAction.LABEL,
+                };
+                this.treeDataProvider.updateGroup(groupInfo);
+                break;
+            default:
+                break;
         }
     }
 }

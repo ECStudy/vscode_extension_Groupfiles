@@ -28,7 +28,7 @@ export class Node extends EventHandler {
         this.parentNode = parentNode;
     }
 
-    getName() {
+    getLabel() {
         return "";
     }
 
@@ -36,7 +36,7 @@ export class Node extends EventHandler {
         if (!this.parentNode) {
             return "";
         }
-        return this.parentNode.getPath() + "/" + this.parentNode.getName();
+        return this.parentNode.getPath() + "/" + this.parentNode.getLabel();
     }
 
     remove(item: Node) {}

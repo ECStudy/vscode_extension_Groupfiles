@@ -16,3 +16,8 @@ export enum Confirm {
     Cancel = "cancel",
     OK = "ok",
 }
+
+export enum UpdateAction {
+    LABEL = "label",
+    ICON = "icon",
+}

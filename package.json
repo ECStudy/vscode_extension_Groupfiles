@@ -61,6 +61,11 @@
                     "command": "create.group.in-group",
                     "when": "viewItem == group",
                     "group": "inline"
+                },
+                {
+                    "command": "update.group.label",
+                    "when": "viewItem == group",
+                    "group": "inline"
                 }
             ],
             "editor/title/context": [
@@ -97,8 +102,13 @@
             },
             {
                 "command": "create.group.in-group",
-                "title": "Create Group",
+                "title": "Create Group In Group",
                 "icon": "$(add)"
+            },
+            {
+                "command": "update.group.label",
+                "title": "Update Group Label",
+                "icon": "$(edit)"
             }
         ],
         "configuration": {
