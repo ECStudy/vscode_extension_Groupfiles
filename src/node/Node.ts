@@ -19,7 +19,7 @@ export class Node extends EventHandler {
     }
 
     add(item: Node) {
-        //이미 부모가 존재하는 경우 부모 ㅈ거
+        //이미 부모가 존재하는 경우 부모 제거
         if (item.parentNode) {
             item.parentNode.remove(item);
         }

@@ -11,6 +11,7 @@ import { CommandManager } from "../CommandManager";
 import { getFileName } from "../util";
 import { Node } from "../node/Node";
 import { Group } from "../node/Group";
+import { Tab } from "../node/Tab";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
@@ -85,7 +86,12 @@ export class TabView extends CommandManager {
 
         //그룹 제거
         vscode.commands.registerCommand("delete.group", (group: Group) => {
-            this.handleDeleteGroup(group);
+            this.handleRemoveNode(group);
+        });
+
+        //그룹에 있는 탭 제거
+        vscode.commands.registerCommand("delete.tab", (tab: Tab) => {
+            this.handleRemoveNode(tab);
         });
     }
 
@@ -232,16 +238,20 @@ export class TabView extends CommandManager {
     }
 
     //그룹 제거
-    async handleDeleteGroup(group: Group) {
-        const confirm = await vscode.window.showInformationMessage(
-            `그룹을 삭제하시겠습니까?`,
-            Confirm.DELETE,
-            Confirm.Cancel
-        );
+    async handleRemoveNode(node: Group | Tab) {
+        if (node instanceof Group) {
+            const confirm = await vscode.window.showInformationMessage(
+                `그룹을 삭제하시겠습니까?`,
+                Confirm.DELETE,
+                Confirm.Cancel
+            );
 
-        if (confirm === Confirm.DELETE) {
-            this.treeDataProvider.removeGroup(group);
-            //TODO 복구 기능 추가
+            if (confirm === Confirm.DELETE) {
+                this.treeDataProvider.remove(node);
+                //TODO 복구 기능 추가
+            }
+        } else if (node instanceof Tab) {
+            this.treeDataProvider.remove(node);
         }
     }
 }

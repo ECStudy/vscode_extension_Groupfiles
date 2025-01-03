@@ -141,8 +141,8 @@ export class TreeDataProvider
         this.triggerEventRerender();
     }
 
-    removeGroup(group: Group) {
-        group.remove(group);
+    remove(node: Node) {
+        node.remove(node);
         this.triggerEventRerender();
     }
 }

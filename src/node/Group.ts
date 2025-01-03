@@ -71,6 +71,7 @@ export class Group extends Node {
         this.label = label;
     }
 
+    //TODO. Tab과 로직이 동일함, 함께 가는 방법 고안
     remove(item: Group): void {
         const targetId = item.id;
         const parentNode = item.getParentNode();

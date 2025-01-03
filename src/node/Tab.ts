@@ -40,4 +40,18 @@ export class Tab extends Node implements TabItem {
     getLabel(): string {
         return getFileName(this.path);
     }
+
+    remove(item: Tab): void {
+        const targetId = item.id;
+        const parentNode = item.getParentNode();
+        const parentNodeChildren = parentNode?.getChildren();
+
+        if (parentNodeChildren?.length) {
+            const removedChildren = parentNodeChildren?.filter(
+                (group) => group.id !== targetId
+            );
+
+            parentNode?.setChildren(removedChildren);
+        }
+    }
 }

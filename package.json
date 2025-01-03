@@ -71,6 +71,11 @@
                     "command": "delete.group",
                     "when": "viewItem == group",
                     "group": "inline"
+                },
+                {
+                    "command": "delete.tab",
+                    "when": "viewItem == tab",
+                    "group": "inline"
                 }
             ],
             "editor/title/context": [
@@ -118,6 +123,11 @@
             {
                 "command": "delete.group",
                 "title": "Delete Group",
+                "icon": "$(trash)"
+            },
+            {
+                "command": "delete.tab",
+                "title": "Delete Tab",
                 "icon": "$(trash)"
             }
         ],
