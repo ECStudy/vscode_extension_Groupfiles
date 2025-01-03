@@ -46,6 +46,7 @@ create.tab.new-group.context
 create.tab.prev-group
 create.tab.prev-group.context
 create.group
+create.group.in-group
 
 create.tab.group-group
 

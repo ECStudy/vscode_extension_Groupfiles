@@ -111,6 +111,16 @@ export class TreeDataProvider
         this.triggerEventRerender();
     }
 
+    createGroupAndGroup(payload: ICreateGroup) {
+        //그룹에서 그룹 생성
+        if (payload?.label) {
+            const group = new Group(payload?.label);
+            payload?.group?.add(group);
+        }
+
+        this.triggerEventRerender();
+    }
+
     resetAll() {
         this.tree.reset();
         this.triggerEventRerender();

@@ -66,6 +66,14 @@ export class TabView extends CommandManager {
             //그룹 모두 삭제
             this.handleDeleteAllGroup(group);
         });
+
+        //그룹에서 그룹 추가
+        vscode.commands.registerCommand(
+            "create.group.in-group",
+            (group: Group) => {
+                this.handleCreateGroupAndCreateGroup(group);
+            }
+        );
     }
 
     async inputGroupPromptInputBox(mode = "new") {
@@ -90,7 +98,6 @@ export class TabView extends CommandManager {
         if (inputResult.result) {
             const groupInfo = {
                 label: inputResult.label,
-                parentId: "root",
             };
 
             this.treeDataProvider.createGroup(groupInfo);
@@ -105,7 +112,6 @@ export class TabView extends CommandManager {
         if (selectedGroup) {
             const groupInfo = {
                 label: selectedGroup.label,
-                //parentId: "root",
                 uri: uri,
             };
 
@@ -169,6 +175,20 @@ export class TabView extends CommandManager {
             );
 
             //TODO 복구 기능 추가
+        }
+    }
+
+    //그룹에서 그룹 추가하기
+    async handleCreateGroupAndCreateGroup(group: Group) {
+        const inputResult = await this.inputGroupPromptInputBox("new");
+
+        if (inputResult.result) {
+            const groupInfo = {
+                label: inputResult.label,
+                group: group,
+            };
+
+            this.treeDataProvider.createGroupAndGroup(groupInfo);
         }
     }
 }

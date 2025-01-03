@@ -56,7 +56,13 @@
                     "group": "navigation"
                 }
             ],
-            "view/item/context": [],
+            "view/item/context": [
+                {
+                    "command": "create.group.in-group",
+                    "when": "viewItem == group",
+                    "group": "inline"
+                }
+            ],
             "editor/title/context": [
                 {
                     "command": "create.tab.new-group",
@@ -88,6 +94,11 @@
                 "command": "delete.group.all",
                 "title": "Delete All Group",
                 "icon": "$(trash)"
+            },
+            {
+                "command": "create.group.in-group",
+                "title": "Create Group",
+                "icon": "$(add)"
             }
         ],
         "configuration": {
