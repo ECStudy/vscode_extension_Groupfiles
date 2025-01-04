@@ -30,9 +30,9 @@ export class Group extends Node {
     // 경로
     path: string;
 
-    constructor(label: string) {
-        super();
-        this.id = `group_${uuidv4()}`;
+    constructor(id: string, label: string) {
+        super(id);
+        this.id = id;
         this.label = label;
         this.color = "default";
         this.collapsed = false; // 기본적으로 열림 상태
@@ -40,8 +40,8 @@ export class Group extends Node {
     }
 
     render(context: vscode.ExtensionContext): vscode.TreeItem {
-        console.log("render Group : this --->", this);
-        console.log("render Group : context", context);
+        //console.log("render Group : this --->", this);
+        //console.log("render Group : context", context);
 
         const groupItem = new vscode.TreeItem(
             this.label,

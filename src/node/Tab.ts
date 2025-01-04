@@ -14,21 +14,23 @@ export class Tab extends Node implements TabItem {
     path: string;
     uri: vscode.Uri;
 
-    constructor(nativeTab: vscode.Tab) {
-        super();
-        this.id = `tab_${uuidv4()}`;
+    constructor(id: string, nativeTab: vscode.Tab) {
+        super(id);
+        this.id = id;
         this.path = getNormalizedId(nativeTab);
         this.uri = (nativeTab.input as NativeTabInput)?.uri;
     }
 
     render(): vscode.TreeItem {
-        console.log("render Tab : this --->", this);
+        //console.log("render Tab : this --->", this);
         const treeItem = new vscode.TreeItem(
             this.uri,
             vscode.TreeItemCollapsibleState.None
         );
         treeItem.id = this.id;
         treeItem.contextValue = "tab";
+        // 명시적 아이콘 지정
+        treeItem.iconPath = vscode.ThemeIcon.File;
         treeItem.command = {
             command: "vscode.open",
             title: "Open Tab",

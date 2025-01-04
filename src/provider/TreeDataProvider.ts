@@ -10,6 +10,7 @@ import { ICreateGroup, IUpdateGroup } from "../type/group";
 import { EventHandler } from "../EventHandler";
 import { Node } from "../node/Node";
 import { UpdateAction } from "../type/enums";
+import { v4 as uuidv4 } from "uuid";
 
 export class TreeDataProvider
     implements
@@ -34,7 +35,7 @@ export class TreeDataProvider
 
     constructor(context: vscode.ExtensionContext) {
         this.context = context;
-        this.tree = new Tree();
+        this.tree = new Tree("root");
         //
         //this.tree.addEvent("create", () => this.triggerEventRerender());
         //this.tree.addEvent("delete", () => this.triggerEventRerender());
@@ -82,7 +83,7 @@ export class TreeDataProvider
                     label: uri.path.split("/").pop() || "Unknown",
                 } as vscode.Tab;
 
-                const tab = new Tab(nativeTab);
+                const tab = new Tab(`tab_${uuidv4()}`, nativeTab);
                 payload.group.add(tab);
             }
         }
@@ -90,7 +91,7 @@ export class TreeDataProvider
         else {
             //그룹 생성
             if (payload?.label) {
-                const group = new Group(payload?.label);
+                const group = new Group(`group_${uuidv4()}`, payload?.label);
                 // const group2 = new Group("child");
                 // group.add(group2);
                 this.tree.add(group);
@@ -103,7 +104,7 @@ export class TreeDataProvider
                         label: uri.path.split("/").pop() || "Unknown",
                     } as vscode.Tab;
 
-                    const tab = new Tab(nativeTab);
+                    const tab = new Tab(`tab_${uuidv4()}`, nativeTab);
                     group.add(tab);
                 }
             }
@@ -115,7 +116,7 @@ export class TreeDataProvider
     createGroupAndGroup(payload: ICreateGroup) {
         //그룹에서 그룹 생성
         if (payload?.label) {
-            const group = new Group(payload?.label);
+            const group = new Group(`group_${uuidv4()}`, payload?.label);
             payload?.group?.add(group);
         }
 

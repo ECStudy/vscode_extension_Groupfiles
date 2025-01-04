@@ -8,8 +8,15 @@ import { ICreateGroup } from "../type/group";
 import { Node } from "./Node";
 
 export class Tree extends Node {
+    id: string;
+
+    constructor(id: string) {
+        super(id);
+        this.id = id;
+    }
+
     getTree() {
-        //return this.root;
+        return this;
     }
 
     createGroup(payload: ICreateGroup) {}
