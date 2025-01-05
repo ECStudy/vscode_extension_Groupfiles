@@ -44,6 +44,16 @@
                     "command": "delete.group.all",
                     "when": "view == tabview",
                     "group": "navigation"
+                },
+                {
+                    "command": "view.fold",
+                    "when": "view == tabview",
+                    "group": "navigation"
+                },
+                {
+                    "command": "view.unfold",
+                    "when": "view == tabview",
+                    "group": "navigation"
                 }
             ],
             "explorer/context": [
@@ -149,6 +159,16 @@
                 "command": "update.group.color",
                 "title": "그룹 아이콘 변경",
                 "category": "tab"
+            },
+            {
+                "command": "view.fold",
+                "title": "Fold All Group",
+                "icon": "$(fold)"
+            },
+            {
+                "command": "view.unfold",
+                "title": "unFold All Group",
+                "icon": "$(unfold)"
             }
         ],
         "configuration": {

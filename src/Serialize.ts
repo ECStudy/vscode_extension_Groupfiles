@@ -22,7 +22,7 @@ export class Serialize {
     constructor() {}
 
     static toJson(tree: Tree) {
-        console.log(tree);
+        //console.log(tree);
 
         const serializeNode = (
             node: any
@@ -57,7 +57,7 @@ export class Serialize {
         return data;
     }
 
-    static fromJson(json: NodeJson) {
+    static fromJson(json: string) {
         const createNode = (nodeJson: any): Group | Tab | Tree => {
             let node;
             switch (nodeJson.type) {

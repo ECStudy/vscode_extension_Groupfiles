@@ -39,15 +39,20 @@ export class Group extends Node {
         this.path = "";
     }
 
-    render(context: vscode.ExtensionContext): vscode.TreeItem {
+    render(
+        context: vscode.ExtensionContext,
+        viewcollapsed?: boolean
+    ): vscode.TreeItem {
         //console.log("render Group : this --->", this);
         //console.log("render Group : context", context);
 
+        console.log("Group render", this.collapsed);
+
         const groupItem = new vscode.TreeItem(
             this.label,
-            this.collapsed
-                ? vscode.TreeItemCollapsibleState.Collapsed
-                : vscode.TreeItemCollapsibleState.Expanded
+            viewcollapsed
+                ? vscode.TreeItemCollapsibleState.Collapsed //닫힘 1
+                : vscode.TreeItemCollapsibleState.Expanded //열림 2
         );
 
         groupItem.id = this.id;
@@ -59,6 +64,11 @@ export class Group extends Node {
             light: path.join(context.extensionPath, iconPath),
             dark: path.join(context.extensionPath, iconPath),
         };
+
+        console.log("🩳🩳🩳🩳 collapsed stage", this.collapsed);
+        // groupItem.collapsibleState = this.collapsed
+        //     ? vscode.TreeItemCollapsibleState.Collapsed
+        //     : vscode.TreeItemCollapsibleState.Expanded;
 
         return groupItem;
     }
@@ -88,5 +98,9 @@ export class Group extends Node {
 
             parentNode?.setChildren(removedChildren);
         }
+    }
+
+    setCollapsed(collapsed: boolean) {
+        this.collapsed = collapsed;
     }
 }

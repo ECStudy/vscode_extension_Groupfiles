@@ -14,7 +14,7 @@ export class Tab extends Node implements TabItem {
     path: string;
     uri: vscode.Uri;
 
-    constructor(id: string, nativeTab: { input: NativeTabInput }) {
+    constructor(id: string, nativeTab: any) {
         super(id);
         this.id = id;
         this.path = (nativeTab.input as NativeTabInput)?.uri?.path;

@@ -32,9 +32,12 @@ export class TreeDataProvider
 
     private context: vscode.ExtensionContext;
 
+    private viewCollapse: boolean;
+
     constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.tree = new Tree("root");
+        this.viewCollapse = false;
         //
         //this.tree.addEvent("create", () => this.triggerEventRerender());
         //this.tree.addEvent("delete", () => this.triggerEventRerender());
@@ -61,17 +64,26 @@ export class TreeDataProvider
         }
     }
 
-    public triggerEventRerender() {
+    public triggerEventRerender(force?: boolean) {
         this.saveData();
+
         this._onDidChangeTreeData.fire();
     }
 
     getTreeItem(element: Group | Tab): vscode.TreeItem {
         //console.log("getTreeItem-->", element);
 
-        const treeItem = element.render(this.context);
+        const treeItem = element.render(this.context, this.viewCollapse);
         //접혔다 펼쳤다 하는 기능
         //this.context에 collapsed를 넣어야할거고, 그걸 통해서 여기서 렌더시칼 때 group에 전부 반영 시켜서 렌더링 시켜줘야할거같음
+        console.log("만들어진 treeItem", treeItem);
+        // if (element instanceof Group) {
+        //     treeItem.collapsibleState = this.viewCollapse
+        //         ? vscode.TreeItemCollapsibleState.Collapsed //닫힘 1
+        //         : vscode.TreeItemCollapsibleState.Expanded; //열림 2
+
+        //     console.log("🎈", treeItem);
+        // }
 
         return treeItem;
     }
@@ -164,5 +176,38 @@ export class TreeDataProvider
     remove(node: Node) {
         node.remove(node);
         this.triggerEventRerender();
+    }
+
+    setCollapsed(node: any, isCollapse: boolean) {
+        this.viewCollapse = isCollapse;
+
+        //접기 stage 변경
+        node.forEach((group: Group) => {
+            group.setCollapsed(isCollapse);
+        });
+
+        //저장해
+        this.saveData();
+        //일단 json에 있는거 가져와
+        const jsonData = this.context.globalState.get(
+            "extensionState"
+        ) as string;
+
+        //지워, 새로고침해
+        this.tree.reset();
+        this._onDidChangeTreeData.fire();
+
+        setTimeout(() => {
+            console.log("글로벌 데이터", jsonData);
+            //데이터 다시 넣어
+            if (jsonData) {
+                const treeClass = Serialize.fromJson(jsonData);
+                console.log("글로벌 데이터 treeClass", treeClass.getChildren());
+                this.tree.setChildren(treeClass.getChildren());
+
+                //새로고침해
+                this._onDidChangeTreeData.fire();
+            }
+        }, 1);
     }
 }

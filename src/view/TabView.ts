@@ -107,6 +107,18 @@ export class TabView extends CommandManager {
                 this.handleUpdateGroup(group, UpdateAction.COLOR);
             }
         );
+
+        //전체 그룹 접기
+        vscode.commands.registerCommand("view.fold", () => {
+            //전체 그룹 접기
+            this.handleFoldGroup(true);
+        });
+
+        //전체 그룹 접기
+        vscode.commands.registerCommand("view.unfold", () => {
+            //전체 그룹 접기
+            this.handleFoldGroup(false);
+        });
     }
 
     async inputGroupPromptInputBox(mode = "new") {
@@ -305,5 +317,11 @@ export class TabView extends CommandManager {
         for (const tab of tabs) {
             await vscode.commands.executeCommand("vscode.open", tab.uri);
         }
+    }
+
+    //접기 펼치기
+    async handleFoldGroup(isCollapse: boolean) {
+        const allGroup = this.treeDataProvider.getGroups() as Group[];
+        this.treeDataProvider.setCollapsed(allGroup, isCollapse);
     }
 }
