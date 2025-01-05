@@ -49,6 +49,16 @@
                     "command": "view.fold-unfold",
                     "when": "view == tabview",
                     "group": "navigation"
+                },
+                {
+                    "command": "global.state.reset",
+                    "when": "view == tabview",
+                    "group": "inline"
+                },
+                {
+                    "command": "option1",
+                    "when": "view == tabview",
+                    "group": "inline"
                 }
             ],
             "explorer/context": [
@@ -159,6 +169,15 @@
                 "command": "view.fold-unfold",
                 "title": "Fold All Group",
                 "icon": "$(map)"
+            },
+            {
+                "command": "global.state.reset",
+                "title": "Reset Global State",
+                "icon": "$(debug-restart)"
+            },
+            {
+                "command": "option1",
+                "title": "옵션1"
             }
         ],
         "configuration": {
