@@ -11,6 +11,7 @@ import { UpdateAction } from "../type/enums";
 import { v4 as uuidv4 } from "uuid";
 import { Serialize } from "../Serialize";
 import { TreeItemType } from "../type/types";
+import { STORAGE_KEYS, StoreageManager } from "../StorageManager";
 
 export class TreeDataProvider
     implements
@@ -18,6 +19,7 @@ export class TreeDataProvider
         vscode.TreeDragAndDropController<Group | Tab>
 {
     private tree: Tree;
+    private storageManager: StoreageManager;
 
     // EventEmitter를 정의
     private _onDidChangeTreeData: vscode.EventEmitter<
@@ -43,51 +45,38 @@ export class TreeDataProvider
         //this.tree.addEvent("create", () => this.triggerEventRerender());
         //this.tree.addEvent("delete", () => this.triggerEventRerender());
         //this.tree.addEvent("update", () => this.triggerEventRerender());
+        this.storageManager = new StoreageManager(this.context);
+
         this.loadData();
     }
 
-    getGlobalState(key: string) {
-        const jsonData = this.context.globalState.get(
-            "extensionState"
-        ) as string;
-
-        if (jsonData) {
-            const globalStateState = JSON.parse(jsonData);
-            return globalStateState[key];
-        }
+    public getGlobalState<T>(key: STORAGE_KEYS) {
+        return this.storageManager.get<T>(key);
     }
 
     private saveData() {
         const tree = this.tree.getTree();
-
         const serializedTree = Serialize.toJson(tree);
-        const state = {
-            treeData: serializedTree,
-            viewCollapse: this.viewCollapse, // 전체 접기/펼치기 상태 저장
-        };
-        //global에 저장하기
-        this.context.globalState.update(
-            "extensionState",
-            JSON.stringify(state)
-        );
+
+        this.storageManager.set(STORAGE_KEYS.TREE_DATA, serializedTree);
+        this.storageManager.set(STORAGE_KEYS.VIEW_COLLAPSE, this.viewCollapse);
     }
 
-    loadData() {
-        const jsonData = this.context.globalState.get(
-            "extensionState"
-        ) as string;
+    private loadData() {
+        const jsonTreeData = this.getGlobalState<string>(
+            STORAGE_KEYS.TREE_DATA
+        );
 
-        if (jsonData) {
-            const state = JSON.parse(jsonData);
+        if (jsonTreeData) {
+            const treeClass = Serialize.fromJson(jsonTreeData);
+            this.tree.setChildren(treeClass.getChildren());
+        }
 
-            if (state?.treeData) {
-                const treeClass = Serialize.fromJson(state.treeData);
-                this.tree.setChildren(treeClass.getChildren());
-            }
-
-            if (state?.viewCollapse !== undefined) {
-                this.viewCollapse = state.viewCollapse; // 전체 접기/펼치기 상태 복원
-            }
+        const viewCollapse = this.getGlobalState<boolean>(
+            STORAGE_KEYS.VIEW_COLLAPSE
+        );
+        if (viewCollapse !== undefined) {
+            this.viewCollapse = viewCollapse;
         }
     }
 

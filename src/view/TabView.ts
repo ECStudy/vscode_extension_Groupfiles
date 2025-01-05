@@ -13,6 +13,7 @@ import { Node } from "../node/Node";
 import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
 import { colorPalette } from "./color";
+import { STORAGE_KEYS } from "../StorageManager";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
@@ -315,8 +316,9 @@ export class TabView extends CommandManager {
 
     //접기 펼치기
     async handleFoldGroup() {
-        const viewCollapse =
-            this.treeDataProvider.getGlobalState("viewCollapse");
+        const viewCollapse = this.treeDataProvider.getGlobalState<boolean>(
+            STORAGE_KEYS.VIEW_COLLAPSE
+        );
 
         const allGroup = this.treeDataProvider.getGroups() as Group[];
         this.treeDataProvider.setCollapsed(allGroup, !viewCollapse);
