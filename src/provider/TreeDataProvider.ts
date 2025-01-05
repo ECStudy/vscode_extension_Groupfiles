@@ -1,8 +1,6 @@
 import * as vscode from "vscode";
 
 import { Tree } from "../node/Tree";
-import { GroupItem, TabItem, TreeItemType } from "../type/types";
-import { getNativeTabByTabItemPath, getNormalizedId } from "../util";
 
 import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
@@ -11,6 +9,7 @@ import { EventHandler } from "../EventHandler";
 import { Node } from "../node/Node";
 import { UpdateAction } from "../type/enums";
 import { v4 as uuidv4 } from "uuid";
+import { Serialize } from "../Serialize";
 
 export class TreeDataProvider
     implements
@@ -40,9 +39,30 @@ export class TreeDataProvider
         //this.tree.addEvent("create", () => this.triggerEventRerender());
         //this.tree.addEvent("delete", () => this.triggerEventRerender());
         //this.tree.addEvent("update", () => this.triggerEventRerender());
+        this.loadData();
+    }
+
+    private saveData() {
+        const tree = this.tree.getTree();
+
+        const serializedTree = Serialize.toJson(tree);
+        //global에 저장하기
+        this.context.globalState.update("extensionState", serializedTree);
+    }
+
+    loadData() {
+        const jsonData = this.context.globalState.get(
+            "extensionState"
+        ) as string;
+
+        if (jsonData) {
+            const treeClass = Serialize.fromJson(jsonData);
+            this.tree.setChildren(treeClass.getChildren());
+        }
     }
 
     public triggerEventRerender() {
+        this.saveData();
         this._onDidChangeTreeData.fire();
     }
 
@@ -66,7 +86,6 @@ export class TreeDataProvider
     }
 
     getGroups() {
-        console.log("aaaaaaa", this.tree.getChildren());
         return this.tree.getAllGroups();
     }
 

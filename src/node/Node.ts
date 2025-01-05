@@ -15,10 +15,6 @@ export class Node extends EventHandler {
         this.extraData = {};
     }
 
-    setExtraData(data: { [key: string]: any }) {
-        this.extraData = { ...this.extraData, ...data };
-    }
-
     getChildren() {
         return this.children;
     }

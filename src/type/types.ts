@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import { TabInputText } from "vscode";
 
 export const enum TreeItemType {
+    Tree,
     Tab,
     Group,
 }

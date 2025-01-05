@@ -1,27 +1,21 @@
 import * as vscode from "vscode";
 
 import { TabView } from "./view/TabView";
+import { Group } from "./node/Group";
+import { Tab } from "./node/Tab";
 
 export function activate(context: vscode.ExtensionContext) {
+    //context.globalState 지우기 기능
+    //clearGlobalState(context);
     context.subscriptions.push(new TabView(context));
-    openStartupFiles();
-}
-
-function openStartupFiles() {
-    const openFiles = vscode.workspace
-        .getConfiguration()
-        .get<string[]>("openFilesAtStartup");
-
-    if (openFiles && Array.isArray(openFiles)) {
-        openFiles.forEach(async (filePath) => {
-            const fileUri = vscode.Uri.file(filePath);
-            try {
-                await vscode.commands.executeCommand("vscode.open", fileUri);
-            } catch (error) {
-                console.error(`Failed to open file: ${filePath}`, error);
-            }
-        });
-    }
 }
 
 export function deactivate() {}
+
+export function clearGlobalState(context: vscode.ExtensionContext) {
+    console.log("Global State가 초기화되었습니다.");
+
+    context.globalState.keys().forEach((key) => {
+        context.globalState.update(key, undefined); // 키 값을 undefined로 설정하여 제거
+    });
+}
