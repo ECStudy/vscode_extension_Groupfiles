@@ -39,10 +39,7 @@ export class Group extends Node {
         this.path = "";
     }
 
-    render(
-        context: vscode.ExtensionContext,
-        viewcollapsed?: boolean
-    ): vscode.TreeItem {
+    render(context: vscode.ExtensionContext): vscode.TreeItem {
         //console.log("render Group : this --->", this);
         //console.log("render Group : context", context);
 
