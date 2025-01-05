@@ -5,27 +5,43 @@ import { Tab } from "./node/Tab";
 import { Tree } from "./node/Tree";
 import { TreeItemType } from "./type/types";
 
+interface NodeJson {
+    type: TreeItemType;
+    payload: {
+        id: string;
+        label?: string;
+        color?: string;
+        collapsed?: boolean;
+        path?: string;
+        uri?: { path: string; external?: string; fsPath?: string };
+    };
+    children?: NodeJson[];
+}
+
 export class Serialize {
     constructor() {}
 
-    static toJson(tree: any) {
+    static toJson(tree: Tree) {
         console.log(tree);
 
-        const serializeNode = (node: any) => {
-            const json = {
-                type: node.type, // Node type (Tree, Group, Tab)
-                payload: {
-                    id: node.id,
-                },
-            } as any;
+        const serializeNode = (
+            node: any
+        ): { type: TreeItemType; payload: any; children?: any[] } => {
+            const json: { type: TreeItemType; payload: any; children?: any[] } =
+                {
+                    type: node.type, // Node type (Tree, Group, Tab)
+                    payload: {
+                        id: node.id,
+                    },
+                } as any;
 
             if (node.type === TreeItemType.Group) {
-                json.payload.label = node.label;
-                json.payload.color = node.color;
-                json.payload.collapsed = node.collapsed;
+                json.payload.label = (node as Group).label;
+                json.payload.color = (node as Group).color;
+                json.payload.collapsed = (node as Group).collapsed;
             } else if (node.type === TreeItemType.Tab) {
-                json.payload.path = node.path;
-                json.payload.uri = node.uri;
+                json.payload.path = (node as Tab).path;
+                json.payload.uri = (node as Tab).uri;
             }
 
             if (node.getChildren().length > 0) {
@@ -41,8 +57,8 @@ export class Serialize {
         return data;
     }
 
-    static fromJson(json: any) {
-        const createNode = (nodeJson: any) => {
+    static fromJson(json: NodeJson) {
+        const createNode = (nodeJson: any): Group | Tab | Tree => {
             let node;
             switch (nodeJson.type) {
                 case TreeItemType.Tree:
