@@ -10,6 +10,7 @@ import { Node } from "../node/Node";
 import { UpdateAction } from "../type/enums";
 import { v4 as uuidv4 } from "uuid";
 import { Serialize } from "../Serialize";
+import { TreeItemType } from "../type/types";
 
 export class TreeDataProvider
     implements
@@ -71,24 +72,30 @@ export class TreeDataProvider
     }
 
     getTreeItem(element: Group | Tab): vscode.TreeItem {
+        console.log("1", element);
         //console.log("getTreeItem-->", element);
 
         const treeItem = element.render(this.context, this.viewCollapse);
         //접혔다 펼쳤다 하는 기능
         //this.context에 collapsed를 넣어야할거고, 그걸 통해서 여기서 렌더시칼 때 group에 전부 반영 시켜서 렌더링 시켜줘야할거같음
-        console.log("만들어진 treeItem", treeItem);
-        // if (element instanceof Group) {
-        //     treeItem.collapsibleState = this.viewCollapse
-        //         ? vscode.TreeItemCollapsibleState.Collapsed //닫힘 1
-        //         : vscode.TreeItemCollapsibleState.Expanded; //열림 2
+        if (element.type === TreeItemType.Group) {
+            console.log("만들어진 treeItem", treeItem);
+            treeItem.id = `${element.id}_${
+                this.viewCollapse ? "collapsed" : "expanded"
+            }`;
 
-        //     console.log("🎈", treeItem);
-        // }
+            treeItem.collapsibleState = this.viewCollapse
+                ? vscode.TreeItemCollapsibleState.Collapsed //닫힘 1
+                : vscode.TreeItemCollapsibleState.Expanded; //열림 2
+
+            console.log("🎈", treeItem);
+        }
 
         return treeItem;
     }
 
     getChildren(element?: Group | Tab): Group[] {
+        console.log("2", element);
         if (element instanceof Tab) {
             return [];
         }
@@ -181,33 +188,37 @@ export class TreeDataProvider
     setCollapsed(node: any, isCollapse: boolean) {
         this.viewCollapse = isCollapse;
 
-        //접기 stage 변경
+        // // 각 그룹의 상태 업데이트
+        // node.forEach((group: Group) => {
+        //     group.setCollapsed(isCollapse);
+        // });
+
+        // // // 변경된 노드만 리렌더링
+        // node.forEach((group: Group) => {
+        //     this._onDidChangeTreeData.fire(group);
+        // });
+
+        // // 데이터 저장
+        // this.saveData();
+
+        // this._onDidChangeTreeData.fire(undefined);
+
+        // 상태 업데이트
         node.forEach((group: Group) => {
             group.setCollapsed(isCollapse);
         });
 
-        //저장해
+        // 데이터 저장
         this.saveData();
-        //일단 json에 있는거 가져와
-        const jsonData = this.context.globalState.get(
-            "extensionState"
-        ) as string;
 
-        //지워, 새로고침해
+        // 트리를 완전히 초기화
         this.tree.reset();
-        this._onDidChangeTreeData.fire();
+        this._onDidChangeTreeData.fire(undefined);
 
         setTimeout(() => {
-            console.log("글로벌 데이터", jsonData);
-            //데이터 다시 넣어
-            if (jsonData) {
-                const treeClass = Serialize.fromJson(jsonData);
-                console.log("글로벌 데이터 treeClass", treeClass.getChildren());
-                this.tree.setChildren(treeClass.getChildren());
-
-                //새로고침해
-                this._onDidChangeTreeData.fire();
-            }
+            // 데이터를 다시 로드하여 렌더링
+            this.loadData();
+            this._onDidChangeTreeData.fire(undefined);
         }, 1);
     }
 }

@@ -46,11 +46,11 @@ export class Group extends Node {
         //console.log("render Group : this --->", this);
         //console.log("render Group : context", context);
 
-        console.log("Group render", this.collapsed);
+        console.log("🩳🩳🩳🩳 collapsed stage", this.collapsed);
 
         const groupItem = new vscode.TreeItem(
             this.label,
-            viewcollapsed
+            this.collapsed
                 ? vscode.TreeItemCollapsibleState.Collapsed //닫힘 1
                 : vscode.TreeItemCollapsibleState.Expanded //열림 2
         );
@@ -65,7 +65,6 @@ export class Group extends Node {
             dark: path.join(context.extensionPath, iconPath),
         };
 
-        console.log("🩳🩳🩳🩳 collapsed stage", this.collapsed);
         // groupItem.collapsibleState = this.collapsed
         //     ? vscode.TreeItemCollapsibleState.Collapsed
         //     : vscode.TreeItemCollapsibleState.Expanded;
