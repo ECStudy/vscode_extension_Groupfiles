@@ -216,4 +216,18 @@ export class TreeDataProvider
 
         this.triggerEventRerender();
     }
+
+    moveTabToGroup(target: Group, node: Node[]) {
+        // console.log("🍘 target2", target);
+        // console.log("🍘 node", node);
+
+        const prevChildren = target.getChildren();
+        //const combinedChildren = [...prevChildren, ...node];
+
+        node.forEach((element) => {
+            target.add(element);
+        });
+
+        this.triggerEventRerender();
+    }
 }

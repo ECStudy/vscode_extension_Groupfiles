@@ -6,13 +6,11 @@ export class Node extends EventHandler {
     private children: any[];
     private parentNode?: Node;
     id: string;
-    extraData: { [key: string]: any }; // 추가 데이터 저장
 
     constructor(id: string) {
         super();
         this.children = [];
         this.id = id;
-        this.extraData = {};
     }
 
     getChildren() {

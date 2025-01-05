@@ -10,10 +10,15 @@ import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
 import { colorPalette } from "./color";
 import { STORAGE_KEYS } from "../StorageManager";
+import { Serialize } from "../Serialize";
+import { TreeItemType } from "../type/types";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
     private context: vscode.ExtensionContext;
+
+    readonly dropMimeTypes: string[] = ["application/vnd.code.tree.tab"];
+    readonly dragMimeTypes: string[] = ["application/vnd.code.tree.tab"];
 
     constructor(context: vscode.ExtensionContext) {
         super();
@@ -22,7 +27,7 @@ export class TabView extends CommandManager {
         vscode.window.createTreeView(TAB_VIEW, {
             treeDataProvider: this.treeDataProvider,
             canSelectMany: true,
-            dragAndDropController: this.treeDataProvider, // Drag & Drop 활성화
+            dragAndDropController: this, // Drag & Drop 활성화
         });
 
         this.initializeGlobalState();
@@ -325,5 +330,64 @@ export class TabView extends CommandManager {
 
         const allGroup = this.treeDataProvider.getGroups() as Group[];
         this.treeDataProvider.setCollapsed(allGroup, !viewCollapse);
+    }
+
+    async handleDrag(
+        node: (Group | Tab)[],
+        dataTransfer: vscode.DataTransfer,
+        token: vscode.CancellationToken
+    ): Promise<void> {
+        console.log("Drag source", node);
+        console.log("Drag dataTransfer", dataTransfer);
+        console.log("Drag token", token);
+
+        if (node) {
+            const nodeJson = Serialize.arrayToJson(node);
+            console.log("🎈 nodeJson", nodeJson);
+            dataTransfer.set(
+                "application/vnd.code.tree.tab",
+                new vscode.DataTransferItem(nodeJson)
+            );
+        }
+    }
+
+    async handleDrop(
+        target: Group | Tab | undefined,
+        dataTransfer: vscode.DataTransfer,
+        token: vscode.CancellationToken
+    ): Promise<void> {
+        console.log("drop target", target);
+        console.log("drop dataTransfer", dataTransfer);
+        console.log("drop token", token);
+
+        const dataTransferItem = dataTransfer.get(
+            "application/vnd.code.tree.tab"
+        );
+
+        console.log("🎀 dataTransferItem", dataTransferItem);
+
+        console.log("🍤 dataTransferItem", dataTransferItem?.value);
+        const dropNodeTabs = dataTransferItem?.value.map((node: any) =>
+            Serialize.createNode(node)
+        );
+
+        console.log("🍠🍠🍠 드롭 노드, 역직렬화함", dropNodeTabs);
+
+        let targetGroup;
+        //드랍한 타겟이 Group
+        if (target?.type === TreeItemType.Group) {
+            targetGroup = target;
+        }
+        //드랍한 타겟이 Tab
+        else if (target?.type === TreeItemType.Tab) {
+            targetGroup = target.getParentNode() as Group;
+        } else {
+        }
+
+        console.log("🍮 타겟 내려놓은 노드", targetGroup);
+
+        if (targetGroup instanceof Group) {
+            this.treeDataProvider.moveTabToGroup(targetGroup, dropNodeTabs);
+        }
     }
 }
