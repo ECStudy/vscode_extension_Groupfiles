@@ -158,7 +158,7 @@
             {
                 "command": "view.fold-unfold",
                 "title": "Fold All Group",
-                "icon": "$(fold)"
+                "icon": "$(map)"
             }
         ],
         "configuration": {
