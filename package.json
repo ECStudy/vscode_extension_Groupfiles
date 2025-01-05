@@ -46,12 +46,7 @@
                     "group": "navigation"
                 },
                 {
-                    "command": "view.fold",
-                    "when": "view == tabview",
-                    "group": "navigation"
-                },
-                {
-                    "command": "view.unfold",
+                    "command": "view.fold-unfold",
                     "when": "view == tabview",
                     "group": "navigation"
                 }
@@ -161,14 +156,9 @@
                 "category": "tab"
             },
             {
-                "command": "view.fold",
+                "command": "view.fold-unfold",
                 "title": "Fold All Group",
                 "icon": "$(fold)"
-            },
-            {
-                "command": "view.unfold",
-                "title": "unFold All Group",
-                "icon": "$(unfold)"
             }
         ],
         "configuration": {

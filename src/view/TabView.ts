@@ -108,16 +108,10 @@ export class TabView extends CommandManager {
             }
         );
 
-        //전체 그룹 접기
-        vscode.commands.registerCommand("view.fold", () => {
+        //전체 그룹 접기, 펼치기
+        vscode.commands.registerCommand("view.fold-unfold", () => {
             //전체 그룹 접기
-            this.handleFoldGroup(true);
-        });
-
-        //전체 그룹 접기
-        vscode.commands.registerCommand("view.unfold", () => {
-            //전체 그룹 접기
-            this.handleFoldGroup(false);
+            this.handleFoldGroup();
         });
     }
 
@@ -320,8 +314,11 @@ export class TabView extends CommandManager {
     }
 
     //접기 펼치기
-    async handleFoldGroup(isCollapse: boolean) {
+    async handleFoldGroup() {
+        const viewCollapse =
+            this.treeDataProvider.getGlobalState("viewCollapse");
+
         const allGroup = this.treeDataProvider.getGroups() as Group[];
-        this.treeDataProvider.setCollapsed(allGroup, isCollapse);
+        this.treeDataProvider.setCollapsed(allGroup, !viewCollapse);
     }
 }

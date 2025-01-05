@@ -46,12 +46,30 @@ export class TreeDataProvider
         this.loadData();
     }
 
+    getGlobalState(key: string) {
+        const jsonData = this.context.globalState.get(
+            "extensionState"
+        ) as string;
+
+        if (jsonData) {
+            const globalStateState = JSON.parse(jsonData);
+            return globalStateState[key];
+        }
+    }
+
     private saveData() {
         const tree = this.tree.getTree();
 
         const serializedTree = Serialize.toJson(tree);
+        const state = {
+            treeData: serializedTree,
+            viewCollapse: this.viewCollapse, // 전체 접기/펼치기 상태 저장
+        };
         //global에 저장하기
-        this.context.globalState.update("extensionState", serializedTree);
+        this.context.globalState.update(
+            "extensionState",
+            JSON.stringify(state)
+        );
     }
 
     loadData() {
@@ -60,8 +78,16 @@ export class TreeDataProvider
         ) as string;
 
         if (jsonData) {
-            const treeClass = Serialize.fromJson(jsonData);
-            this.tree.setChildren(treeClass.getChildren());
+            const state = JSON.parse(jsonData);
+
+            if (state?.treeData) {
+                const treeClass = Serialize.fromJson(state.treeData);
+                this.tree.setChildren(treeClass.getChildren());
+            }
+
+            if (state?.viewCollapse !== undefined) {
+                this.viewCollapse = state.viewCollapse; // 전체 접기/펼치기 상태 복원
+            }
         }
     }
 
@@ -178,6 +204,9 @@ export class TreeDataProvider
     }
 
     setCollapsed(node: any, isCollapse: boolean) {
+        // 전체 접기/펼치기 상태 업데이트
+        this.viewCollapse = isCollapse;
+
         // 각 그룹의 상태 업데이트
         node.forEach((group: Group) => {
             group.setCollapsed(isCollapse);
