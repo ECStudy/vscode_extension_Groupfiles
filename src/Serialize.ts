@@ -22,8 +22,6 @@ export class Serialize {
     constructor() {}
 
     static toJson(tree: Tree) {
-        //console.log(tree);
-
         const serializeNode = (
             node: any
         ): { type: TreeItemType; payload: any; children?: any[] } => {

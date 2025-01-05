@@ -40,11 +40,6 @@ export class Group extends Node {
     }
 
     render(context: vscode.ExtensionContext): vscode.TreeItem {
-        //console.log("render Group : this --->", this);
-        //console.log("render Group : context", context);
-
-        console.log("🩳🩳🩳🩳 collapsed stage", this.collapsed);
-
         const groupItem = new vscode.TreeItem(
             this.label,
             this.collapsed
@@ -61,10 +56,6 @@ export class Group extends Node {
             light: path.join(context.extensionPath, iconPath),
             dark: path.join(context.extensionPath, iconPath),
         };
-
-        // groupItem.collapsibleState = this.collapsed
-        //     ? vscode.TreeItemCollapsibleState.Collapsed
-        //     : vscode.TreeItemCollapsibleState.Expanded;
 
         return groupItem;
     }

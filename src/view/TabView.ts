@@ -201,7 +201,6 @@ export class TabView extends CommandManager {
     }
 
     async handleDeleteAllGroup(group: Group) {
-        console.log(group);
         const confirm = await vscode.window.showInformationMessage(
             `전체 그룹을 삭제하시겠습니까?`,
             Confirm.DELETE,

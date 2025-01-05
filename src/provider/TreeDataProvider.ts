@@ -102,7 +102,6 @@ export class TreeDataProvider
     }
 
     getChildren(element?: Group | Tab): Group[] {
-        console.log("2", element);
         if (element instanceof Tab) {
             return [];
         }
