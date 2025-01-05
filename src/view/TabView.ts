@@ -1,9 +1,5 @@
 import * as vscode from "vscode";
 
-import * as path from "path";
-import * as os from "os";
-import * as fs from "fs";
-
 import { v4 as uuidv4 } from "uuid";
 import { Confirm, TAB_VIEW, UpdateAction } from "../type/enums";
 import { TreeDataProvider } from "../provider/TreeDataProvider";
@@ -207,13 +203,21 @@ export class TabView extends CommandManager {
             Confirm.Cancel
         );
 
+        const tempOriginTreeData = this.treeDataProvider.getGlobalState<string>(
+            STORAGE_KEYS.TREE_DATA
+        );
+
         if (confirm === Confirm.DELETE) {
             this.treeDataProvider.resetAll();
-            vscode.window.showInformationMessage(
-                `전체 그룹을 삭제했습니다. 복구하시겠습니까?`
+            const confirm = await vscode.window.showInformationMessage(
+                `전체 그룹을 삭제했습니다. 복구하시겠습니까?`,
+                Confirm.Cancel,
+                Confirm.KEEP
             );
 
-            //TODO 복구 기능 추가
+            if (confirm === Confirm.Cancel && tempOriginTreeData) {
+                await this.treeDataProvider.restoreData(tempOriginTreeData);
+            }
         }
     }
 

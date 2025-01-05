@@ -15,6 +15,8 @@ export enum Confirm {
     DELETE = "delete",
     Cancel = "cancel",
     OK = "ok",
+    RESROTE = "restore",
+    KEEP = "keep",
 }
 
 export enum UpdateAction {

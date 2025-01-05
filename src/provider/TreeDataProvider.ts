@@ -54,7 +54,7 @@ export class TreeDataProvider
         return this.storageManager.get<T>(key);
     }
 
-    private saveData() {
+    public saveData() {
         const tree = this.tree.getTree();
         const serializedTree = Serialize.toJson(tree);
 
@@ -77,6 +77,20 @@ export class TreeDataProvider
         );
         if (viewCollapse !== undefined) {
             this.viewCollapse = viewCollapse;
+        }
+    }
+
+    public async restoreData(jsonTreeData: string, target?: Group) {
+        if (jsonTreeData) {
+            const treeClass = Serialize.fromJson(jsonTreeData);
+
+            if (!target) {
+                this.tree.setChildren(treeClass.getChildren());
+            } else {
+                target.setChildren(treeClass.getChildren());
+            }
+
+            this.triggerEventRerender();
         }
     }
 
@@ -172,6 +186,11 @@ export class TreeDataProvider
         this.triggerEventRerender();
     }
 
+    remove(node: Node) {
+        node.remove(node);
+        this.triggerEventRerender();
+    }
+
     updateGroup(payload: IUpdateGroup) {
         switch (payload.action) {
             case UpdateAction.LABEL:
@@ -183,11 +202,6 @@ export class TreeDataProvider
             default:
                 break;
         }
-        this.triggerEventRerender();
-    }
-
-    remove(node: Node) {
-        node.remove(node);
         this.triggerEventRerender();
     }
 
