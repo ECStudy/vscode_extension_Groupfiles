@@ -188,37 +188,37 @@ export class TreeDataProvider
     setCollapsed(node: any, isCollapse: boolean) {
         this.viewCollapse = isCollapse;
 
-        // // 각 그룹의 상태 업데이트
-        // node.forEach((group: Group) => {
-        //     group.setCollapsed(isCollapse);
-        // });
-
-        // // // 변경된 노드만 리렌더링
-        // node.forEach((group: Group) => {
-        //     this._onDidChangeTreeData.fire(group);
-        // });
-
-        // // 데이터 저장
-        // this.saveData();
-
-        // this._onDidChangeTreeData.fire(undefined);
-
-        // 상태 업데이트
+        // 각 그룹의 상태 업데이트
         node.forEach((group: Group) => {
             group.setCollapsed(isCollapse);
+        });
+
+        // // 변경된 노드만 리렌더링
+        node.forEach((group: Group) => {
+            this._onDidChangeTreeData.fire(group);
         });
 
         // 데이터 저장
         this.saveData();
 
-        // 트리를 완전히 초기화
-        this.tree.reset();
         this._onDidChangeTreeData.fire(undefined);
 
-        setTimeout(() => {
-            // 데이터를 다시 로드하여 렌더링
-            this.loadData();
-            this._onDidChangeTreeData.fire(undefined);
-        }, 1);
+        // // 상태 업데이트
+        // node.forEach((group: Group) => {
+        //     group.setCollapsed(isCollapse);
+        // });
+
+        // // 데이터 저장
+        // this.saveData();
+
+        // // 트리를 완전히 초기화
+        // this.tree.reset();
+        // this._onDidChangeTreeData.fire(undefined);
+
+        // setTimeout(() => {
+        //     // 데이터를 다시 로드하여 렌더링
+        //     this.loadData();
+        //     this._onDidChangeTreeData.fire(undefined);
+        // }, 1);
     }
 }
