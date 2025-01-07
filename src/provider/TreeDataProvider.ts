@@ -58,6 +58,8 @@ export class TreeDataProvider
         const tree = this.tree.getTree();
         const serializedTree = Serialize.toJson(tree);
 
+        console.log("🎀 json 만들기 json 데이터임-->", serializedTree);
+
         this.storageManager.set(STORAGE_KEYS.TREE_DATA, serializedTree);
         this.storageManager.set(STORAGE_KEYS.VIEW_COLLAPSE, this.viewCollapse);
     }
@@ -69,6 +71,9 @@ export class TreeDataProvider
 
         if (jsonTreeData) {
             const treeClass = Serialize.fromJson(jsonTreeData);
+
+            console.log("🎈 json 복구", treeClass);
+
             this.tree.setChildren(treeClass.getChildren());
         }
 
@@ -128,6 +133,25 @@ export class TreeDataProvider
         return this.tree.getAllGroups();
     }
 
+    getGroupById(parentList: Node[], id: string): Node | undefined {
+        // parentList 배열을 순회하며 탐색
+        for (const parent of parentList) {
+            // 현재 노드의 id와 비교
+            if (parent.id === id) {
+                return parent;
+            }
+
+            // 자식 노드 재귀 탐색
+            const result = this.getGroupById(parent.getChildren(), id);
+            if (result) {
+                return result; // 발견 시 즉시 반환
+            }
+        }
+
+        // 배열 전체를 탐색해도 결과를 찾지 못하면 undefined 반환
+        return undefined;
+    }
+
     /**
      * 그룹 생성
      */
@@ -150,8 +174,6 @@ export class TreeDataProvider
             //그룹 생성
             if (payload?.label) {
                 const group = new Group(`group_${uuidv4()}`, payload?.label);
-                // const group2 = new Group("child");
-                // group.add(group2);
                 this.tree.add(group);
 
                 //탭 있는 경우 탭 생성
@@ -217,17 +239,42 @@ export class TreeDataProvider
         this.triggerEventRerender();
     }
 
-    moveTabToGroup(target: Group, node: Node[]) {
-        // console.log("🍘 target2", target);
-        // console.log("🍘 node", node);
+    moveTabToGroup(targetGroup: Group, nodes: Node[]) {
+        console.log("🍳targetGroup", targetGroup);
+        console.log("🍳node", nodes);
 
-        const prevChildren = target.getChildren();
-        //const combinedChildren = [...prevChildren, ...node];
+        //기존 부모 그룹에서는 지워줘야함
+        nodes.forEach((node) => {
+            console.log("🍕🍕🍕", node);
+            const parent = node.getParentNode(); //정상적인 Tab이 아님, 이게 없다...ㅠ
+            console.log("🌟 parent", parent);
+            const parentChildren = parent?.getChildren();
+            console.log("🌟 parentChildren", parentChildren);
+            const filteredParentChildren = parentChildren?.filter(
+                (parentChildrenNode) => parentChildrenNode.id !== node.id
+            );
 
-        node.forEach((element) => {
-            target.add(element);
+            console.log("333", filteredParentChildren);
+
+            parent?.setChildren(filteredParentChildren);
         });
 
+        nodes.forEach((node) => {
+            targetGroup.add(node);
+        });
+        console.log("nodes", nodes);
+        console.log("this.tree", this.tree);
+
+        //새로운 그룹에서는 추가해줘야힘
+
+        //add로 넣어야, 기존꺼랑, 지금꺼랑 유지 된다.
         this.triggerEventRerender();
+    }
+
+    getAllParent() {
+        const parent = this.tree.getAllGroups();
+        //드래그앤 드랍이 가능한 부모를 위해서 tree 추가
+        parent.push(this.tree);
+        return parent;
     }
 }

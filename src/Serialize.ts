@@ -30,6 +30,7 @@ export class Serialize {
                     type: node.type, // Node type (Tree, Group, Tab)
                     payload: {
                         id: node.id,
+                        parentNodeId: node?.parentNode?.id,
                     },
                 } as any;
 
@@ -104,6 +105,7 @@ export class Serialize {
             type: node.type, // Node type (Tree, Group, Tab)
             payload: {
                 id: node.id,
+                parentNodeId: node?.parentNode?.id,
             },
         };
 
@@ -123,10 +125,6 @@ export class Serialize {
         }
 
         return json;
-    }
-
-    static arrayToJson(nodes: any[]) {
-        return nodes.map((node) => Serialize.serializeNode(node));
     }
 
     static createNode = (nodeJson: any): Group | Tab | Tree => {

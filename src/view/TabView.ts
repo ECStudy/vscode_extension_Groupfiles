@@ -32,6 +32,7 @@ export class TabView extends CommandManager {
 
         this.initializeGlobalState();
         this.registerCommandHandler();
+        this.registerSubscriptionsCommandHandler();
     }
 
     private async initializeGlobalState() {
@@ -40,6 +41,29 @@ export class TabView extends CommandManager {
         if (!existingGroups) {
             await this.context.globalState.update("tabGroups", "[]");
         }
+    }
+
+    private clearGlobalState = () => {
+        console.log("Global State가 초기화되었습니다.");
+        this.context.globalState.keys().forEach((key) => {
+            this.context.globalState.update(key, undefined); // 키 값을 undefined로 설정하여 제거
+        });
+    };
+
+    private registerSubscriptionsCommandHandler() {
+        //TODO : provider로 빼기
+        this.context.subscriptions.push(
+            vscode.commands.registerCommand("global.state.reset", () => {
+                this.clearGlobalState();
+            })
+        );
+
+        // option1 명령 핸들러
+        this.context.subscriptions.push(
+            vscode.commands.registerCommand("option1", () => {
+                console.log("옵션1");
+            })
+        );
     }
 
     //command 추가
@@ -333,16 +357,16 @@ export class TabView extends CommandManager {
     }
 
     async handleDrag(
-        node: (Group | Tab)[],
+        nodes: (Group | Tab)[],
         dataTransfer: vscode.DataTransfer,
         token: vscode.CancellationToken
     ): Promise<void> {
-        console.log("Drag source", node);
+        console.log("Drag source", nodes);
         console.log("Drag dataTransfer", dataTransfer);
         console.log("Drag token", token);
 
-        if (node) {
-            const nodeJson = Serialize.arrayToJson(node);
+        if (nodes) {
+            const nodeJson = nodes.map((node) => Serialize.serializeNode(node));
             console.log("🎈 nodeJson", nodeJson);
             dataTransfer.set(
                 "application/vnd.code.tree.tab",
@@ -356,23 +380,49 @@ export class TabView extends CommandManager {
         dataTransfer: vscode.DataTransfer,
         token: vscode.CancellationToken
     ): Promise<void> {
+        //console.log("모든 그룹 상태", this.treeDataProvider.getGroups());
+
         console.log("drop target", target);
         console.log("drop dataTransfer", dataTransfer);
         console.log("drop token", token);
+
+        //빈곳에 놓은 경우
+        if (!target) {
+            return;
+        }
 
         const dataTransferItem = dataTransfer.get(
             "application/vnd.code.tree.tab"
         );
 
-        console.log("🎀 dataTransferItem", dataTransferItem);
+        //console.log("🎀 dataTransferItem", dataTransferItem);
 
-        console.log("🍤 dataTransferItem", dataTransferItem?.value);
-        const dropNodeTabs = dataTransferItem?.value.map((node: any) =>
-            Serialize.createNode(node)
-        );
+        //console.log("🍤 dataTransferItem", dataTransferItem?.value);
 
-        console.log("🍠🍠🍠 드롭 노드, 역직렬화함", dropNodeTabs);
+        //provider로 옮김
 
+        //여기에 tree가 없기 때문에 부모를 찾을 수 없다.
+        const allGroups = this.treeDataProvider.getAllParent();
+        const dropNodeArr = dataTransferItem?.value
+            .map((node: any) => {
+                const tempNode = Serialize.createNode(node);
+
+                console.log("🍖 tempNode", tempNode);
+
+                const parentNode = this.treeDataProvider.getGroupById(
+                    allGroups,
+                    node.payload.parentNodeId
+                );
+
+                if (parentNode) {
+                    tempNode.setParentNode(parentNode);
+                }
+
+                return tempNode;
+            })
+            .filter((node: any) => node);
+
+        //탭으로 놓아도 그룹으로 들어가야한다.
         let targetGroup;
         //드랍한 타겟이 Group
         if (target?.type === TreeItemType.Group) {
@@ -382,12 +432,16 @@ export class TabView extends CommandManager {
         else if (target?.type === TreeItemType.Tab) {
             targetGroup = target.getParentNode() as Group;
         } else {
+            //
         }
 
-        console.log("🍮 타겟 내려놓은 노드", targetGroup);
-
         if (targetGroup instanceof Group) {
-            this.treeDataProvider.moveTabToGroup(targetGroup, dropNodeTabs);
+            this.treeDataProvider.moveTabToGroup(targetGroup, dropNodeArr);
         }
     }
 }
+
+//TODO
+//이동하는 로직 provider에 넣기
+//부모가 tree인 그룹은 이동이 불가능함
+//동일한 path는 추가가 안되어야함
