@@ -34,6 +34,7 @@ export class Tab extends Node implements TabItem {
             title: "Open Tab",
             arguments: [this.uri],
         };
+        treeItem.description = "description 테스트";
         return treeItem;
     }
 

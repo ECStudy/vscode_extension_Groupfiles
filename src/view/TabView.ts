@@ -12,6 +12,7 @@ import { colorPalette } from "./color";
 import { STORAGE_KEYS } from "../StorageManager";
 import { Serialize } from "../Serialize";
 import { TreeItemType } from "../type/types";
+import { Tree } from "../node/Tree";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
@@ -113,7 +114,7 @@ export class TabView extends CommandManager {
 
         //그룹 제거
         vscode.commands.registerCommand("delete.group", (node: Node) => {
-            this.handleRemoveNode(node);
+            this.handleDeleteAllGroup(node);
         });
 
         //그룹에 있는 탭 제거
@@ -225,27 +226,26 @@ export class TabView extends CommandManager {
         }
     }
 
-    async handleDeleteAllGroup(group: Group) {
+    async handleDeleteAllGroup(node: Node = this.treeDataProvider.getTree()) {
         const confirm = await vscode.window.showInformationMessage(
             `전체 그룹을 삭제하시겠습니까?`,
             Confirm.DELETE,
             Confirm.Cancel
         );
 
-        const tempOriginTreeData = this.treeDataProvider.getGlobalState<string>(
-            STORAGE_KEYS.TREE_DATA
-        );
-
         if (confirm === Confirm.DELETE) {
-            this.treeDataProvider.resetAll();
+            const beforeChildren = [...node.getChildren()];
+            node.reset();
+            this.treeDataProvider.triggerEventRerender();
             const confirm = await vscode.window.showInformationMessage(
                 `전체 그룹을 삭제했습니다. 복구하시겠습니까?`,
                 Confirm.Cancel,
                 Confirm.KEEP
             );
 
-            if (confirm === Confirm.Cancel && tempOriginTreeData) {
-                await this.treeDataProvider.restoreData(tempOriginTreeData);
+            if (confirm === Confirm.Cancel) {
+                node.setChildren(beforeChildren);
+                this.treeDataProvider.triggerEventRerender();
             }
         }
     }
@@ -365,14 +365,29 @@ export class TabView extends CommandManager {
         console.log("Drag dataTransfer", dataTransfer);
         console.log("Drag token", token);
 
-        if (nodes) {
-            const nodeJson = nodes.map((node) => Serialize.serializeNode(node));
-            console.log("🎈 nodeJson", nodeJson);
-            dataTransfer.set(
-                "application/vnd.code.tree.tab",
-                new vscode.DataTransferItem(nodeJson)
-            );
+        if (!nodes?.length) {
+            return;
         }
+
+        const filteredPaths: string[] = [];
+        const paths = nodes.map((node) => node.getTreePath()).sort();
+
+        paths.forEach((path) => {
+            if (
+                filteredPaths.some((filteredPath) =>
+                    new RegExp(`^${filteredPath}.*`).test(path)
+                )
+            ) {
+                return;
+            }
+            filteredPaths.push(path);
+        });
+        console.log("🎈 paths", paths);
+        console.log("🎈 filteredPaths", filteredPaths);
+        dataTransfer.set(
+            "application/vnd.code.tree.tab",
+            new vscode.DataTransferItem(filteredPaths)
+        );
     }
 
     async handleDrop(
@@ -386,58 +401,11 @@ export class TabView extends CommandManager {
         console.log("drop dataTransfer", dataTransfer);
         console.log("drop token", token);
 
-        //빈곳에 놓은 경우
-        if (!target) {
-            return;
-        }
-
         const dataTransferItem = dataTransfer.get(
             "application/vnd.code.tree.tab"
         );
 
-        //console.log("🎀 dataTransferItem", dataTransferItem);
-
-        //console.log("🍤 dataTransferItem", dataTransferItem?.value);
-
-        //provider로 옮김
-
-        //여기에 tree가 없기 때문에 부모를 찾을 수 없다.
-        const allGroups = this.treeDataProvider.getAllParent();
-        const dropNodeArr = dataTransferItem?.value
-            .map((node: any) => {
-                const tempNode = Serialize.createNode(node);
-
-                console.log("🍖 tempNode", tempNode);
-
-                const parentNode = this.treeDataProvider.getGroupById(
-                    allGroups,
-                    node.payload.parentNodeId
-                );
-
-                if (parentNode) {
-                    tempNode.setParentNode(parentNode);
-                }
-
-                return tempNode;
-            })
-            .filter((node: any) => node);
-
-        //탭으로 놓아도 그룹으로 들어가야한다.
-        let targetGroup;
-        //드랍한 타겟이 Group
-        if (target?.type === TreeItemType.Group) {
-            targetGroup = target;
-        }
-        //드랍한 타겟이 Tab
-        else if (target?.type === TreeItemType.Tab) {
-            targetGroup = target.getParentNode() as Group;
-        } else {
-            //
-        }
-
-        if (targetGroup instanceof Group) {
-            this.treeDataProvider.moveTabToGroup(targetGroup, dropNodeArr);
-        }
+        this.treeDataProvider.moveNode(target, dataTransferItem?.value);
     }
 }
 

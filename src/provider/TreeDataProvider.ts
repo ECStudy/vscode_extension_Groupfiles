@@ -133,6 +133,13 @@ export class TreeDataProvider
         return this.tree.getAllGroups();
     }
 
+    getAllParent() {
+        const parent = this.tree.getAllGroups();
+        //드래그앤 드랍이 가능한 부모를 위해서 tree 추가
+        parent.push(this.tree);
+        return parent;
+    }
+
     getGroupById(parentList: Node[], id: string): Node | undefined {
         // parentList 배열을 순회하며 탐색
         for (const parent of parentList) {
@@ -204,8 +211,10 @@ export class TreeDataProvider
     }
 
     resetAll() {
+        const children = [...this.tree.getChildren()];
         this.tree.reset();
         this.triggerEventRerender();
+        return children;
     }
 
     remove(node: Node) {
@@ -239,42 +248,77 @@ export class TreeDataProvider
         this.triggerEventRerender();
     }
 
-    moveTabToGroup(targetGroup: Group, nodes: Node[]) {
-        console.log("🍳targetGroup", targetGroup);
-        console.log("🍳node", nodes);
+    moveNode(target: any, dropNodeArr: any[]) {
+        if (!dropNodeArr) {
+            return;
+        }
 
-        //기존 부모 그룹에서는 지워줘야함
+        let targetGroup: Tree | Group;
+        if (!target) {
+            targetGroup = this.tree;
+        } else {
+            if (target?.type === TreeItemType.Group) {
+                targetGroup = target;
+            }
+            //드랍한 타겟이 Tab
+            else if (target?.type === TreeItemType.Tab) {
+                targetGroup = target.getParentNode() as Group;
+            } else {
+                //
+            }
+        }
+
+        const allGroups = this.getAllParent();
+        const nodes = dropNodeArr
+            .map((node: any) => {
+                const tempNode = this.tree.findPath(
+                    node.split("/").filter(Boolean)
+                );
+                // const parentNode = this.getGroupById(
+                //     allGroups,
+                //     node.payload.parentNodeId
+                // );
+
+                // if (parentNode) {
+                //     tempNode.setParentNode(parentNode);
+                // }
+
+                return tempNode;
+            })
+            .filter((node: any) => node);
+
+        //기존 부모 children 목록에서 대상 node 지워줘야함
+        // nodes.forEach((node) => {
+        //     const parent = node.getParentNode();
+        //     const parentChildren = parent?.getChildren();
+        //     const filteredParentChildren = parentChildren?.filter(
+        //         (parentChildrenNode) => parentChildrenNode.id !== node.id
+        //     );
+
+        //     parent?.setChildren(filteredParentChildren);
+        // });
+
         nodes.forEach((node) => {
-            console.log("🍕🍕🍕", node);
-            const parent = node.getParentNode(); //정상적인 Tab이 아님, 이게 없다...ㅠ
-            console.log("🌟 parent", parent);
-            const parentChildren = parent?.getChildren();
-            console.log("🌟 parentChildren", parentChildren);
-            const filteredParentChildren = parentChildren?.filter(
-                (parentChildrenNode) => parentChildrenNode.id !== node.id
-            );
+            //자기 자신이 자기 자신 그룹인 경우 넣을 수 없다.
+            if (node.id === targetGroup.id) {
+                return;
+            }
 
-            console.log("333", filteredParentChildren);
+            //node가 tab인데 tree에 넣을 수는 없다.
+            if (
+                node.type === TreeItemType.Tab &&
+                targetGroup.type === TreeItemType.Tree
+            ) {
+                return;
+            }
 
-            parent?.setChildren(filteredParentChildren);
-        });
-
-        nodes.forEach((node) => {
             targetGroup.add(node);
         });
-        console.log("nodes", nodes);
-        console.log("this.tree", this.tree);
 
-        //새로운 그룹에서는 추가해줘야힘
-
-        //add로 넣어야, 기존꺼랑, 지금꺼랑 유지 된다.
         this.triggerEventRerender();
     }
 
-    getAllParent() {
-        const parent = this.tree.getAllGroups();
-        //드래그앤 드랍이 가능한 부모를 위해서 tree 추가
-        parent.push(this.tree);
-        return parent;
+    getTree() {
+        return this.tree;
     }
 }

@@ -22,6 +22,10 @@ export class Node extends EventHandler {
     }
 
     add(item: Node) {
+        if (this.isMyParent(item)) {
+            return;
+        }
+
         console.log("🍧🍧 item", item);
         console.log("🍧🍧 this", this);
         console.log("🍧🍧 this.children", this.children);
@@ -38,7 +42,19 @@ export class Node extends EventHandler {
         item.setParentNode(this);
     }
 
-    setParentNode(parentNode: Node) {
+    isMyParent(node: Node): boolean {
+        const nodePath = node.getTreePath();
+        const selfPath = this.getTreePath();
+        if (selfPath.length < nodePath.length) {
+            return false;
+        }
+        if (nodePath === "") {
+            return false;
+        }
+        return new RegExp(`^${nodePath}.*`).test(selfPath);
+    }
+
+    setParentNode(parentNode?: Node) {
         this.parentNode = parentNode;
     }
 
@@ -54,10 +70,16 @@ export class Node extends EventHandler {
         if (!this.parentNode) {
             return "";
         }
-        return this.parentNode.getPath() + "/" + this.parentNode.getLabel();
+        return this.parentNode.getPath() + this.parentNode.getLabel() + "/";
     }
 
-    remove(item: Node) {}
+    remove(item: Node) {
+        if (!this.getChildren().some(({ id }) => id === item.id)) {
+            return;
+        }
+        this.setChildren(this.getChildren().filter(({ id }) => id !== item.id));
+        item.setParentNode();
+    }
 
     reset() {
         this.children = [];
@@ -80,5 +102,19 @@ export class Node extends EventHandler {
         return items;
     }
 
-    
+    findPath(treePath: string[] = []) {
+        const [id, ...other] = treePath;
+        if (!id) {
+            return this;
+        }
+        const child = this.getChildren().find((item) => item.id === id);
+        return child.findPath(other);
+    }
+
+    getTreePath(): string {
+        if (!this.parentNode) {
+            return "";
+        }
+        return this.parentNode.getTreePath() + "/" + this.id;
+    }
 }
