@@ -22,4 +22,5 @@ export enum Confirm {
 export enum UpdateAction {
     LABEL = "label",
     COLOR = "color",
+    DESCRIPTION = "description",
 }

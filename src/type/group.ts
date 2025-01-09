@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { Node } from "../node/Node";
 import { Group } from "../node/Group";
 import { UpdateAction } from "./enums";
+import { Tab } from "../node/Tab";
 
 export interface ICreateGroup {
     label?: string;
@@ -14,4 +15,11 @@ export interface IUpdateGroup {
     group: Group;
     label?: string;
     color?: string;
+}
+
+export interface IUpdateTab {
+    action: UpdateAction;
+    label?: string;
+    tab: Tab;
+    description?: string;
 }

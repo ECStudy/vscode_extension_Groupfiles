@@ -140,6 +140,14 @@ export class TabView extends CommandManager {
             //전체 그룹 접기
             this.handleFoldGroup();
         });
+
+        vscode.commands.registerCommand("update.tab.label", (tab) => {
+            this.handleUpdateTab(tab, UpdateAction.LABEL);
+        });
+
+        vscode.commands.registerCommand("update.tab.description", (tab) => {
+            this.handleUpdateTab(tab, UpdateAction.DESCRIPTION);
+        });
     }
 
     async inputGroupPromptInputBox(mode = "new") {
@@ -314,6 +322,53 @@ export class TabView extends CommandManager {
                     color: selectedColor?.value,
                 };
                 this.treeDataProvider.updateGroup(groupInfo2);
+                break;
+            default:
+                break;
+        }
+    }
+    async handleUpdateTab(tab: Tab, action: UpdateAction) {
+        switch (action) {
+            case UpdateAction.LABEL:
+                const label = await vscode.window.showInputBox({
+                    prompt: "Enter a name for the new group",
+                    placeHolder: "수정할 라벨 이름 입력",
+                    value: tab.label,
+                });
+
+                if (!label) {
+                    vscode.window.showErrorMessage("라벨 이름을 입력해주세요.");
+                    return;
+                }
+
+                const payload = {
+                    label,
+                    tab,
+                    action: UpdateAction.LABEL,
+                };
+
+                this.treeDataProvider.updateTab(payload);
+                break;
+            case UpdateAction.DESCRIPTION:
+                const description = await vscode.window.showInputBox({
+                    prompt: "Enter a name for the new group",
+                    placeHolder: "디스크립션 입력",
+                    value: tab?.description,
+                });
+
+                if (!description) {
+                    vscode.window.showErrorMessage("디스크립션 입력해주세요.");
+                    return;
+                }
+
+                //payload 개선
+                const payload2 = {
+                    description,
+                    tab,
+                    action: UpdateAction.DESCRIPTION,
+                };
+
+                this.treeDataProvider.updateTab(payload2);
                 break;
             default:
                 break;

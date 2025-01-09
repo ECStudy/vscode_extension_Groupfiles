@@ -101,6 +101,16 @@
                     "command": "update.group.color",
                     "when": "viewItem == group",
                     "group": "navigation"
+                },
+                {
+                    "command": "update.tab.label",
+                    "when": "viewItem == tab",
+                    "group": "navigation"
+                },
+                {
+                    "command": "update.tab.description",
+                    "when": "viewItem == tab",
+                    "group": "navigation"
                 }
             ],
             "editor/title/context": [
@@ -178,6 +188,16 @@
             {
                 "command": "option1",
                 "title": "옵션1"
+            },
+            {
+                "command": "update.tab.label",
+                "title": "라벨 이름 변경",
+                "category": "tab"
+            },
+            {
+                "command": "update.tab.description",
+                "title": "주석 추가",
+                "category": "tab"
             }
         ],
         "configuration": {

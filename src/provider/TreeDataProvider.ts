@@ -4,7 +4,7 @@ import { Tree } from "../node/Tree";
 
 import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
-import { ICreateGroup, IUpdateGroup } from "../type/group";
+import { ICreateGroup, IUpdateGroup, IUpdateTab } from "../type/group";
 import { EventHandler } from "../EventHandler";
 import { Node } from "../node/Node";
 import { UpdateAction } from "../type/enums";
@@ -229,6 +229,21 @@ export class TreeDataProvider
                 break;
             case UpdateAction.COLOR:
                 payload?.color && payload.group.setColor(payload?.color);
+                break;
+            default:
+                break;
+        }
+        this.triggerEventRerender();
+    }
+
+    updateTab(payload: IUpdateTab) {
+        switch (payload.action) {
+            case UpdateAction.LABEL:
+                payload?.label && payload.tab.setLabel(payload?.label);
+                break;
+            case UpdateAction.DESCRIPTION:
+                payload?.description &&
+                    payload.tab.setDescription(payload?.description);
                 break;
             default:
                 break;

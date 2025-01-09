@@ -41,6 +41,8 @@ export class Serialize {
             } else if (node.type === TreeItemType.Tab) {
                 json.payload.path = (node as Tab).path;
                 json.payload.uri = (node as Tab).uri;
+                json.payload.label = (node as Tab).label;
+                json.payload.description = (node as Tab).description;
             }
 
             if (node.getChildren().length > 0) {
@@ -77,9 +79,16 @@ export class Serialize {
                     //nodeJson.payload.uri.path : 파일명까지 나옴
                     const filePath = nodeJson.payload.uri.path;
                     const uri = vscode.Uri.parse(filePath);
-                    node = new Tab(nodeJson.payload.id, {
-                        input: { uri },
-                    });
+                    node = new Tab(
+                        nodeJson.payload.id,
+                        {
+                            input: { uri },
+                        },
+                        {
+                            label: nodeJson?.payload?.label,
+                            description: nodeJson?.payload?.description,
+                        }
+                    );
                     break;
                 default:
                     throw new Error(`Unknown node type: ${nodeJson.type}`);

@@ -13,12 +13,16 @@ export class Tab extends Node implements TabItem {
     id: string;
     path: string;
     uri: vscode.Uri;
+    label?: string;
+    description?: string;
 
-    constructor(id: string, nativeTab: any) {
+    constructor(id: string, nativeTab: any, arg?: any) {
         super(id);
         this.id = id;
         this.path = (nativeTab.input as NativeTabInput)?.uri?.path;
         this.uri = (nativeTab.input as NativeTabInput)?.uri;
+        this.label = arg?.label || "";
+        this.description = arg?.description || "";
     }
 
     render(): vscode.TreeItem {
@@ -34,7 +38,13 @@ export class Tab extends Node implements TabItem {
             title: "Open Tab",
             arguments: [this.uri],
         };
-        treeItem.description = "description 테스트";
+        if (this.label && this.label.trim() !== "") {
+            treeItem.label = this.label;
+        }
+        if (this.description && this.description.trim() !== "") {
+            treeItem.description = this.description;
+        }
+
         return treeItem;
     }
 
@@ -54,5 +64,13 @@ export class Tab extends Node implements TabItem {
 
             parentNode?.setChildren(removedChildren);
         }
+    }
+
+    setLabel(label?: string) {
+        this.label = label;
+    }
+
+    setDescription(description?: string) {
+        this.description = description;
     }
 }
