@@ -65,6 +65,13 @@ export class TabView extends CommandManager {
                 console.log("옵션1");
             })
         );
+
+        // 주석 보이기 / 숨기기
+        this.context.subscriptions.push(
+            vscode.commands.registerCommand("viewDescription", () => {
+                this.handleViewDescription();
+            })
+        );
     }
 
     //command 추가
@@ -409,6 +416,13 @@ export class TabView extends CommandManager {
 
         const allGroup = this.treeDataProvider.getGroups() as Group[];
         this.treeDataProvider.setCollapsed(allGroup, !viewCollapse);
+    }
+
+    async handleViewDescription() {
+        const viewDescription = this.treeDataProvider.getGlobalState<boolean>(
+            STORAGE_KEYS.VIEW_DESCRIPTION
+        );
+        this.treeDataProvider.setViewDescription(!viewDescription);
     }
 
     async handleDrag(

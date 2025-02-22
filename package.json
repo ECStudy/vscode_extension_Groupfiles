@@ -59,6 +59,11 @@
                     "command": "option1",
                     "when": "view == tabview",
                     "group": "inline"
+                },
+                {
+                    "command": "viewDescription",
+                    "when": "view == tabview",
+                    "group": "inline"
                 }
             ],
             "explorer/context": [
@@ -188,6 +193,10 @@
             {
                 "command": "option1",
                 "title": "옵션1"
+            },
+            {
+                "command": "viewDescription",
+                "title": "주석 보이기 / 숨기기"
             },
             {
                 "command": "update.tab.label",

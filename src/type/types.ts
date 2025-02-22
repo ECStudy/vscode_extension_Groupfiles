@@ -26,3 +26,7 @@ export type TabItem = {
 
 export type NativeTabInput = TabInputText;
 type Item = TabItem | GroupItem;
+
+export interface RenderPayload {
+    viewDescription?: boolean;
+}

@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 export enum STORAGE_KEYS {
     TREE_DATA = "treeData",
     VIEW_COLLAPSE = "viewCollapse",
+    VIEW_DESCRIPTION = "viewDescription",
 }
 
 export class StoreageManager {

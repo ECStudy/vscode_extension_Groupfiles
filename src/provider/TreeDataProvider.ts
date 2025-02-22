@@ -36,11 +36,13 @@ export class TreeDataProvider
     private context: vscode.ExtensionContext;
 
     private viewCollapse: boolean;
+    private viewDescription: boolean;
 
     constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.tree = new Tree("root");
         this.viewCollapse = false;
+        this.viewDescription = true;
         //
         //this.tree.addEvent("create", () => this.triggerEventRerender());
         //this.tree.addEvent("delete", () => this.triggerEventRerender());
@@ -62,6 +64,10 @@ export class TreeDataProvider
 
         this.storageManager.set(STORAGE_KEYS.TREE_DATA, serializedTree);
         this.storageManager.set(STORAGE_KEYS.VIEW_COLLAPSE, this.viewCollapse);
+        this.storageManager.set(
+            STORAGE_KEYS.VIEW_DESCRIPTION,
+            this.viewDescription
+        );
     }
 
     private loadData() {
@@ -105,7 +111,10 @@ export class TreeDataProvider
     }
 
     getTreeItem(element: Group | Tab): vscode.TreeItem {
-        const treeItem = element.render(this.context);
+        const itemPayload = {
+            viewDescription: this.viewDescription,
+        };
+        const treeItem = element.render(this.context, itemPayload);
         if (element.type === TreeItemType.Group) {
             //접기 펼치기 캐싱 때문에 렌더 할 때 아이디 변경
             treeItem.id = `${element.id}_${
@@ -339,5 +348,10 @@ export class TreeDataProvider
 
     getTree() {
         return this.tree;
+    }
+
+    setViewDescription(isViewDescription: boolean) {
+        this.viewDescription = isViewDescription;
+        this.triggerEventRerender();
     }
 }

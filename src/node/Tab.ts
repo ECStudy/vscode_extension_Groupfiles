@@ -3,7 +3,12 @@ import * as path from "path";
 
 import { v4 as uuidv4 } from "uuid";
 
-import { NativeTabInput, TabItem, TreeItemType } from "../type/types";
+import {
+    NativeTabInput,
+    RenderPayload,
+    TabItem,
+    TreeItemType,
+} from "../type/types";
 
 import { getFileName } from "../util";
 import { Node } from "./Node";
@@ -25,7 +30,10 @@ export class Tab extends Node implements TabItem {
         this.description = arg?.description || "";
     }
 
-    render(): vscode.TreeItem {
+    render(
+        context: vscode.ExtensionContext,
+        payload?: RenderPayload
+    ): vscode.TreeItem {
         const treeItem = new vscode.TreeItem(
             this.uri,
             vscode.TreeItemCollapsibleState.None
@@ -41,7 +49,11 @@ export class Tab extends Node implements TabItem {
         if (this.label && this.label.trim() !== "") {
             treeItem.label = this.label;
         }
-        if (this.description && this.description.trim() !== "") {
+        if (
+            payload?.viewDescription &&
+            this.description &&
+            this.description.trim() !== ""
+        ) {
             treeItem.description = this.description;
         }
 

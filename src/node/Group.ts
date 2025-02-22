@@ -3,7 +3,7 @@ import * as path from "path";
 
 import { v4 as uuidv4 } from "uuid";
 
-import { TabItem, TreeItemType } from "../type/types";
+import { RenderPayload, TabItem, TreeItemType } from "../type/types";
 import { Node } from "./Node";
 
 const groupIconPaths: { [key: string]: string } = {
@@ -39,7 +39,10 @@ export class Group extends Node {
         this.path = "";
     }
 
-    render(context: vscode.ExtensionContext): vscode.TreeItem {
+    render(
+        context: vscode.ExtensionContext,
+        payload?: RenderPayload
+    ): vscode.TreeItem {
         const groupItem = new vscode.TreeItem(
             this.label,
             this.collapsed
