@@ -38,6 +38,7 @@ export class Serialize {
                 json.payload.label = (node as Group).label;
                 json.payload.color = (node as Group).color;
                 json.payload.collapsed = (node as Group).collapsed;
+                json.payload.description = (node as Group).description;
             } else if (node.type === TreeItemType.Tab) {
                 json.payload.path = (node as Tab).path;
                 json.payload.uri = (node as Tab).uri;
@@ -72,6 +73,8 @@ export class Serialize {
                     );
                     node.setColor(nodeJson.payload.color);
                     node.collapsed = nodeJson.payload.collapsed;
+                    node.description = nodeJson.payload.description;
+
                     break;
                 case TreeItemType.Tab:
                     //nodeJson.payload.uri.external : 파일명까지 나옴
