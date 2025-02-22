@@ -4,7 +4,12 @@ import { Tree } from "../node/Tree";
 
 import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
-import { ICreateGroup, IUpdateGroup, IUpdateTab } from "../type/group";
+import {
+    CREATE_TYPE,
+    ICreateGroup,
+    IUpdateGroup,
+    IUpdateTab,
+} from "../type/group";
 import { EventHandler } from "../EventHandler";
 import { Node } from "../node/Node";
 import { UpdateAction } from "../type/enums";
@@ -59,8 +64,6 @@ export class TreeDataProvider
     public saveData() {
         const tree = this.tree.getTree();
         const serializedTree = Serialize.toJson(tree);
-
-        console.log("🎀 json 만들기 json 데이터임-->", serializedTree);
 
         this.storageManager.set(STORAGE_KEYS.TREE_DATA, serializedTree);
         this.storageManager.set(STORAGE_KEYS.VIEW_COLLAPSE, this.viewCollapse);
@@ -171,47 +174,58 @@ export class TreeDataProvider
     /**
      * 그룹 생성
      */
-    createGroup(payload: ICreateGroup) {
-        //그룹이 이미 있는 경우
-        if (payload?.group) {
-            if (payload?.uri) {
-                const uri = payload.uri;
-                const nativeTab: vscode.Tab = {
-                    input: { uri },
-                    label: uri.path.split("/").pop() || "Unknown",
-                } as vscode.Tab;
-
-                const tab = new Tab(`tab_${uuidv4()}`, nativeTab);
-                payload.group.add(tab);
-                //TODO : group 인터페이스 수정
-                (payload.group as any)?.setUpdateCollapsed(false);
-            }
-        }
+    createGroup = async (payload: ICreateGroup) => {
         //그룹 신규 생성
-        else {
+        if (payload.type === CREATE_TYPE.NEW) {
             //그룹 생성
             if (payload?.label) {
                 const group = new Group(`group_${uuidv4()}`, payload?.label);
                 this.tree.add(group);
 
                 //탭 있는 경우 탭 생성
-                if (payload?.uri) {
-                    const uri = payload.uri;
-                    const nativeTab: vscode.Tab = {
-                        input: { uri },
-                        label: uri.path.split("/").pop() || "Unknown",
-                    } as vscode.Tab;
+                if (payload?.uris) {
+                    payload?.uris.forEach(async (uri) => {
+                        const stat = await vscode.workspace.fs.stat(uri);
+                        //다중 선택해도 파일만 Tab 생성
+                        if (stat.type === vscode.FileType.File) {
+                            const nativeTab: vscode.Tab = {
+                                input: { uri },
+                                label: uri.path.split("/").pop() || "Unknown",
+                            } as vscode.Tab;
 
-                    const tab = new Tab(`tab_${uuidv4()}`, nativeTab);
-                    group.add(tab);
-                    //TODO : group 인터페이스 수정
-                    (group as any)?.setUpdateCollapsed(false);
+                            const tab = new Tab(`tab_${uuidv4()}`, nativeTab);
+                            group.add(tab);
+                            //TODO : group 인터페이스 수정
+                            (group as any)?.setUpdateCollapsed(false);
+                        }
+                    });
                 }
             }
         }
 
+        //그룹이 이미 있는 경우
+        else if (payload.type === CREATE_TYPE.PREV) {
+            if (payload?.group && payload?.uris) {
+                payload?.uris.forEach(async (uri) => {
+                    const stat = await vscode.workspace.fs.stat(uri);
+                    //다중 선택해도 파일만 Tab 생성
+                    if (stat.type === vscode.FileType.File) {
+                        const nativeTab: vscode.Tab = {
+                            input: { uri },
+                            label: uri.path.split("/").pop() || "Unknown",
+                        } as vscode.Tab;
+
+                        const tab = new Tab(`tab_${uuidv4()}`, nativeTab);
+                        payload?.group?.add(tab);
+                        //TODO : group 인터페이스 수정
+                        (payload.group as any)?.setUpdateCollapsed(false);
+                    }
+                });
+            }
+        }
+
         this.triggerEventRerender();
-    }
+    };
 
     createGroupAndGroup(payload: ICreateGroup) {
         //그룹에서 그룹 생성

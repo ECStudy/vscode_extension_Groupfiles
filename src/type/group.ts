@@ -4,10 +4,16 @@ import { Group } from "../node/Group";
 import { UpdateAction } from "./enums";
 import { Tab } from "../node/Tab";
 
+export enum CREATE_TYPE {
+    NEW = "new",
+    PREV = "prev",
+}
+
 export interface ICreateGroup {
     label?: string;
-    uri?: vscode.Uri;
+    uris?: vscode.Uri[];
     group?: Node;
+    type: CREATE_TYPE;
 }
 
 export interface IUpdateGroup {

@@ -13,6 +13,7 @@ import { STORAGE_KEYS } from "../StorageManager";
 import { Serialize } from "../Serialize";
 import { TreeItemType } from "../type/types";
 import { Tree } from "../node/Tree";
+import { CREATE_TYPE } from "../type/group";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
@@ -84,16 +85,20 @@ export class TabView extends CommandManager {
         //새 그룹에 추가
         vscode.commands.registerCommand(
             "create.tab.new-group",
-            (uri: vscode.Uri) => {
-                this.handleCreateGroupAndCreateTab(uri);
+            (uri: vscode.Uri, selectedUris: vscode.Uri[]) => {
+                const uris = selectedUris?.length ? selectedUris : [uri];
+
+                this.handleCreateGroupAndCreateTab(uris);
             }
         );
 
         //기존 그룹에 추가
         vscode.commands.registerCommand(
             "create.tab.prev-group",
-            (uri: vscode.Uri) => {
-                this.handlePrebGroupAndCreateTab(uri);
+            async (uri: vscode.Uri, selectedUris: vscode.Uri[]) => {
+                const uris = selectedUris?.length ? selectedUris : [uri];
+
+                await this.handlePrebGroupAndCreateTab(uris);
             }
         );
 
@@ -186,36 +191,35 @@ export class TabView extends CommandManager {
 
         if (inputResult.result) {
             const groupInfo = {
+                type: CREATE_TYPE.NEW,
                 label: inputResult.label,
             };
 
             this.treeDataProvider.createGroup(groupInfo);
             vscode.window.showInformationMessage(
-                `그룹 "${inputResult}"이 생성되었습니다.`
+                `그룹 "${inputResult.label}"이 생성되었습니다.`
             );
         }
     }
 
-    async handleCreateGroupAndCreateTab(uri: vscode.Uri) {
+    //새로운 그룹 생성
+    async handleCreateGroupAndCreateTab(uris: vscode.Uri[]) {
         const selectedGroup = await this.inputGroupPromptInputBox("new");
         if (selectedGroup) {
             const groupInfo = {
+                type: CREATE_TYPE.NEW,
                 label: selectedGroup.label,
-                uri: uri,
+                uris: uris,
             };
-
             //빈 그룹 추가 + 탭 추가
             this.treeDataProvider.createGroup(groupInfo);
-
             vscode.window.showInformationMessage(
-                `파일 ${getFileName(uri.path)} 가 그룹 ${
-                    selectedGroup.label
-                }에 추가 되었습니다.`
+                `그룹 ${selectedGroup.label}에 파일 추가 완료`
             );
         }
     }
 
-    async handlePrebGroupAndCreateTab(uri: vscode.Uri) {
+    async handlePrebGroupAndCreateTab(uris: vscode.Uri[]) {
         const quickPickItems = this.treeDataProvider
             .getGroups()
             .map((group: Node) => {
@@ -236,15 +240,14 @@ export class TabView extends CommandManager {
 
         if (selectedGroup) {
             const groupInfo = {
-                uri: uri,
+                type: CREATE_TYPE.PREV,
+                uris: uris,
                 group: selectedGroup.group,
             };
-            this.treeDataProvider.createGroup(groupInfo);
 
+            this.treeDataProvider.createGroup(groupInfo);
             vscode.window.showInformationMessage(
-                `파일 ${getFileName(uri.path)} 가 그룹 ${
-                    selectedGroup.label
-                }에 추가 되었습니다.`
+                `그룹 ${selectedGroup.label}에 파일 추가 완료`
             );
         }
     }
@@ -261,7 +264,7 @@ export class TabView extends CommandManager {
             node.reset();
             this.treeDataProvider.triggerEventRerender();
             const confirm = await vscode.window.showInformationMessage(
-                `전체 그룹을 삭제했습니다. 복구하시겠습니까?`,
+                `전체 그룹을 삭제했습니다. 삭제를 취소하시겠습니까?`,
                 Confirm.Cancel,
                 Confirm.KEEP
             );
@@ -279,6 +282,7 @@ export class TabView extends CommandManager {
 
         if (inputResult.result) {
             const groupInfo = {
+                type: CREATE_TYPE.PREV,
                 label: inputResult.label,
                 group: group,
             };

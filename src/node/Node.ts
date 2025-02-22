@@ -26,11 +26,6 @@ export class Node extends EventHandler {
             return;
         }
 
-        console.log("🍧🍧 item", item);
-        console.log("🍧🍧 this", this);
-        console.log("🍧🍧 this.children", this.children);
-        console.log("🍧🍧 item.parentNode", item.parentNode);
-
         //이미 부모가 존재하는 경우 부모 제거
         if (item.parentNode) {
             item.parentNode.remove(item);
