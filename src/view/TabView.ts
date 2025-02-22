@@ -444,9 +444,11 @@ export class TabView extends CommandManager {
 
     //그룹에 속한 파일 열기
     async handleOpenGroupChildren(group: Group) {
-        const tabs = group.getChildren();
-        for (const tab of tabs) {
-            await vscode.commands.executeCommand("vscode.open", tab.uri);
+        const nodes = group.getChildren();
+        for (const node of nodes) {
+            if (node.type === TreeItemType.Tab) {
+                await vscode.commands.executeCommand("vscode.open", node.uri);
+            }
         }
     }
 
