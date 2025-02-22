@@ -174,6 +174,8 @@ export class TreeDataProvider
 
                 const tab = new Tab(`tab_${uuidv4()}`, nativeTab);
                 payload.group.add(tab);
+                //TODO : group 인터페이스 수정
+                (payload.group as any)?.setUpdateCollapsed(false);
             }
         }
         //그룹 신규 생성
@@ -193,6 +195,8 @@ export class TreeDataProvider
 
                     const tab = new Tab(`tab_${uuidv4()}`, nativeTab);
                     group.add(tab);
+                    //TODO : group 인터페이스 수정
+                    (group as any)?.setUpdateCollapsed(false);
                 }
             }
         }

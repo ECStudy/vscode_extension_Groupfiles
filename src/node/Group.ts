@@ -90,4 +90,14 @@ export class Group extends Node {
     setCollapsed(collapsed: boolean) {
         this.collapsed = collapsed;
     }
+
+    setUpdateCollapsed(collapsed: boolean) {
+        //현재 노드 collapsed 업데이트
+        this.setCollapsed(collapsed);
+        //부모 노드 collapsed 업데이트
+        const parentNode = this.getParentNode() as Group;
+        if (parentNode && parentNode.type === TreeItemType.Group) {
+            parentNode.setUpdateCollapsed(collapsed);
+        }
+    }
 }
