@@ -21,43 +21,43 @@ export class Tab extends Node implements TabItem {
     label?: string;
     description?: string;
 
-    constructor(id: string, nativeTab: any, arg?: any) {
+    constructor(id: string, nativeTab: any, payload?: any) {
         super(id);
         this.id = id;
         this.path = (nativeTab.input as NativeTabInput)?.uri?.path;
         this.uri = (nativeTab.input as NativeTabInput)?.uri;
-        this.label = arg?.label || "";
-        this.description = arg?.description || "";
+        this.label = payload?.label || "";
+        this.description = payload?.description || "";
     }
 
     render(
         context: vscode.ExtensionContext,
         payload?: RenderPayload
     ): vscode.TreeItem {
-        const treeItem = new vscode.TreeItem(
+        const item = new vscode.TreeItem(
             this.uri,
             vscode.TreeItemCollapsibleState.None
         );
-        treeItem.id = this.id;
-        treeItem.contextValue = "tab";
-        treeItem.iconPath = vscode.ThemeIcon.File;
-        treeItem.command = {
+        item.id = this.id;
+        item.contextValue = "tab";
+        item.iconPath = vscode.ThemeIcon.File;
+        item.command = {
             command: "vscode.open",
             title: "Open Tab",
             arguments: [this.uri],
         };
         if (this.label && this.label.trim() !== "") {
-            treeItem.label = this.label;
+            item.label = this.label;
         }
         if (
             payload?.viewDescription &&
             this.description &&
             this.description.trim() !== ""
         ) {
-            treeItem.description = this.description;
+            item.description = this.description;
         }
 
-        return treeItem;
+        return item;
     }
 
     getLabel(): string {

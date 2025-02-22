@@ -116,6 +116,11 @@
                     "command": "update.tab.description",
                     "when": "viewItem == tab",
                     "group": "navigation"
+                },
+                {
+                    "command": "update.group.description",
+                    "when": "viewItem == group",
+                    "group": "navigation"
                 }
             ],
             "editor/title/context": [
@@ -207,6 +212,11 @@
                 "command": "update.tab.description",
                 "title": "주석 추가",
                 "category": "tab"
+            },
+            {
+                "command": "update.group.description",
+                "title": "주석 추가",
+                "category": "group"
             }
         ],
         "configuration": {

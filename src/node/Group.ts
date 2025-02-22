@@ -29,38 +29,48 @@ export class Group extends Node {
     collapsed: boolean;
     // 경로
     path: string;
+    description?: string;
 
-    constructor(id: string, label: string) {
+    constructor(id: string, label: string, payload?: any) {
         super(id);
         this.id = id;
         this.label = label;
         this.color = "default";
         this.collapsed = false; // 기본적으로 열림 상태
         this.path = "";
+        this.description = payload?.description || "";
     }
 
     render(
         context: vscode.ExtensionContext,
         payload?: RenderPayload
     ): vscode.TreeItem {
-        const groupItem = new vscode.TreeItem(
+        const item = new vscode.TreeItem(
             this.label,
             this.collapsed
                 ? vscode.TreeItemCollapsibleState.Collapsed //닫힘 1
                 : vscode.TreeItemCollapsibleState.Expanded //열림 2
         );
 
-        groupItem.id = this.id;
-        groupItem.contextValue = "group";
+        item.id = this.id;
+        item.contextValue = "group";
 
         const iconPath =
             groupIconPaths[this.color] || groupIconPaths["default"];
-        groupItem.iconPath = {
+        item.iconPath = {
             light: path.join(context.extensionPath, iconPath),
             dark: path.join(context.extensionPath, iconPath),
         };
 
-        return groupItem;
+        if (
+            payload?.viewDescription &&
+            this.description &&
+            this.description.trim() !== ""
+        ) {
+            item.description = this.description;
+        }
+
+        return item;
     }
 
     getLabel(): string {
@@ -102,5 +112,9 @@ export class Group extends Node {
         if (parentNode && parentNode.type === TreeItemType.Group) {
             parentNode.setUpdateCollapsed(collapsed);
         }
+    }
+
+    setDescription(description?: string) {
+        this.description = description;
     }
 }

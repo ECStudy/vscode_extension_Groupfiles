@@ -15,6 +15,7 @@ export interface IUpdateGroup {
     group: Group;
     label?: string;
     color?: string;
+    description?: string;
 }
 
 export interface IUpdateTab {

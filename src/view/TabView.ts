@@ -142,6 +142,14 @@ export class TabView extends CommandManager {
             }
         );
 
+        //그룹 주석 변경
+        vscode.commands.registerCommand(
+            "update.group.description",
+            (group: Group) => {
+                this.handleUpdateGroup(group, UpdateAction.DESCRIPTION);
+            }
+        );
+
         //전체 그룹 접기, 펼치기
         vscode.commands.registerCommand("view.fold-unfold", () => {
             //전체 그룹 접기
@@ -329,6 +337,27 @@ export class TabView extends CommandManager {
                     color: selectedColor?.value,
                 };
                 this.treeDataProvider.updateGroup(groupInfo2);
+                break;
+            case UpdateAction.DESCRIPTION:
+                const description = await vscode.window.showInputBox({
+                    prompt: "Enter a name for the new group",
+                    placeHolder: "디스크립션 입력",
+                    value: group?.description,
+                });
+
+                if (!description) {
+                    vscode.window.showErrorMessage("디스크립션 입력해주세요.");
+                    return;
+                }
+
+                //payload 개선
+                const groupInfo3 = {
+                    description,
+                    group,
+                    action: UpdateAction.DESCRIPTION,
+                };
+
+                this.treeDataProvider.updateGroup(groupInfo3);
                 break;
             default:
                 break;

@@ -243,6 +243,10 @@ export class TreeDataProvider
             case UpdateAction.COLOR:
                 payload?.color && payload.group.setColor(payload?.color);
                 break;
+            case UpdateAction.DESCRIPTION:
+                payload?.description &&
+                    payload.group.setDescription(payload?.description);
+                break;
             default:
                 break;
         }
