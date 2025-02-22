@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Confirm, TAB_VIEW, UpdateAction } from "../type/enums";
 import { TreeDataProvider } from "../provider/TreeDataProvider";
 import { CommandManager } from "../CommandManager";
-import { getFileName } from "../util";
+import { getFileName, showInputBox } from "../util";
 import { Node } from "../node/Node";
 import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
@@ -287,27 +287,39 @@ export class TabView extends CommandManager {
         }
     }
 
-    async handleUpdateGroup(group: Group, action: UpdateAction) {
+    applyUpdate = (setter: any, payload: any, updatedPayload: any) => {
+        setter({
+            ...payload,
+            ...updatedPayload,
+        });
+    };
+
+    handleUpdateGroup = async (group: Group, action: UpdateAction) => {
+        const payload = {
+            label: group.label || "",
+            group,
+            action,
+            color: undefined,
+            description: group.description || "",
+        };
+
         switch (action) {
             case UpdateAction.LABEL:
-                const label = await vscode.window.showInputBox({
-                    prompt: "Enter a name for the new group",
-                    placeHolder: "수정할 그룹 이름 입력",
-                    value: group.label,
-                });
-
-                if (!label) {
-                    vscode.window.showErrorMessage("그룹 이름을 입력해주세요.");
-                    return;
+                const label = await showInputBox(
+                    "Enter a name for the new group",
+                    "수정할 그룹 이름 입력",
+                    group.label
+                );
+                if (label) {
+                    this.applyUpdate(
+                        (updatedPayload: any) =>
+                            this.treeDataProvider.updateGroup(updatedPayload),
+                        payload,
+                        {
+                            label,
+                        }
+                    );
                 }
-
-                const groupInfo = {
-                    label,
-                    group,
-                    action: UpdateAction.LABEL,
-                };
-
-                this.treeDataProvider.updateGroup(groupInfo);
                 break;
             case UpdateAction.COLOR:
                 const quickPickItems = colorPalette.map((item) => ({
@@ -324,92 +336,93 @@ export class TabView extends CommandManager {
                     }
                 );
 
-                if (!selectedColor) {
+                if (selectedColor) {
+                    this.applyUpdate(
+                        (updatedPayload: any) =>
+                            this.treeDataProvider.updateGroup(updatedPayload),
+                        payload,
+                        {
+                            color: selectedColor.value,
+                        }
+                    );
+                } else {
                     vscode.window.showErrorMessage(
                         "변경할 아이콘을 선택해주세요"
                     );
-                    return;
                 }
-
-                const groupInfo2 = {
-                    group,
-                    action: UpdateAction.COLOR,
-                    color: selectedColor?.value,
-                };
-                this.treeDataProvider.updateGroup(groupInfo2);
                 break;
             case UpdateAction.DESCRIPTION:
-                const description = await vscode.window.showInputBox({
-                    prompt: "Enter a name for the new group",
-                    placeHolder: "디스크립션 입력",
-                    value: group?.description,
-                });
-
-                if (!description) {
-                    vscode.window.showErrorMessage("디스크립션 입력해주세요.");
-                    return;
+                const description = await showInputBox(
+                    "Enter a description for the group",
+                    "디스크립션 입력",
+                    group?.description
+                );
+                if (description) {
+                    this.applyUpdate(
+                        (updatedPayload: any) =>
+                            this.treeDataProvider.updateGroup(updatedPayload),
+                        payload,
+                        {
+                            description,
+                        }
+                    );
                 }
-
-                //payload 개선
-                const groupInfo3 = {
-                    description,
-                    group,
-                    action: UpdateAction.DESCRIPTION,
-                };
-
-                this.treeDataProvider.updateGroup(groupInfo3);
                 break;
             default:
+                vscode.window.showErrorMessage("유효하지 않은 액션입니다.");
                 break;
         }
-    }
-    async handleUpdateTab(tab: Tab, action: UpdateAction) {
+    };
+    handleUpdateTab = async (tab: Tab, action: UpdateAction) => {
+        const payload = {
+            label: tab.label || "",
+            tab,
+            action,
+            color: undefined,
+            description: tab.description || "",
+        };
+
         switch (action) {
             case UpdateAction.LABEL:
-                const label = await vscode.window.showInputBox({
-                    prompt: "Enter a name for the new group",
-                    placeHolder: "수정할 라벨 이름 입력",
-                    value: tab.label,
-                });
-
-                if (!label) {
-                    vscode.window.showErrorMessage("라벨 이름을 입력해주세요.");
-                    return;
+                const label = await showInputBox(
+                    "Enter a name for the new group",
+                    "수정할 탭 이름 입력",
+                    tab.label
+                );
+                if (label) {
+                    this.applyUpdate(
+                        (updatedPayload: any) =>
+                            this.treeDataProvider.updateTab(updatedPayload),
+                        payload,
+                        {
+                            label,
+                        }
+                    );
                 }
-
-                const payload = {
-                    label,
-                    tab,
-                    action: UpdateAction.LABEL,
-                };
-
-                this.treeDataProvider.updateTab(payload);
                 break;
             case UpdateAction.DESCRIPTION:
-                const description = await vscode.window.showInputBox({
-                    prompt: "Enter a name for the new group",
-                    placeHolder: "디스크립션 입력",
-                    value: tab?.description,
-                });
-
-                if (!description) {
-                    vscode.window.showErrorMessage("디스크립션 입력해주세요.");
-                    return;
+                const description = await showInputBox(
+                    "Enter a description for the group",
+                    "디스크립션 입력",
+                    tab?.description
+                );
+                if (description) {
+                    this.applyUpdate(
+                        (updatedPayload: any) =>
+                            this.treeDataProvider.updateTab(updatedPayload),
+                        payload,
+                        {
+                            description,
+                        }
+                    );
                 }
 
-                //payload 개선
-                const payload2 = {
-                    description,
-                    tab,
-                    action: UpdateAction.DESCRIPTION,
-                };
-
-                this.treeDataProvider.updateTab(payload2);
                 break;
             default:
+                vscode.window.showErrorMessage("유효하지 않은 액션입니다.");
                 break;
         }
-    }
+    };
 
     //그룹 제거 OR 탭 제거
     async handleRemoveNode(node: Node) {
@@ -506,8 +519,3 @@ export class TabView extends CommandManager {
         this.treeDataProvider.moveNode(target, dataTransferItem?.value);
     }
 }
-
-//TODO
-//이동하는 로직 provider에 넣기
-//부모가 tree인 그룹은 이동이 불가능함
-//동일한 path는 추가가 안되어야함
