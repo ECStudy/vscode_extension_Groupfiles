@@ -12,7 +12,7 @@ export enum CREATE_TYPE {
 export interface ICreateGroup {
     label?: string;
     uris?: vscode.Uri[];
-    group?: Node;
+    group?: Group;
     type: CREATE_TYPE;
 }
 

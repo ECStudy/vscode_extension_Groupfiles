@@ -175,52 +175,41 @@ export class TreeDataProvider
      * 그룹 생성
      */
     createGroup = async (payload: ICreateGroup) => {
-        //그룹 신규 생성
-        if (payload.type === CREATE_TYPE.NEW) {
-            //그룹 생성
+        const isNewGroup = payload.type === CREATE_TYPE.NEW;
+        let targetGroup: Group | undefined; //타입
+
+        // 그룹 생성 로직 (NEW or PREV)
+        if (isNewGroup) {
             if (payload?.label) {
-                const group = new Group(`group_${uuidv4()}`, payload?.label);
-                this.tree.add(group);
-
-                //탭 있는 경우 탭 생성
-                if (payload?.uris) {
-                    payload?.uris.forEach(async (uri) => {
-                        const stat = await vscode.workspace.fs.stat(uri);
-                        //다중 선택해도 파일만 Tab 생성
-                        if (stat.type === vscode.FileType.File) {
-                            const nativeTab: vscode.Tab = {
-                                input: { uri },
-                                label: uri.path.split("/").pop() || "Unknown",
-                            } as vscode.Tab;
-
-                            const tab = new Tab(`tab_${uuidv4()}`, nativeTab);
-                            group.add(tab);
-                            //TODO : group 인터페이스 수정
-                            (group as any)?.setUpdateCollapsed(false);
-                        }
-                    });
-                }
+                targetGroup = new Group(`group_${uuidv4()}`, payload.label);
+                this.tree.add(targetGroup);
             }
+        } else if (payload.type === CREATE_TYPE.PREV && payload?.group) {
+            targetGroup = payload.group;
         }
 
-        //그룹이 이미 있는 경우
-        else if (payload.type === CREATE_TYPE.PREV) {
-            if (payload?.group && payload?.uris) {
-                payload?.uris.forEach(async (uri) => {
-                    const stat = await vscode.workspace.fs.stat(uri);
-                    //다중 선택해도 파일만 Tab 생성
-                    if (stat.type === vscode.FileType.File) {
-                        const nativeTab: vscode.Tab = {
-                            input: { uri },
-                            label: uri.path.split("/").pop() || "Unknown",
-                        } as vscode.Tab;
+        // 그룹이 없으면 중단
+        if (!targetGroup) {
+            vscode.window.showErrorMessage("그룹을 생성할 수 없습니다.");
+            return;
+        }
 
-                        const tab = new Tab(`tab_${uuidv4()}`, nativeTab);
-                        payload?.group?.add(tab);
-                        //TODO : group 인터페이스 수정
-                        (payload.group as any)?.setUpdateCollapsed(false);
-                    }
-                });
+        //탭 있는 경우 탭 생성
+        if (payload?.uris && payload.uris.length > 0) {
+            for (const uri of payload.uris) {
+                const stat = await vscode.workspace.fs.stat(uri);
+                //다중 선택해도 파일만 Tab 생성
+                if (stat.type === vscode.FileType.File) {
+                    const nativeTab: vscode.Tab = {
+                        input: { uri },
+                        label: uri.path.split("/").pop() || "Unknown",
+                    } as vscode.Tab;
+
+                    const tab = new Tab(`tab_${uuidv4()}`, nativeTab);
+                    targetGroup.add(tab);
+                    //TODO : group 인터페이스 수정
+                    (targetGroup as any)?.setUpdateCollapsed(false);
+                }
             }
         }
 
