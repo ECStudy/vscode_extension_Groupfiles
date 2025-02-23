@@ -289,8 +289,11 @@ export class TabView extends CommandManager {
     }
 
     async handleDeleteAllGroup(node: Node = this.treeDataProvider.getTree()) {
+        if (node.getChildren().length === 0) {
+            return;
+        }
         const confirm = await vscode.window.showInformationMessage(
-            `전체 그룹을 삭제하시겠습니까?`,
+            `Delete All groups abd tabs?`,
             Confirm.DELETE,
             Confirm.Cancel
         );
@@ -299,16 +302,19 @@ export class TabView extends CommandManager {
             const beforeChildren = [...node.getChildren()];
             node.reset();
             this.treeDataProvider.triggerEventRerender();
-            const confirm = await vscode.window.showInformationMessage(
-                `전체 그룹을 삭제했습니다. 삭제를 취소하시겠습니까?`,
-                Confirm.Cancel,
-                Confirm.KEEP
-            );
 
-            if (confirm === Confirm.Cancel) {
-                node.setChildren(beforeChildren);
-                this.treeDataProvider.triggerEventRerender();
-            }
+            setTimeout(async () => {
+                const confirm = await vscode.window.showInformationMessage(
+                    `Deleted all groups. Would you like to recover?`,
+                    Confirm.RECOVER,
+                    Confirm.DELETE
+                );
+
+                if (confirm === Confirm.RECOVER) {
+                    node.setChildren(beforeChildren);
+                    this.treeDataProvider.triggerEventRerender();
+                }
+            }, 1500);
         }
     }
 

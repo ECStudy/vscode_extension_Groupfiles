@@ -15,7 +15,7 @@ export enum Confirm {
     DELETE = "delete",
     Cancel = "cancel",
     OK = "ok",
-    RESROTE = "restore",
+    RECOVER = "recover",
     KEEP = "keep",
 }
 
