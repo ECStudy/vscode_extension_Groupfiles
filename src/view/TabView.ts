@@ -245,7 +245,7 @@ export class TabView extends CommandManager {
                 group: selectedGroup.group,
             };
 
-            this.treeDataProvider.createGroup(groupInfo as any);
+            this.treeDataProvider.createGroup(groupInfo);
             vscode.window.showInformationMessage(
                 `그룹 ${selectedGroup.label}에 파일 추가 완료`
             );
