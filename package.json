@@ -139,7 +139,7 @@
             },
             {
                 "command": "create.group.tab",
-                "title": "Create Group And Add Tab",
+                "title": "GroupTab: Add Tab",
                 "category": "tab"
             },
             {

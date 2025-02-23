@@ -80,9 +80,6 @@ export class TreeDataProvider
 
         if (jsonTreeData) {
             const treeClass = Serialize.fromJson(jsonTreeData);
-
-            console.log("🎈 json 복구", treeClass);
-
             this.tree.setChildren(treeClass.getChildren());
         }
 
@@ -320,29 +317,10 @@ export class TreeDataProvider
                 const tempNode = this.tree.findPath(
                     node.split("/").filter(Boolean)
                 );
-                // const parentNode = this.getGroupById(
-                //     allGroups,
-                //     node.payload.parentNodeId
-                // );
-
-                // if (parentNode) {
-                //     tempNode.setParentNode(parentNode);
-                // }
 
                 return tempNode;
             })
             .filter((node: any) => node);
-
-        //기존 부모 children 목록에서 대상 node 지워줘야함
-        // nodes.forEach((node) => {
-        //     const parent = node.getParentNode();
-        //     const parentChildren = parent?.getChildren();
-        //     const filteredParentChildren = parentChildren?.filter(
-        //         (parentChildrenNode) => parentChildrenNode.id !== node.id
-        //     );
-
-        //     parent?.setChildren(filteredParentChildren);
-        // });
 
         nodes.forEach((node) => {
             //자기 자신이 자기 자신 그룹인 경우 넣을 수 없다.

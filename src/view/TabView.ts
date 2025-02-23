@@ -47,7 +47,6 @@ export class TabView extends CommandManager {
     }
 
     private clearGlobalState = () => {
-        console.log("Global State가 초기화되었습니다.");
         this.context.globalState.keys().forEach((key) => {
             this.context.globalState.update(key, undefined); // 키 값을 undefined로 설정하여 제거
         });
@@ -63,9 +62,7 @@ export class TabView extends CommandManager {
 
         // option1 명령 핸들러
         this.context.subscriptions.push(
-            vscode.commands.registerCommand("option1", () => {
-                console.log("옵션1");
-            })
+            vscode.commands.registerCommand("option1", () => {})
         );
 
         // 주석 보이기 / 숨기기
@@ -511,10 +508,6 @@ export class TabView extends CommandManager {
         dataTransfer: vscode.DataTransfer,
         token: vscode.CancellationToken
     ): Promise<void> {
-        console.log("Drag source", nodes);
-        console.log("Drag dataTransfer", dataTransfer);
-        console.log("Drag token", token);
-
         if (!nodes?.length) {
             return;
         }
@@ -532,8 +525,6 @@ export class TabView extends CommandManager {
             }
             filteredPaths.push(path);
         });
-        console.log("🎈 paths", paths);
-        console.log("🎈 filteredPaths", filteredPaths);
         dataTransfer.set(
             "application/vnd.code.tree.tab",
             new vscode.DataTransferItem(filteredPaths)
@@ -545,12 +536,6 @@ export class TabView extends CommandManager {
         dataTransfer: vscode.DataTransfer,
         token: vscode.CancellationToken
     ): Promise<void> {
-        //console.log("모든 그룹 상태", this.treeDataProvider.getGroups());
-
-        console.log("drop target", target);
-        console.log("drop dataTransfer", dataTransfer);
-        console.log("drop token", token);
-
         const dataTransferItem = dataTransfer.get(
             "application/vnd.code.tree.tab"
         );
