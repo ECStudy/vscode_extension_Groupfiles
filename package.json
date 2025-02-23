@@ -79,11 +79,6 @@
                     "group": "inline"
                 },
                 {
-                    "command": "update.group.label",
-                    "when": "viewItem == group",
-                    "group": "inline"
-                },
-                {
                     "command": "delete.group",
                     "when": "viewItem == group",
                     "group": "inline"
@@ -100,6 +95,11 @@
                 },
                 {
                     "command": "update.group.color",
+                    "when": "viewItem == group",
+                    "group": "navigation"
+                },
+                {
+                    "command": "update.group.label",
                     "when": "viewItem == group",
                     "group": "navigation"
                 },
@@ -153,11 +153,6 @@
                 "icon": "$(add)"
             },
             {
-                "command": "update.group.label",
-                "title": "Update Group Label",
-                "icon": "$(edit)"
-            },
-            {
                 "command": "delete.group",
                 "title": "Delete Group",
                 "icon": "$(trash)"
@@ -175,6 +170,11 @@
             {
                 "command": "update.group.color",
                 "title": "그룹 아이콘 변경",
+                "category": "tab"
+            },
+            {
+                "command": "update.group.label",
+                "title": "그룹 이름 변경",
                 "category": "tab"
             },
             {
