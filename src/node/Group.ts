@@ -7,15 +7,14 @@ import { RenderPayload, TabItem, TreeItemType } from "../type/types";
 import { Node } from "./Node";
 
 const groupIconPaths: { [key: string]: string } = {
-    Default: "images/group_icon_Default.svg",
-    Black: "images/group_icon_Black.svg",
-    Blue: "images/group_icon_Blue.svg",
-    Brown: "images/group_icon_Brown.svg",
-    Green: "images/group_icon_Green.svg",
-    Purple: "images/group_icon_Purple.svg",
-    Red: "images/group_icon_Red.svg",
-    White: "images/group_icon_White.svg",
-    Yellow: "images/group_icon_Yellow.svg",
+    default: "images/group_icon_default.svg",
+    red: "images/group_icon_red.svg",
+    blue: "images/group_icon_blue.svg",
+    yellow: "images/group_icon_yellow.svg",
+    pink: "images/group_icon_black.svg",
+    green: "images/group_icon_green.svg",
+    purple: "images/group_icon_purple.svg",
+    orange: "images/group_icon_orange.svg",
 };
 
 export class Group extends Node {
@@ -36,7 +35,7 @@ export class Group extends Node {
         super(id);
         this.id = id;
         this.label = label;
-        this.color = "Default";
+        this.color = "default";
         this.collapsed = false; // 기본적으로 열림 상태
         this.path = "";
         this.description = payload?.description || "";
@@ -57,7 +56,7 @@ export class Group extends Node {
         item.contextValue = "group";
 
         const iconPath =
-            groupIconPaths[this.color] || groupIconPaths["Default"];
+            groupIconPaths[this.color] || groupIconPaths["default"];
         item.iconPath = {
             light: path.join(context.extensionPath, iconPath),
             dark: path.join(context.extensionPath, iconPath),
