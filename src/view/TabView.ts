@@ -71,6 +71,14 @@ export class TabView extends CommandManager {
                 this.handleViewDescription();
             })
         );
+
+        // 주석 보이기 / 숨기기
+        this.context.subscriptions.push(
+            vscode.commands.registerCommand("view.fold-unfold", () => {
+                //전체 그룹 접기
+                this.handleFoldGroup();
+            })
+        );
     }
 
     //command 추가
@@ -143,11 +151,11 @@ export class TabView extends CommandManager {
             }
         );
 
-        //전체 그룹 접기, 펼치기
-        vscode.commands.registerCommand("view.fold-unfold", () => {
-            //전체 그룹 접기
-            this.handleFoldGroup();
-        });
+        // //전체 그룹 접기, 펼치기
+        // vscode.commands.registerCommand("view.fold-unfold", () => {
+        //     //전체 그룹 접기
+        //     this.handleFoldGroup();
+        // });
 
         vscode.commands.registerCommand("update.tab.label", (tab) => {
             this.handleUpdateTab(tab, UpdateAction.LABEL);

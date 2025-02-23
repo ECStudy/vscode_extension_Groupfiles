@@ -46,11 +46,6 @@
                     "group": "navigation"
                 },
                 {
-                    "command": "view.fold-unfold",
-                    "when": "view == tabview",
-                    "group": "navigation"
-                },
-                {
                     "command": "global.state.reset",
                     "when": "view == tabview",
                     "group": "inline"
@@ -62,6 +57,11 @@
                 },
                 {
                     "command": "viewDescription",
+                    "when": "view == tabview",
+                    "group": "inline"
+                },
+                {
+                    "command": "view.fold-unfold",
                     "when": "view == tabview",
                     "group": "inline"
                 }
@@ -178,11 +178,6 @@
                 "category": "tab"
             },
             {
-                "command": "view.fold-unfold",
-                "title": "Fold All Group",
-                "icon": "$(map)"
-            },
-            {
                 "command": "global.state.reset",
                 "title": "Reset Global State",
                 "icon": "$(debug-restart)"
@@ -193,11 +188,15 @@
             },
             {
                 "command": "viewDescription",
-                "title": "주석 보이기 / 숨기기"
+                "title": "Description Show / Hide"
+            },
+            {
+                "command": "view.fold-unfold",
+                "title": "Group Fold / UnFold"
             },
             {
                 "command": "update.tab.label",
-                "title": "라벨 이름 변경",
+                "title": "탭 이름 변경",
                 "category": "tab"
             },
             {
