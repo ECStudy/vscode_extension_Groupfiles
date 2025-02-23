@@ -64,3 +64,8 @@ delete.group
 delete.group.all
 
 `;
+
+export enum Command {
+    CREATE_GROUP = "create.group",
+    CREATE_GROUP_TAB = "create.group.tab",
+}

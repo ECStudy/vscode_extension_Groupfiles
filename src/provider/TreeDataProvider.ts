@@ -176,7 +176,7 @@ export class TreeDataProvider
      */
     createGroup = async (payload: ICreateGroup) => {
         //그룹 신규 생성
-        if (payload.type === CREATE_TYPE.NEW) {
+        if (payload.createType === CREATE_TYPE.NEW) {
             //그룹 생성
             if (payload?.label) {
                 const group = new Group(`group_${uuidv4()}`, payload?.label);
@@ -204,7 +204,7 @@ export class TreeDataProvider
         }
 
         //그룹이 이미 있는 경우
-        else if (payload.type === CREATE_TYPE.PREV) {
+        else if (payload.createType === CREATE_TYPE.PREV) {
             if (payload?.group && payload?.uris) {
                 payload?.uris.forEach(async (uri) => {
                     const stat = await vscode.workspace.fs.stat(uri);

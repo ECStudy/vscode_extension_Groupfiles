@@ -10,10 +10,11 @@ export enum CREATE_TYPE {
 }
 
 export interface ICreateGroup {
+    createType: CREATE_TYPE;
+
     label?: string;
     uris?: vscode.Uri[];
-    group?: Node;
-    type: CREATE_TYPE;
+    group?: Group;
 }
 
 export interface IUpdateGroup {

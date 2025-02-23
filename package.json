@@ -68,11 +68,7 @@
             ],
             "explorer/context": [
                 {
-                    "command": "create.tab.new-group",
-                    "group": "navigation"
-                },
-                {
-                    "command": "create.tab.prev-group",
+                    "command": "create.group.tab",
                     "group": "navigation"
                 }
             ],
@@ -125,11 +121,7 @@
             ],
             "editor/title/context": [
                 {
-                    "command": "create.tab.new-group",
-                    "group": "navigation"
-                },
-                {
-                    "command": "create.tab.prev-group",
+                    "command": "create.group.tab",
                     "group": "navigation"
                 }
             ]
@@ -141,13 +133,13 @@
                 "icon": "$(add)"
             },
             {
-                "command": "create.tab.new-group",
-                "title": "새 그룹에 추가",
+                "command": "create.group.tab",
+                "title": "그룹에 추가",
                 "category": "tab"
             },
             {
-                "command": "create.tab.prev-group",
-                "title": "기존 그룹에 추가",
+                "command": "create.group.tab",
+                "title": "Create Group And Add Tab",
                 "category": "tab"
             },
             {

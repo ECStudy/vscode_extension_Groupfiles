@@ -14,6 +14,7 @@ import { Serialize } from "../Serialize";
 import { TreeItemType } from "../type/types";
 import { Tree } from "../node/Tree";
 import { CREATE_TYPE } from "../type/group";
+import { Command } from "../type/command";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
@@ -77,28 +78,18 @@ export class TabView extends CommandManager {
 
     //command 추가
     private registerCommandHandler() {
-        // + 버튼 : 빈 그룹 추가
-        vscode.commands.registerCommand("create.group", () => {
+        //Group 추가
+        vscode.commands.registerCommand(Command.CREATE_GROUP, () => {
             this.handleCreateGroup();
         });
 
-        //새 그룹에 추가
+        //Group 추가 + Tab 추가
         vscode.commands.registerCommand(
-            "create.tab.new-group",
-            (uri: vscode.Uri, selectedUris: vscode.Uri[]) => {
-                const uris = selectedUris?.length ? selectedUris : [uri];
-
-                this.handleCreateGroupAndCreateTab(uris);
-            }
-        );
-
-        //기존 그룹에 추가
-        vscode.commands.registerCommand(
-            "create.tab.prev-group",
+            Command.CREATE_GROUP_TAB,
             async (uri: vscode.Uri, selectedUris: vscode.Uri[]) => {
                 const uris = selectedUris?.length ? selectedUris : [uri];
 
-                await this.handlePrebGroupAndCreateTab(uris);
+                await this.handleCreateGroupAndTab(uris);
             }
         );
 
@@ -170,9 +161,11 @@ export class TabView extends CommandManager {
         });
     }
 
-    async inputGroupPromptInputBox(mode = "new") {
+    async inputGroupPromptInputBox(mode = CREATE_TYPE.NEW) {
         const dispaly_placeHolder =
-            mode === "new" ? "새 그룹 이름 추가" : "수정할 그룹 이름 입력";
+            mode === CREATE_TYPE.NEW
+                ? "새 그룹 이름 추가"
+                : "수정할 그룹 이름 입력";
         const label = await vscode.window.showInputBox({
             prompt: "Enter a name for the new group",
             placeHolder: dispaly_placeHolder,
@@ -187,40 +180,26 @@ export class TabView extends CommandManager {
     }
 
     async handleCreateGroup() {
-        const inputResult = await this.inputGroupPromptInputBox("new");
+        const inputResult = await this.inputGroupPromptInputBox(
+            CREATE_TYPE.NEW
+        );
 
         if (inputResult.result) {
             const groupInfo = {
-                type: CREATE_TYPE.NEW,
+                createType: CREATE_TYPE.NEW,
                 label: inputResult.label,
             };
 
             this.treeDataProvider.createGroup(groupInfo);
             vscode.window.showInformationMessage(
-                `그룹 "${inputResult.label}"이 생성되었습니다.`
+                `"${inputResult.label}" group has been updated`
             );
         }
     }
 
-    //새로운 그룹 생성
-    async handleCreateGroupAndCreateTab(uris: vscode.Uri[]) {
-        const selectedGroup = await this.inputGroupPromptInputBox("new");
-        if (selectedGroup) {
-            const groupInfo = {
-                type: CREATE_TYPE.NEW,
-                label: selectedGroup.label,
-                uris: uris,
-            };
-            //빈 그룹 추가 + 탭 추가
-            this.treeDataProvider.createGroup(groupInfo);
-            vscode.window.showInformationMessage(
-                `그룹 ${selectedGroup.label}에 파일 추가 완료`
-            );
-        }
-    }
-
-    async handlePrebGroupAndCreateTab(uris: vscode.Uri[]) {
-        const quickPickItems = this.treeDataProvider
+    //기존 Group 추가 → Tab 추가
+    async handleCreateGroupAndTab(uris?: vscode.Uri[]) {
+        const groupList = this.treeDataProvider
             .getGroups()
             .map((group: Node) => {
                 return {
@@ -230,26 +209,78 @@ export class TabView extends CommandManager {
                 };
             });
 
-        const selectedGroup = await vscode.window.showQuickPick(
-            quickPickItems,
-            {
-                placeHolder: "Choose a color for the group icon",
-                canPickMany: false,
+        const quickPick = vscode.window.createQuickPick();
+        quickPick.placeholder = "Choose target group or type new group name";
+        quickPick.items = groupList; //Group list
+        quickPick.ignoreFocusOut = true;
+
+        quickPick.onDidChangeValue((value) => {
+            if (value) {
+                //새용자가 입력할 때, 입력한 값으로 '새 그룹 생성'
+                quickPick.items = [
+                    {
+                        label: `$(add) Create new group: "${value}"`,
+                        description: "New group",
+                        alwaysShow: true,
+                    },
+                    ...groupList.filter((item) =>
+                        item.label.toLowerCase().includes(value.toLowerCase())
+                    ),
+                ];
+            } else {
+                quickPick.items = groupList;
             }
-        );
+        });
 
-        if (selectedGroup) {
-            const groupInfo = {
-                type: CREATE_TYPE.PREV,
-                uris: uris,
-                group: selectedGroup.group,
-            };
+        quickPick.onDidAccept(() => {
+            const selectedItem = quickPick.selectedItems[0];
 
-            this.treeDataProvider.createGroup(groupInfo);
-            vscode.window.showInformationMessage(
-                `그룹 ${selectedGroup.label}에 파일 추가 완료`
-            );
-        }
+            let selectedGroup: Group | undefined;
+            let newGroupLabel: string | undefined;
+
+            if (selectedItem.label.startsWith("$(add)")) {
+                newGroupLabel = selectedItem.label.replace(
+                    /\$\(add\) Create new group\: "([^"]+)"/g,
+                    "$1"
+                );
+                vscode.window.showInformationMessage(
+                    `New group "${newGroupLabel}" created!`
+                );
+                if (newGroupLabel) {
+                    const createPayload = {
+                        createType: CREATE_TYPE.NEW,
+                        label: newGroupLabel,
+                        uris: uris,
+                    };
+
+                    //신규 Group 추가
+                    this.treeDataProvider.createGroup(createPayload);
+                    vscode.window.showInformationMessage(
+                        `"${newGroupLabel}" group has been updated with new tab(s)`
+                    );
+                }
+            } else {
+                selectedGroup = (selectedItem as any)?.group as Group;
+
+                if (selectedGroup) {
+                    const createPayload = {
+                        createType: CREATE_TYPE.PREV,
+                        uris: uris,
+                        group: selectedGroup,
+                    };
+
+                    //신규 Group 추가
+                    this.treeDataProvider.createGroup(createPayload);
+                    vscode.window.showInformationMessage(
+                        `"${newGroupLabel}" group has been updated with new tab(s)`
+                    );
+                }
+            }
+
+            quickPick.hide();
+        });
+
+        quickPick.show();
     }
 
     async handleDeleteAllGroup(node: Node = this.treeDataProvider.getTree()) {
@@ -278,16 +309,18 @@ export class TabView extends CommandManager {
 
     //그룹에서 그룹 추가하기
     async handleCreateGroupAndCreateGroup(group: Group) {
-        const inputResult = await this.inputGroupPromptInputBox("new");
+        const inputResult = await this.inputGroupPromptInputBox(
+            CREATE_TYPE.NEW
+        );
 
         if (inputResult.result) {
-            const groupInfo = {
-                type: CREATE_TYPE.PREV,
+            const createPayload = {
+                createType: CREATE_TYPE.PREV,
                 label: inputResult.label,
                 group: group,
             };
 
-            this.treeDataProvider.createGroupAndGroup(groupInfo);
+            this.treeDataProvider.createGroupAndGroup(createPayload);
         }
     }
 
