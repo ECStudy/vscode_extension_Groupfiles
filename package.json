@@ -46,24 +46,29 @@
                     "group": "navigation"
                 },
                 {
-                    "command": "global.state.reset",
-                    "when": "view == tabview",
-                    "group": "inline"
-                },
-                {
                     "command": "option1",
                     "when": "view == tabview",
-                    "group": "inline"
+                    "group": "mygr@4"
+                },
+                {
+                    "command": "myext.fold",
+                    "when": "view == tabview && !myext:isFold",
+                    "group": "mygr@1"
+                },
+                {
+                    "command": "myext.unfold",
+                    "when": "view == tabview && myext:isFold",
+                    "group": "mygr@1"
                 },
                 {
                     "command": "viewDescription",
                     "when": "view == tabview",
-                    "group": "inline"
+                    "group": "mygr@2"
                 },
                 {
-                    "command": "view.fold-unfold",
+                    "command": "global.state.reset",
                     "when": "view == tabview",
-                    "group": "inline"
+                    "group": "mygr@3"
                 }
             ],
             "explorer/context": [
@@ -191,7 +196,11 @@
                 "title": "Description Show / Hide"
             },
             {
-                "command": "view.fold-unfold",
+                "command": "myext.fold",
+                "title": "✓ Group Fold / UnFold"
+            },
+            {
+                "command": "myext.unfold",
                 "title": "Group Fold / UnFold"
             },
             {
