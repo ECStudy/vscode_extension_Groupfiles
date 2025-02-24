@@ -51,13 +51,13 @@
                     "group": "mygr@4"
                 },
                 {
-                    "command": "myext.fold",
-                    "when": "view == tabview && !myext:isFold",
+                    "command": "myext.group.fold",
+                    "when": "view == tabview && !myext:group.fold",
                     "group": "mygr@1"
                 },
                 {
-                    "command": "myext.unfold",
-                    "when": "view == tabview && myext:isFold",
+                    "command": "myext.group.unfold",
+                    "when": "view == tabview && myext:group.fold",
                     "group": "mygr@1"
                 },
                 {
@@ -205,11 +205,11 @@
                 "title": "Description Show / Hide"
             },
             {
-                "command": "myext.fold",
+                "command": "myext.group.fold",
                 "title": "✓ Group Fold / UnFold"
             },
             {
-                "command": "myext.unfold",
+                "command": "myext.group.unfold",
                 "title": "Group Fold / UnFold"
             },
             {

@@ -65,37 +65,30 @@ export class TabView extends CommandManager {
             vscode.commands.registerCommand("option1", () => {})
         );
 
-        // // 주석 보이기 / 숨기기
-        // this.context.subscriptions.push(
-        //     vscode.commands.registerCommand("viewDescription", () => {
-        //         this.handleViewDescription();
-        //     })
-        // );
-
         // 전체 그룹 접기 / 펼치기
         const executeFoldUnfold = () => {
-            const setMinifyContext = (isFold: boolean) => {
+            const setContext = (state: boolean) => {
                 vscode.commands.executeCommand(
                     "setContext",
-                    "myext:isFold",
-                    isFold
+                    "myext:group.fold",
+                    state
                 );
             };
             this.context.subscriptions.push(
-                vscode.commands.registerCommand("myext.fold", () => {
-                    setMinifyContext(true);
+                vscode.commands.registerCommand("myext.group.fold", () => {
+                    setContext(true);
                     //전체 그룹 접기
                     this.handleFoldGroup();
                 })
             );
             this.context.subscriptions.push(
-                vscode.commands.registerCommand("myext.unfold", () => {
-                    setMinifyContext(false);
+                vscode.commands.registerCommand("myext.group.unfold", () => {
+                    setContext(false);
                     //전체 그룹 펼치기
                     this.handleFoldGroup();
                 })
             );
-            setMinifyContext(false);
+            setContext(false);
         };
 
         // 주석 보이기 / 숨기기
