@@ -65,12 +65,12 @@ export class TabView extends CommandManager {
             vscode.commands.registerCommand("option1", () => {})
         );
 
-        // 주석 보이기 / 숨기기
-        this.context.subscriptions.push(
-            vscode.commands.registerCommand("viewDescription", () => {
-                this.handleViewDescription();
-            })
-        );
+        // // 주석 보이기 / 숨기기
+        // this.context.subscriptions.push(
+        //     vscode.commands.registerCommand("viewDescription", () => {
+        //         this.handleViewDescription();
+        //     })
+        // );
 
         // 전체 그룹 접기 / 펼치기
         const executeFoldUnfold = () => {
@@ -97,7 +97,41 @@ export class TabView extends CommandManager {
             );
             setMinifyContext(false);
         };
+
+        // 주석 보이기 / 숨기기
+        const executShowHideDescription = () => {
+            const setContext = (state: boolean) => {
+                vscode.commands.executeCommand(
+                    "setContext",
+                    "myext:show.description",
+                    state
+                );
+            };
+            this.context.subscriptions.push(
+                vscode.commands.registerCommand(
+                    "myext.show.description",
+                    () => {
+                        setContext(true);
+                        //주석 보이기
+                        this.handleViewDescription();
+                    }
+                )
+            );
+            this.context.subscriptions.push(
+                vscode.commands.registerCommand(
+                    "myext.hide.description",
+                    () => {
+                        setContext(false);
+                        //주석 숨기기
+                        this.handleViewDescription();
+                    }
+                )
+            );
+            setContext(false);
+        };
+
         executeFoldUnfold();
+        executShowHideDescription();
     }
 
     //command 추가

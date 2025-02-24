@@ -61,8 +61,13 @@
                     "group": "mygr@1"
                 },
                 {
-                    "command": "viewDescription",
-                    "when": "view == tabview",
+                    "command": "myext.show.description",
+                    "when": "view == tabview && !myext:show.description",
+                    "group": "mygr@2"
+                },
+                {
+                    "command": "myext.hide.description",
+                    "when": "view == tabview && myext:show.description",
                     "group": "mygr@2"
                 },
                 {
@@ -192,7 +197,11 @@
                 "title": "옵션1"
             },
             {
-                "command": "viewDescription",
+                "command": "myext.show.description",
+                "title": "✓ Description Show / Hide"
+            },
+            {
+                "command": "myext.hide.description",
                 "title": "Description Show / Hide"
             },
             {
