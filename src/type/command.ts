@@ -68,4 +68,5 @@ delete.group.all
 export enum Command {
     CREATE_GROUP = "create.group",
     CREATE_GROUP_TAB = "create.group.tab",
+    CREATE_GROUP_TAB_KEY = "create.group.tab.key",
 }

@@ -144,11 +144,6 @@
             },
             {
                 "command": "create.group.tab",
-                "title": "그룹에 추가",
-                "category": "tab"
-            },
-            {
-                "command": "create.group.tab",
                 "title": "GroupTab: Add Tab",
                 "category": "tab"
             },
@@ -238,7 +233,14 @@
                     "default": []
                 }
             }
-        }
+        },
+        "keybindings": [
+            {
+                "command": "create.group.tab",
+                "key": "ctrl+alt+g",
+                "when": "editorTextFocus"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

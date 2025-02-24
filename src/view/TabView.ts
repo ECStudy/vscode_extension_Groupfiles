@@ -125,8 +125,18 @@ export class TabView extends CommandManager {
         vscode.commands.registerCommand(
             Command.CREATE_GROUP_TAB,
             async (uri: vscode.Uri, selectedUris: vscode.Uri[]) => {
-                const uris = selectedUris?.length ? selectedUris : [uri];
+                //단축키 추가
+                if (!uri && !selectedUris) {
+                    const editor = vscode.window.activeTextEditor;
+                    if (editor) {
+                        await this.handleCreateGroupAndTab([
+                            editor.document.uri,
+                        ]);
+                    }
+                    return;
+                }
 
+                const uris = selectedUris?.length ? selectedUris : [uri];
                 await this.handleCreateGroupAndTab(uris);
             }
         );
