@@ -65,6 +65,9 @@ export class TreeDataProvider
         const tree = this.tree.getTree();
         const serializedTree = Serialize.toJson(tree);
 
+        console.log("🎈saveData tree", tree);
+        console.log("🎈saveData serializedTree", serializedTree);
+
         this.storageManager.set(STORAGE_KEYS.TREE_DATA, serializedTree);
         this.storageManager.set(STORAGE_KEYS.VIEW_COLLAPSE, this.viewCollapse);
         this.storageManager.set(
@@ -78,8 +81,11 @@ export class TreeDataProvider
             STORAGE_KEYS.TREE_DATA
         );
 
+        console.log("🎈 loadData tree", jsonTreeData);
+
         if (jsonTreeData) {
             const treeClass = Serialize.fromJson(jsonTreeData);
+            console.log("🎈 loadData treeClass", treeClass);
             this.tree.setChildren(treeClass.getChildren());
         }
 
@@ -221,6 +227,7 @@ export class TreeDataProvider
             }
         }
 
+        console.log("🎈트리", this.tree);
         this.triggerEventRerender();
     };
 

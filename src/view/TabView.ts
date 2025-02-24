@@ -286,6 +286,7 @@ export class TabView extends CommandManager {
             let selectedGroup: Group | undefined;
             let newGroupLabel: string | undefined;
 
+            //새그룹
             if (selectedItem.label.startsWith("$(add)")) {
                 newGroupLabel = selectedItem.label.replace(
                     /\$\(add\) Create new group\: "([^"]+)"/g,
@@ -320,7 +321,7 @@ export class TabView extends CommandManager {
                     //신규 Group 추가
                     this.treeDataProvider.createGroup(createPayload);
                     vscode.window.showInformationMessage(
-                        `"${newGroupLabel}" group has been updated with new tab(s)`
+                        `"${selectedGroup.label}" group has been updated with new tab(s)`
                     );
                 }
             }
