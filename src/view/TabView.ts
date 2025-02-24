@@ -52,6 +52,37 @@ export class TabView extends CommandManager {
         });
     };
 
+    private registerCommandCheckContextMenu = ({
+        trueCommand,
+        falseCommand,
+        whenCondition,
+        trueCallback,
+        falseCallback,
+    }: {
+        trueCommand: string;
+        falseCommand: string;
+        whenCondition: string;
+        trueCallback: () => void;
+        falseCallback: () => void;
+    }) => {
+        const setContext = (state: boolean) => {
+            vscode.commands.executeCommand("setContext", whenCondition, state);
+        };
+        this.context.subscriptions.push(
+            vscode.commands.registerCommand(trueCommand, () => {
+                setContext(true);
+                trueCallback();
+            })
+        );
+        this.context.subscriptions.push(
+            vscode.commands.registerCommand(falseCommand, () => {
+                setContext(false);
+                falseCallback();
+            })
+        );
+        setContext(false);
+    };
+
     private registerSubscriptionsCommandHandler() {
         //TODO : provider로 빼기
         this.context.subscriptions.push(
@@ -66,65 +97,21 @@ export class TabView extends CommandManager {
         );
 
         // 전체 그룹 접기 / 펼치기
-        const executeFoldUnfold = () => {
-            const setContext = (state: boolean) => {
-                vscode.commands.executeCommand(
-                    "setContext",
-                    "myext:group.fold",
-                    state
-                );
-            };
-            this.context.subscriptions.push(
-                vscode.commands.registerCommand("myext.group.fold", () => {
-                    setContext(true);
-                    //전체 그룹 접기
-                    this.handleFoldGroup();
-                })
-            );
-            this.context.subscriptions.push(
-                vscode.commands.registerCommand("myext.group.unfold", () => {
-                    setContext(false);
-                    //전체 그룹 펼치기
-                    this.handleFoldGroup();
-                })
-            );
-            setContext(false);
-        };
-
+        this.registerCommandCheckContextMenu({
+            trueCommand: "myext.group.fold",
+            falseCommand: "myext.group.unfold",
+            whenCondition: "myext:group.fold",
+            trueCallback: () => this.handleFoldGroup(),
+            falseCallback: () => this.handleFoldGroup(),
+        });
         // 주석 보이기 / 숨기기
-        const executShowHideDescription = () => {
-            const setContext = (state: boolean) => {
-                vscode.commands.executeCommand(
-                    "setContext",
-                    "myext:show.description",
-                    state
-                );
-            };
-            this.context.subscriptions.push(
-                vscode.commands.registerCommand(
-                    "myext.show.description",
-                    () => {
-                        setContext(true);
-                        //주석 보이기
-                        this.handleViewDescription();
-                    }
-                )
-            );
-            this.context.subscriptions.push(
-                vscode.commands.registerCommand(
-                    "myext.hide.description",
-                    () => {
-                        setContext(false);
-                        //주석 숨기기
-                        this.handleViewDescription();
-                    }
-                )
-            );
-            setContext(false);
-        };
-
-        executeFoldUnfold();
-        executShowHideDescription();
+        this.registerCommandCheckContextMenu({
+            trueCommand: "myext.show.description",
+            falseCommand: "myext.hide.description",
+            whenCondition: "myext:show.description",
+            trueCallback: () => this.handleViewDescription(),
+            falseCallback: () => this.handleViewDescription(),
+        });
     }
 
     //command 추가
