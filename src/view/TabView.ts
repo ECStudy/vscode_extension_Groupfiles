@@ -238,7 +238,7 @@ export class TabView extends CommandManager {
                 label: inputResult.label,
             };
 
-            this.treeDataProvider.createGroup(groupInfo);
+            await this.treeDataProvider.createGroup(groupInfo);
             vscode.window.showInformationMessage(
                 `"${inputResult.label}" group has been updated`
             );
@@ -280,7 +280,7 @@ export class TabView extends CommandManager {
             }
         });
 
-        quickPick.onDidAccept(() => {
+        quickPick.onDidAccept(async () => {
             const selectedItem = quickPick.selectedItems[0];
 
             let selectedGroup: Group | undefined;
@@ -303,7 +303,7 @@ export class TabView extends CommandManager {
                     };
 
                     //신규 Group 추가
-                    this.treeDataProvider.createGroup(createPayload);
+                    await this.treeDataProvider.createGroup(createPayload);
                     vscode.window.showInformationMessage(
                         `"${newGroupLabel}" group has been updated with new tab(s)`
                     );
@@ -319,7 +319,7 @@ export class TabView extends CommandManager {
                     };
 
                     //신규 Group 추가
-                    this.treeDataProvider.createGroup(createPayload);
+                    await this.treeDataProvider.createGroup(createPayload);
                     vscode.window.showInformationMessage(
                         `"${selectedGroup.label}" group has been updated with new tab(s)`
                     );
@@ -333,7 +333,7 @@ export class TabView extends CommandManager {
     }
 
     async handleDeleteAllGroup(node: Node = this.treeDataProvider.getTree()) {
-        if (node.getChildren().length === 0) {
+        if (this.treeDataProvider.getTree().getChildren().length === 0) {
             return;
         }
         const confirm = await vscode.window.showInformationMessage(

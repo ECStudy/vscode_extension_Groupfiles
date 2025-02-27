@@ -187,7 +187,7 @@ export class TreeDataProvider
 
                 //탭 있는 경우 탭 생성
                 if (payload?.uris) {
-                    payload?.uris.forEach(async (uri) => {
+                    for (const uri of payload.uris || []) {
                         const stat = await vscode.workspace.fs.stat(uri);
                         //다중 선택해도 파일만 Tab 생성
                         if (stat.type === vscode.FileType.File) {
@@ -201,7 +201,7 @@ export class TreeDataProvider
                             //TODO : group 인터페이스 수정
                             (group as any)?.setUpdateCollapsed(false);
                         }
-                    });
+                    }
                 }
             }
         }
@@ -209,7 +209,8 @@ export class TreeDataProvider
         //그룹이 이미 있는 경우
         else if (payload.createType === CREATE_TYPE.PREV) {
             if (payload?.group && payload?.uris) {
-                payload?.uris.forEach(async (uri) => {
+                const group = payload?.group;
+                for (const uri of payload.uris || []) {
                     const stat = await vscode.workspace.fs.stat(uri);
                     //다중 선택해도 파일만 Tab 생성
                     if (stat.type === vscode.FileType.File) {
@@ -219,11 +220,11 @@ export class TreeDataProvider
                         } as vscode.Tab;
 
                         const tab = new Tab(`tab_${uuidv4()}`, nativeTab);
-                        payload?.group?.add(tab);
+                        group.add(tab);
                         //TODO : group 인터페이스 수정
-                        (payload.group as any)?.setUpdateCollapsed(false);
+                        (group as any)?.setUpdateCollapsed(false);
                     }
-                });
+                }
             }
         }
 
