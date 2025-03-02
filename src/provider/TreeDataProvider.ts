@@ -62,14 +62,16 @@ export class TreeDataProvider
     }
 
     public saveData() {
-        const tree = this.tree.getTree();
+        const treeClass = this.tree.getTree();
 
-        const serializedTree = Serialize.toJson(tree);
+        //
+        const jsonTreeData = Serialize.toJson(treeClass);
 
-        console.log("🎈saveData tree", tree);
-        console.log("🎈saveData serializedTree", serializedTree);
+        console.log("🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈");
+        console.log("🎈saveData treeClass 1", treeClass);
+        console.log("🎈saveData jsonTreeData 2", jsonTreeData);
 
-        this.storageManager.set(STORAGE_KEYS.TREE_DATA, serializedTree);
+        this.storageManager.set(STORAGE_KEYS.TREE_DATA, jsonTreeData);
         this.storageManager.set(STORAGE_KEYS.VIEW_COLLAPSE, this.viewCollapse);
         this.storageManager.set(
             STORAGE_KEYS.VIEW_DESCRIPTION,
@@ -81,13 +83,15 @@ export class TreeDataProvider
         const jsonTreeData = this.getGlobalState<string>(
             STORAGE_KEYS.TREE_DATA
         );
-
-        console.log("🎈 loadData tree", jsonTreeData);
+        console.log("🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁");
+        console.log("🧁 loadData json 1", jsonTreeData);
 
         if (jsonTreeData) {
+            //
             const treeClass = Serialize.fromJson(jsonTreeData);
-            console.log("🎈 loadData treeClass", treeClass);
+            console.log("🧁 loadData treeClass 2", treeClass);
             this.tree.setChildren(treeClass.getChildren());
+            console.log("🧁 loadData 최종 3", this.tree);
         }
 
         const viewCollapse = this.getGlobalState<boolean>(
@@ -95,20 +99,6 @@ export class TreeDataProvider
         );
         if (viewCollapse !== undefined) {
             this.viewCollapse = viewCollapse;
-        }
-    }
-
-    public async restoreData(jsonTreeData: string, target?: Group) {
-        if (jsonTreeData) {
-            const treeClass = Serialize.fromJson(jsonTreeData);
-
-            if (!target) {
-                this.tree.setChildren(treeClass.getChildren());
-            } else {
-                target.setChildren(treeClass.getChildren());
-            }
-
-            this.triggerEventRerender();
         }
     }
 
@@ -320,8 +310,8 @@ export class TreeDataProvider
             }
         }
 
-        const allGroups = this.getAllParent();
-        const nodes = dropNodeArr
+        // const allGroups = this.getAllParent();
+        const filterDropNodeArr = dropNodeArr
             .map((node: any) => {
                 const tempNode = this.tree.findPath(
                     node.split("/").filter(Boolean)
@@ -331,7 +321,7 @@ export class TreeDataProvider
             })
             .filter((node: any) => node);
 
-        nodes.forEach((node) => {
+        filterDropNodeArr.forEach((node) => {
             //자기 자신이 자기 자신 그룹인 경우 넣을 수 없다.
             if (node.id === targetGroup.id) {
                 return;
@@ -345,8 +335,14 @@ export class TreeDataProvider
                 return;
             }
 
+            //자기자신 못넣음
+            //tab은 tree에 붙을 수 없음
             targetGroup.add(node);
+
+            console.log("찐 최종 add", targetGroup);
         });
+
+        console.log("🧀 무브", this.getTree());
 
         this.triggerEventRerender();
     }

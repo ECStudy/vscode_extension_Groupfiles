@@ -21,7 +21,9 @@ export class Node extends EventHandler {
         return this.parentNode;
     }
 
+    //item이 지금 옮기려고 넣은 item
     add(item: Node) {
+        //원래 내 부모인가?
         if (this.isMyParent(item)) {
             return;
         }
@@ -35,6 +37,9 @@ export class Node extends EventHandler {
 
         //자식에 node 넣기
         item.setParentNode(this);
+
+        //자식은 부모를 잃었다.
+        //
     }
 
     isMyParent(node: Node): boolean {
@@ -71,8 +76,12 @@ export class Node extends EventHandler {
     remove(item: Node) {
         if (!this.getChildren().some(({ id }) => id === item.id)) {
             return;
-        }
-        this.setChildren(this.getChildren().filter(({ id }) => id !== item.id));
+        } //
+        const removeResult = this.getChildren().filter(
+            ({ id }) => id !== item.id
+        );
+        //제거할 대상을 부모의 children 목록에서 지워주고, children set 해줌
+        this.setChildren(removeResult);
         item.setParentNode();
     }
 
