@@ -62,10 +62,10 @@ export class TreeDataProvider
     }
 
     public saveData() {
-        const treeClass = this.tree.getTree();
-        const jsonTreeData = Serialize.toJson(treeClass);
+        const tree = this.tree;
+        const jsonTree = Serialize.toJson(tree);
 
-        this.storageManager.set(STORAGE_KEYS.TREE_DATA, jsonTreeData);
+        this.storageManager.set(STORAGE_KEYS.TREE_DATA, jsonTree);
         this.storageManager.set(STORAGE_KEYS.VIEW_COLLAPSE, this.viewCollapse);
         this.storageManager.set(
             STORAGE_KEYS.VIEW_DESCRIPTION,
@@ -74,13 +74,11 @@ export class TreeDataProvider
     }
 
     private loadData() {
-        const jsonTreeData = this.getGlobalState<string>(
-            STORAGE_KEYS.TREE_DATA
-        );
+        const jsonTree = this.getGlobalState<string>(STORAGE_KEYS.TREE_DATA);
 
-        if (jsonTreeData) {
-            const treeClass = Serialize.fromJson(jsonTreeData, this.tree);
-            this.tree.setChildren(treeClass.getChildren());
+        if (jsonTree) {
+            const tree = Serialize.fromJson(jsonTree, this.tree);
+            this.tree.setChildren(tree.getChildren());
         }
 
         const viewCollapse = this.getGlobalState<boolean>(

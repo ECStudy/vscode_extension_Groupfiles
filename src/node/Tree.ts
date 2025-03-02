@@ -16,10 +16,6 @@ export class Tree extends Node {
         this.id = id;
     }
 
-    getTree() {
-        return this;
-    }
-
     createGroup(payload: ICreateGroup) {}
 
     getGroupMap() {}
