@@ -63,6 +63,7 @@ export class TreeDataProvider
 
     public saveData() {
         const tree = this.tree.getTree();
+
         const serializedTree = Serialize.toJson(tree);
 
         console.log("🎈saveData tree", tree);
