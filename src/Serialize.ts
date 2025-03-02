@@ -59,12 +59,13 @@ export class Serialize {
         return data;
     }
 
-    static fromJson(json: string) {
+    static fromJson(json: string, tree: Tree) {
         const createNode = (nodeJson: any): Group | Tab | Tree => {
             let node;
             switch (nodeJson.type) {
                 case TreeItemType.Tree:
-                    node = new Tree(nodeJson.payload.id);
+                    //provider에서 생성해준 tree 주입
+                    node = tree;
                     break;
                 case TreeItemType.Group:
                     node = new Group(
@@ -107,68 +108,4 @@ export class Serialize {
 
         return createNode(json);
     }
-
-    static serializeNode(node: any): {
-        type: TreeItemType;
-        payload: any;
-        children?: any[];
-    } {
-        const json: { type: TreeItemType; payload: any; children?: any[] } = {
-            type: node.type, // Node type (Tree, Group, Tab)
-            payload: {
-                id: node.id,
-                parentNodeId: node?.parentNode?.id,
-            },
-        };
-
-        if (node.type === TreeItemType.Group) {
-            json.payload.label = (node as Group).label;
-            json.payload.color = (node as Group).color;
-            json.payload.collapsed = (node as Group).collapsed;
-        } else if (node.type === TreeItemType.Tab) {
-            json.payload.path = (node as Tab).path;
-            json.payload.uri = (node as Tab).uri;
-        }
-
-        if (node.getChildren().length > 0) {
-            json.children = node
-                .getChildren()
-                .map((child: any) => Serialize.serializeNode(child));
-        }
-
-        return json;
-    }
-
-    static createNode = (nodeJson: any): Group | Tab | Tree => {
-        let node;
-        switch (nodeJson.type) {
-            case TreeItemType.Tree:
-                node = new Tree(nodeJson.payload.id);
-                break;
-            case TreeItemType.Group:
-                node = new Group(nodeJson.payload.id, nodeJson.payload.label);
-                node.setColor(nodeJson.payload.color);
-                node.collapsed = nodeJson.payload.collapsed;
-                break;
-            case TreeItemType.Tab:
-                //nodeJson.payload.uri.external : 파일명까지 나옴
-                //nodeJson.payload.uri.fsPath : 파일 경로가 통으로 나옴
-                //nodeJson.payload.uri.path : 파일명까지 나옴
-                const filePath = nodeJson.payload.uri.path;
-                const uri = vscode.Uri.parse(filePath);
-                node = new Tab(nodeJson.payload.id, {
-                    input: { uri },
-                });
-                break;
-            default:
-                throw new Error(`Unknown node type: ${nodeJson.type}`);
-        }
-        if (nodeJson.children && nodeJson.children.length > 0) {
-            nodeJson.children.forEach((childJson: any) => {
-                const childNode = Serialize.createNode(childJson);
-                node.add(childNode);
-            });
-        }
-        return node;
-    };
 }

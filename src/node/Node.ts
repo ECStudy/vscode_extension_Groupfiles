@@ -74,9 +74,11 @@ export class Node extends EventHandler {
     }
 
     remove(item: Node) {
+        //children 목록에 item이 존재하지 않으면 return
         if (!this.getChildren().some(({ id }) => id === item.id)) {
             return;
-        } //
+        }
+        //제거할 대상을 부모의 children 목록에서 제거
         const removeResult = this.getChildren().filter(
             ({ id }) => id !== item.id
         );
