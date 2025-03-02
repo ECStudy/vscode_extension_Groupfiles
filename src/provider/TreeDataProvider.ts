@@ -10,7 +10,7 @@ import {
     IUpdateGroup,
     IUpdateTab,
 } from "../type/group";
-import { EventHandler } from "../EventHandler";
+
 import { Node } from "../node/Node";
 import { UpdateAction } from "../type/enums";
 import { v4 as uuidv4 } from "uuid";

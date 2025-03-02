@@ -1,18 +1,15 @@
 import * as vscode from "vscode";
 
-import { v4 as uuidv4 } from "uuid";
 import { Confirm, TAB_VIEW, UpdateAction } from "../type/enums";
 import { TreeDataProvider } from "../provider/TreeDataProvider";
 import { CommandManager } from "../CommandManager";
-import { getFileName, showInputBox } from "../util";
+import { showInputBox } from "../util";
 import { Node } from "../node/Node";
 import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
 import { colorPalette } from "./color";
 import { STORAGE_KEYS } from "../StorageManager";
-import { Serialize } from "../Serialize";
 import { TreeItemType } from "../type/types";
-import { Tree } from "../node/Tree";
 import { CREATE_TYPE } from "../type/group";
 import { Command } from "../type/command";
 
