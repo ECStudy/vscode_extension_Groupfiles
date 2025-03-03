@@ -20,13 +20,13 @@
 //     { label: "White", description: "White", svg: "⬜" },
 // ];
 export const colorPalette = [
-    { label: "Red", description: "Red", svg: "🔴" },
-    { label: "Orange", description: "Orange", svg: "🟠" },
-    { label: "Yellow", description: "Yellow", svg: "🟡" },
-    { label: "Green", description: "Green", svg: "🟢" },
-    { label: "Blue", description: "Blue", svg: "🔵" },
-    { label: "Purple", description: "Purple", svg: "🟣" },
-    { label: "Brown", description: "Brown", svg: "🟤" },
-    { label: "Black", description: "Black", svg: "⚫" },
-    { label: "White", description: "White", svg: "⚪" },
+    { label: "red", icon: "🔴" },
+    { label: "orange", icon: "🟠" },
+    { label: "yellow", icon: "🟡" },
+    { label: "green", icon: "🟢" },
+    { label: "blue", icon: "🔵" },
+    { label: "purple", icon: "🟣" },
+    { label: "brown", icon: "🟤" },
+    { label: "black", icon: "⚫" },
+    { label: "white", icon: "⚪" },
 ];

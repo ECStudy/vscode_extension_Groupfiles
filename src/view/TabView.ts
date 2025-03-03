@@ -412,8 +412,7 @@ export class TabView extends CommandManager {
                 break;
             case UpdateAction.COLOR:
                 const quickPickItems = colorPalette.map((item) => ({
-                    label: `${item.svg} ${item.description}`,
-                    description: `Choose ${item.label}`,
+                    label: `${item.icon} ${item.label}`,
                     value: item.label, // 색상 키를 전달
                 }));
 
