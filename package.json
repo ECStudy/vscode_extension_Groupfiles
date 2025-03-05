@@ -94,7 +94,7 @@
             ],
             "view/item/context": [
                 {
-                    "command": "create.group.in-group",
+                    "command": "create.group.group",
                     "when": "viewItem == group",
                     "group": "inline"
                 },
@@ -163,7 +163,7 @@
                 "icon": "$(trash)"
             },
             {
-                "command": "create.group.in-group",
+                "command": "create.group.group",
                 "title": "Create Group In Group",
                 "icon": "$(add)"
             },

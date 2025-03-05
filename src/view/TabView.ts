@@ -115,6 +115,7 @@ export class TabView extends CommandManager {
 
     //command 추가
     private registerCommandHandler() {
+        //#region 생성 --------------------------------
         //Group 추가
         vscode.commands.registerCommand(Command.CREATE_GROUP, () => {
             this.handleCreateGroup();
@@ -142,21 +143,14 @@ export class TabView extends CommandManager {
 
         //그룹에서 그룹 추가
         vscode.commands.registerCommand(
-            "create.group.in-group",
+            Command.CREATE_GROUP_GROUP,
             (group: Group) => {
-                this.handleCreateGroupAndCreateGroup(group);
+                this.handleCreateGroupAndGroup(group);
             }
         );
+        //#endregion 생성 끝
 
-        //그룹 라벨 변경
-        vscode.commands.registerCommand(
-            "update.group.label",
-            (group: Group) => {
-                this.handleUpdateGroup(group, UpdateAction.LABEL);
-            }
-        );
-
-        //#region 제거
+        //#region 제거 --------------------------------
         //모든 그룹 삭제
         vscode.commands.registerCommand(Command.DELET_All, () => {
             //그룹 모두 삭제
@@ -172,36 +166,53 @@ export class TabView extends CommandManager {
         vscode.commands.registerCommand(Command.DELET_TAB, (node: Tab) => {
             this.handleDelete(node);
         });
-        //#endregion
+        //#endregion 제거 끝
 
-        //그룹에 있는 탭 열기
-        vscode.commands.registerCommand("open.group", (group: Group) => {
-            this.handleOpenGroupChildren(group);
-        });
-
-        //그룹 아이콘 변경
+        //#region 업데이트 --------------------------------
+        //그룹 라벨
         vscode.commands.registerCommand(
-            "update.group.color",
+            Command.UPDATE_GROUP_LABEL,
+            (group: Group) => {
+                this.handleUpdateGroup(group, UpdateAction.LABEL);
+            }
+        );
+
+        //그룹 아이콘
+        vscode.commands.registerCommand(
+            Command.UPDATE_GROUP_COLOR,
             (group: Group) => {
                 this.handleUpdateGroup(group, UpdateAction.COLOR);
             }
         );
 
-        //그룹 주석 변경
+        //그룹 주석
         vscode.commands.registerCommand(
-            "update.group.description",
+            Command.UPDATE_GROUP_DESCRIPTION,
             (group: Group) => {
                 this.handleUpdateGroup(group, UpdateAction.DESCRIPTION);
             }
         );
 
-        vscode.commands.registerCommand("update.tab.label", (tab) => {
+        //탭 라벨
+        vscode.commands.registerCommand(Command.UPDATE_TAB_LABEL, (tab) => {
             this.handleUpdateTab(tab, UpdateAction.LABEL);
         });
 
-        vscode.commands.registerCommand("update.tab.description", (tab) => {
-            this.handleUpdateTab(tab, UpdateAction.DESCRIPTION);
+        //탭 주석
+        vscode.commands.registerCommand(
+            Command.UPDATE_TAB_DESCRIPTION,
+            (tab) => {
+                this.handleUpdateTab(tab, UpdateAction.DESCRIPTION);
+            }
+        );
+        //#endregion 업데이트 끝
+
+        //#region 열기 --------------------------------
+        //그룹에 있는 탭 열기
+        vscode.commands.registerCommand("open.group", (group: Group) => {
+            this.handleOpenGroup(group);
         });
+        //#endregion 열기 끝
     }
 
     private async clearGlobalState() {
@@ -397,7 +408,7 @@ export class TabView extends CommandManager {
     }
 
     //그룹에서 그룹 추가하기
-    async handleCreateGroupAndCreateGroup(group: Group) {
+    async handleCreateGroupAndGroup(group: Group) {
         const inputResult = await this.inputGroupPromptInputBox(
             CREATE_TYPE.NEW
         );
@@ -551,7 +562,7 @@ export class TabView extends CommandManager {
     }
 
     //그룹에 속한 파일 열기
-    async handleOpenGroupChildren(group: Group) {
+    async handleOpenGroup(group: Group) {
         const nodes = group.getChildren();
         for (const node of nodes) {
             if (node.type === TreeItemType.Tab) {
