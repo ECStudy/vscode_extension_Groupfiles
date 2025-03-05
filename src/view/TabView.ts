@@ -43,10 +43,22 @@ export class TabView extends CommandManager {
         }
     }
 
-    private clearGlobalState = () => {
-        this.context.globalState.keys().forEach((key) => {
-            this.context.globalState.update(key, undefined); // 키 값을 undefined로 설정하여 제거
-        });
+    private clearGlobalState = async () => {
+        const nodes = this.treeDataProvider.getTree();
+
+        const confirm = await vscode.window.showInformationMessage(
+            `Extension reset. Cannot be restored.`,
+            Confirm.OK,
+            Confirm.Cancel
+        );
+
+        if (confirm === Confirm.OK) {
+            this.context.globalState.keys().forEach((key) => {
+                this.context.globalState.update(key, undefined); // 키 값을 undefined로 설정하여 제거
+            });
+            nodes.reset();
+            this.treeDataProvider.triggerEventRerender();
+        }
     };
 
     private registerCommandCheckContextMenu = ({
@@ -162,7 +174,7 @@ export class TabView extends CommandManager {
         });
 
         //그룹 제거
-        vscode.commands.registerCommand(Command.CREATE_GROUP, (node: Group) => {
+        vscode.commands.registerCommand(Command.DELETE_GROUP, (node: Group) => {
             this.handleDelete(node);
         });
 
@@ -192,12 +204,6 @@ export class TabView extends CommandManager {
                 this.handleUpdateGroup(group, UpdateAction.DESCRIPTION);
             }
         );
-
-        // //전체 그룹 접기, 펼치기
-        // vscode.commands.registerCommand("view.fold-unfold", () => {
-        //     //전체 그룹 접기
-        //     this.handleFoldGroup();
-        // });
 
         vscode.commands.registerCommand("update.tab.label", (tab) => {
             this.handleUpdateTab(tab, UpdateAction.LABEL);
