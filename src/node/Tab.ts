@@ -46,7 +46,7 @@ export class Tab extends Node implements TabItem {
             title: "Open Tab",
             arguments: [this.uri],
         };
-        if (this.label && this.label.trim() !== "") {
+        if (payload?.viewAlias && this.label && this.label.trim() !== "") {
             item.label = this.label;
         }
         if (

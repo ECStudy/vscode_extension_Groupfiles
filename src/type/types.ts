@@ -29,4 +29,5 @@ type Item = TabItem | GroupItem;
 
 export interface RenderPayload {
     viewDescription?: boolean;
+    viewAlias?: boolean;
 }

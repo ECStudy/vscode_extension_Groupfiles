@@ -48,7 +48,7 @@
                 {
                     "command": "option1",
                     "when": "view == tabview",
-                    "group": "mygr@4"
+                    "group": "mygr@9"
                 },
                 {
                     "command": "myext.group.fold",
@@ -71,9 +71,19 @@
                     "group": "mygr@2"
                 },
                 {
+                    "command": "myext.show.alias",
+                    "when": "view == tabview && !myext:show.alias",
+                    "group": "mygr@3"
+                },
+                {
+                    "command": "myext.hide.alias",
+                    "when": "view == tabview && myext:show.alias",
+                    "group": "mygr@3"
+                },
+                {
                     "command": "global.state.reset",
                     "when": "view == tabview",
-                    "group": "mygr@3"
+                    "group": "mygr@10"
                 }
             ],
             "explorer/context": [
@@ -198,6 +208,14 @@
             {
                 "command": "myext.hide.description",
                 "title": "Description Show / Hide"
+            },
+            {
+                "command": "myext.show.alias",
+                "title": "✓ Alias Show / Hide"
+            },
+            {
+                "command": "myext.hide.alias",
+                "title": "Alias Show / Hide"
             },
             {
                 "command": "myext.group.fold",

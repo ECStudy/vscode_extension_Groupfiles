@@ -42,12 +42,14 @@ export class TreeDataProvider
 
     private viewCollapse: boolean;
     private viewDescription: boolean;
+    private viewAlias: boolean; //탭 별칭
 
     constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.tree = new Tree("root");
         this.viewCollapse = false;
         this.viewDescription = true;
+        this.viewAlias = true; //탭 별칭
         //
         //this.tree.addEvent("create", () => this.triggerEventRerender());
         //this.tree.addEvent("delete", () => this.triggerEventRerender());
@@ -71,6 +73,8 @@ export class TreeDataProvider
             STORAGE_KEYS.VIEW_DESCRIPTION,
             this.viewDescription
         );
+
+        this.storageManager.set(STORAGE_KEYS.VIEW_ALIAS, this.viewAlias);
     }
 
     private loadData() {
@@ -97,6 +101,7 @@ export class TreeDataProvider
     getTreeItem(element: Group | Tab): vscode.TreeItem {
         const itemPayload = {
             viewDescription: this.viewDescription,
+            viewAlias: this.viewAlias,
         };
         const treeItem = element.render(this.context, itemPayload);
         if (element.type === TreeItemType.Group) {
@@ -335,8 +340,13 @@ export class TreeDataProvider
         return this.tree;
     }
 
-    setViewDescription(isViewDescription: boolean) {
-        this.viewDescription = isViewDescription;
+    setViewDescription(state: boolean) {
+        this.viewDescription = state;
+        this.triggerEventRerender();
+    }
+
+    setViewAlias(state: boolean) {
+        this.viewAlias = state;
         this.triggerEventRerender();
     }
 }

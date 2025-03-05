@@ -121,6 +121,14 @@ export class TabView extends CommandManager {
             trueCallback: () => this.handleViewDescription(),
             falseCallback: () => this.handleViewDescription(),
         });
+        // 탭 Alias 보이기 / 숨기기
+        this.registerCommandCheckContextMenu({
+            trueCommand: "myext.show.alias",
+            falseCommand: "myext.hide.alias",
+            whenCondition: "myext:show.alias",
+            trueCallback: () => this.handleViewAlias(),
+            falseCallback: () => this.handleViewAlias(),
+        });
     }
 
     //command 추가
@@ -562,10 +570,17 @@ export class TabView extends CommandManager {
     }
 
     async handleViewDescription() {
-        const viewDescription = this.treeDataProvider.getGlobalState<boolean>(
+        const viewState = this.treeDataProvider.getGlobalState<boolean>(
             STORAGE_KEYS.VIEW_DESCRIPTION
         );
-        this.treeDataProvider.setViewDescription(!viewDescription);
+        this.treeDataProvider.setViewDescription(!viewState);
+    }
+
+    async handleViewAlias() {
+        const viewState = this.treeDataProvider.getGlobalState<boolean>(
+            STORAGE_KEYS.VIEW_ALIAS
+        );
+        this.treeDataProvider.setViewAlias(!viewState);
     }
 
     async handleDrag(
