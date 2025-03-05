@@ -41,7 +41,7 @@
                     "group": "navigation"
                 },
                 {
-                    "command": "delete.group.all",
+                    "command": "delete.all",
                     "when": "view == tabview",
                     "group": "navigation"
                 },
@@ -148,7 +148,7 @@
                 "category": "tab"
             },
             {
-                "command": "delete.group.all",
+                "command": "delete.all",
                 "title": "Delete All Group",
                 "icon": "$(trash)"
             },

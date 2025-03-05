@@ -138,12 +138,6 @@ export class TabView extends CommandManager {
             }
         );
 
-        //모든 그룹 삭제
-        vscode.commands.registerCommand("delete.group.all", (group: Group) => {
-            //그룹 모두 삭제
-            this.handleDeleteAllGroup(group);
-        });
-
         //그룹에서 그룹 추가
         vscode.commands.registerCommand(
             "create.group.in-group",
@@ -160,15 +154,23 @@ export class TabView extends CommandManager {
             }
         );
 
+        //#region 제거
+        //모든 그룹 삭제
+        vscode.commands.registerCommand(Command.DELET_All, () => {
+            //그룹 모두 삭제
+            this.handleDeleteAll();
+        });
+
         //그룹 제거
-        vscode.commands.registerCommand("delete.group", (node: Node) => {
-            this.handleDeleteAllGroup(node);
+        vscode.commands.registerCommand(Command.CREATE_GROUP, (node: Group) => {
+            this.handleDelete(node);
         });
 
         //그룹에 있는 탭 제거
-        vscode.commands.registerCommand("delete.tab", (node: Node) => {
-            this.handleRemoveNode(node);
+        vscode.commands.registerCommand(Command.DELET_TAB, (node: Tab) => {
+            this.handleDelete(node);
         });
+        //#endregion
 
         //그룹에 있는 탭 열기
         vscode.commands.registerCommand("open.group", (group: Group) => {
@@ -329,21 +331,25 @@ export class TabView extends CommandManager {
         quickPick.show();
     }
 
-    async handleDeleteAllGroup(node: Node = this.treeDataProvider.getTree()) {
-        if (this.treeDataProvider.getTree().getChildren().length === 0) {
+    async handleDeleteAll() {
+        const nodes = this.treeDataProvider.getTree();
+
+        if (nodes.getChildren().length === 0) {
             return;
         }
+
         const confirm = await vscode.window.showInformationMessage(
-            `Delete All groups abd tabs?`,
+            `Delete groups and tabs?`,
             Confirm.DELETE,
             Confirm.Cancel
         );
 
         if (confirm === Confirm.DELETE) {
-            const beforeChildren = [...node.getChildren()];
-            node.reset();
+            const beforeChildren = [...nodes.getChildren()];
+            nodes.reset();
             this.treeDataProvider.triggerEventRerender();
 
+            //복구
             setTimeout(async () => {
                 const confirm = await vscode.window.showInformationMessage(
                     `Deleted all groups. Would you like to recover?`,
@@ -352,10 +358,27 @@ export class TabView extends CommandManager {
                 );
 
                 if (confirm === Confirm.RECOVER) {
-                    node.setChildren(beforeChildren);
+                    nodes.setChildren(beforeChildren);
                     this.treeDataProvider.triggerEventRerender();
                 }
             }, 1500);
+        }
+    }
+
+    //그룹 제거 OR 탭 제거
+    async handleDelete(node: Group | Tab) {
+        if (node.type === TreeItemType.Group) {
+            const confirm = await vscode.window.showInformationMessage(
+                `Delete group?`,
+                Confirm.DELETE,
+                Confirm.Cancel
+            );
+
+            if (confirm === Confirm.DELETE) {
+                this.treeDataProvider.remove(node);
+            }
+        } else if (node.type === TreeItemType.Tab) {
+            this.treeDataProvider.remove(node);
         }
     }
 
@@ -511,24 +534,6 @@ export class TabView extends CommandManager {
                 break;
         }
     };
-
-    //그룹 제거 OR 탭 제거
-    async handleRemoveNode(node: Node) {
-        if (node instanceof Group) {
-            const confirm = await vscode.window.showInformationMessage(
-                `그룹을 삭제하시겠습니까?`,
-                Confirm.DELETE,
-                Confirm.Cancel
-            );
-
-            if (confirm === Confirm.DELETE) {
-                this.treeDataProvider.remove(node);
-                //TODO 복구 기능 추가
-            }
-        } else if (node instanceof Tab) {
-            this.treeDataProvider.remove(node);
-        }
-    }
 
     //그룹에 속한 파일 열기
     async handleOpenGroupChildren(group: Group) {

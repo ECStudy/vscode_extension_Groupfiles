@@ -61,12 +61,18 @@ update.group.color
 delete.tab
 delete.tab.all
 delete.group
-delete.group.all
+delete.all
 
 `;
 
 export enum Command {
+    //추가
     CREATE_GROUP = "create.group",
     CREATE_GROUP_TAB = "create.group.tab",
     CREATE_GROUP_TAB_KEY = "create.group.tab.key",
+
+    //제거
+    DELET_TAB = "create.tab",
+    DELETE_GROUP = "create.group",
+    DELET_All = "delete.all",
 }
