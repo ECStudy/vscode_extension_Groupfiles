@@ -160,7 +160,7 @@ export class TreeDataProvider
     /**
      * 그룹 생성
      */
-    createGroup = async (payload: ICreateGroup) => {
+    async createGroup(payload: ICreateGroup) {
         //그룹 신규 생성
         if (payload.createType === CREATE_TYPE.NEW) {
             //그룹 생성
@@ -212,7 +212,7 @@ export class TreeDataProvider
         }
 
         this.triggerEventRerender();
-    };
+    }
 
     createGroupAndGroup(payload: ICreateGroup) {
         //그룹에서 그룹 생성

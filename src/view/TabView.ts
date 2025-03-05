@@ -43,24 +43,6 @@ export class TabView extends CommandManager {
         }
     }
 
-    private clearGlobalState = async () => {
-        const nodes = this.treeDataProvider.getTree();
-
-        const confirm = await vscode.window.showInformationMessage(
-            `Extension reset. Cannot be restored.`,
-            Confirm.OK,
-            Confirm.Cancel
-        );
-
-        if (confirm === Confirm.OK) {
-            this.context.globalState.keys().forEach((key) => {
-                this.context.globalState.update(key, undefined); // 키 값을 undefined로 설정하여 제거
-            });
-            nodes.reset();
-            this.treeDataProvider.triggerEventRerender();
-        }
-    };
-
     private registerCommandCheckContextMenu = ({
         trueCommand,
         falseCommand,
@@ -220,6 +202,24 @@ export class TabView extends CommandManager {
         vscode.commands.registerCommand("update.tab.description", (tab) => {
             this.handleUpdateTab(tab, UpdateAction.DESCRIPTION);
         });
+    }
+
+    private async clearGlobalState() {
+        const nodes = this.treeDataProvider.getTree();
+
+        const confirm = await vscode.window.showInformationMessage(
+            `Extension reset. Cannot be restored.`,
+            Confirm.OK,
+            Confirm.Cancel
+        );
+
+        if (confirm === Confirm.OK) {
+            this.context.globalState.keys().forEach((key) => {
+                this.context.globalState.update(key, undefined); // 키 값을 undefined로 설정하여 제거
+            });
+            nodes.reset();
+            this.treeDataProvider.triggerEventRerender();
+        }
     }
 
     async inputGroupPromptInputBox(mode = CREATE_TYPE.NEW) {
@@ -413,14 +413,14 @@ export class TabView extends CommandManager {
         }
     }
 
-    applyUpdate = (setter: any, payload: any, updatedPayload: any) => {
+    applyUpdate(setter: any, payload: any, updatedPayload: any) {
         setter({
             ...payload,
             ...updatedPayload,
         });
-    };
+    }
 
-    handleUpdateGroup = async (group: Group, action: UpdateAction) => {
+    async handleUpdateGroup(group: Group, action: UpdateAction) {
         const payload = {
             label: group.label || "",
             group,
@@ -497,8 +497,9 @@ export class TabView extends CommandManager {
                 vscode.window.showErrorMessage("유효하지 않은 액션입니다.");
                 break;
         }
-    };
-    handleUpdateTab = async (tab: Tab, action: UpdateAction) => {
+    }
+
+    async handleUpdateTab(tab: Tab, action: UpdateAction) {
         const payload = {
             label: tab.label || "",
             tab,
@@ -547,7 +548,7 @@ export class TabView extends CommandManager {
                 vscode.window.showErrorMessage("유효하지 않은 액션입니다.");
                 break;
         }
-    };
+    }
 
     //그룹에 속한 파일 열기
     async handleOpenGroupChildren(group: Group) {

@@ -1,9 +1,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
 
-import { v4 as uuidv4 } from "uuid";
-
-import { RenderPayload, TabItem, TreeItemType } from "../type/types";
+import { RenderPayload, TreeItemType } from "../type/types";
 import { Node } from "./Node";
 
 const groupIconPaths: { [key: string]: string } = {
