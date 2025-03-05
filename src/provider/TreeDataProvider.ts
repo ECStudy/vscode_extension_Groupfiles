@@ -264,13 +264,16 @@ export class TreeDataProvider
         this.triggerEventRerender();
     }
 
-    setCollapsed(node: any, isCollapse: boolean) {
+    setCollapsed(nodes: (Group | Tab)[], isCollapse: boolean) {
         // 전체 접기/펼치기 상태 업데이트
         this.viewCollapse = isCollapse;
 
         // 각 그룹의 상태 업데이트
-        node.forEach((group: Group) => {
-            group.setCollapsed(isCollapse);
+        nodes.forEach((node) => {
+            if (node?.type === TreeItemType.Group) {
+                // Group인 경우만 setCollapsed 호출
+                node.setCollapsed(isCollapse);
+            }
         });
 
         this.triggerEventRerender();

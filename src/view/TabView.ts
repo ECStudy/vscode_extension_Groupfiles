@@ -365,7 +365,7 @@ export class TabView extends CommandManager {
         }
     }
 
-    //그룹 제거 OR 탭 제거
+    //그룹 제거 | 탭 제거
     async handleDelete(node: Group | Tab) {
         if (node.type === TreeItemType.Group) {
             const confirm = await vscode.window.showInformationMessage(
