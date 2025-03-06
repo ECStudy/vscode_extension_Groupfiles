@@ -16,10 +16,11 @@ import { Command } from "../type/command";
 import { globalState } from "../globalState";
 import { registerCommandCheckContextMenu } from "./registerCommandCheckContextMenu";
 import { registerCommands } from "./registerCommands";
+import { registerSubscriptionsCommandHandler } from "./registerSubscriptionsCommandHandler";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
-    private context: vscode.ExtensionContext;
+    context: vscode.ExtensionContext;
 
     readonly dropMimeTypes: string[] = ["application/vnd.code.tree.tab"];
     readonly dragMimeTypes: string[] = ["application/vnd.code.tree.tab"];
@@ -38,53 +39,14 @@ export class TabView extends CommandManager {
         this.initializeGlobalState();
 
         registerCommands(this);
-        this.registerSubscriptionsCommandHandler();
+        registerSubscriptionsCommandHandler(this);
     }
 
     private initializeGlobalState() {
         globalState.initialize(this.context);
     }
 
-    private registerSubscriptionsCommandHandler() {
-        //TODO : provider로 빼기
-        this.context.subscriptions.push(
-            vscode.commands.registerCommand("global.state.reset", () => {
-                this.clearGlobalState();
-            })
-        );
-
-        // option1 명령 핸들러
-        this.context.subscriptions.push(
-            vscode.commands.registerCommand("option1", () => {})
-        );
-
-        // 전체 그룹 접기 / 펼치기
-        registerCommandCheckContextMenu({
-            trueCommand: "myext.group.fold",
-            falseCommand: "myext.group.unfold",
-            whenCondition: "myext:group.fold",
-            trueCallback: () => this.handleFoldGroup(),
-            falseCallback: () => this.handleFoldGroup(),
-        });
-        // 주석 보이기 / 숨기기
-        registerCommandCheckContextMenu({
-            trueCommand: "myext.show.description",
-            falseCommand: "myext.hide.description",
-            whenCondition: "myext:show.description",
-            trueCallback: () => this.handleViewDescription(),
-            falseCallback: () => this.handleViewDescription(),
-        });
-        // 탭 Alias 보이기 / 숨기기
-        registerCommandCheckContextMenu({
-            trueCommand: "myext.show.alias",
-            falseCommand: "myext.hide.alias",
-            whenCondition: "myext:show.alias",
-            trueCallback: () => this.handleViewAlias(),
-            falseCallback: () => this.handleViewAlias(),
-        });
-    }
-
-    private async clearGlobalState() {
+    async handleClearGlobalState() {
         const nodes = this.treeDataProvider.getTree();
 
         const confirm = await vscode.window.showInformationMessage(
