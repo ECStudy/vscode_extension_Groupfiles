@@ -12,7 +12,9 @@ import { STORAGE_KEYS } from "../StorageManager";
 import { TreeItemType } from "../type/types";
 import { CREATE_TYPE } from "../type/group";
 import { Command } from "../type/command";
+
 import { globalState } from "../globalState";
+import { registerCommandCheckContextMenu } from "./registerCommandCheckContextMenu";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
@@ -40,37 +42,6 @@ export class TabView extends CommandManager {
         globalState.initialize(this.context);
     }
 
-    private registerCommandCheckContextMenu = ({
-        trueCommand,
-        falseCommand,
-        whenCondition,
-        trueCallback,
-        falseCallback,
-    }: {
-        trueCommand: string;
-        falseCommand: string;
-        whenCondition: string;
-        trueCallback: () => void;
-        falseCallback: () => void;
-    }) => {
-        const setContext = (state: boolean) => {
-            vscode.commands.executeCommand("setContext", whenCondition, state);
-        };
-        this.context.subscriptions.push(
-            vscode.commands.registerCommand(trueCommand, () => {
-                setContext(true);
-                trueCallback();
-            })
-        );
-        this.context.subscriptions.push(
-            vscode.commands.registerCommand(falseCommand, () => {
-                setContext(false);
-                falseCallback();
-            })
-        );
-        setContext(false);
-    };
-
     private registerSubscriptionsCommandHandler() {
         //TODO : provider로 빼기
         this.context.subscriptions.push(
@@ -85,7 +56,7 @@ export class TabView extends CommandManager {
         );
 
         // 전체 그룹 접기 / 펼치기
-        this.registerCommandCheckContextMenu({
+        registerCommandCheckContextMenu({
             trueCommand: "myext.group.fold",
             falseCommand: "myext.group.unfold",
             whenCondition: "myext:group.fold",
@@ -93,7 +64,7 @@ export class TabView extends CommandManager {
             falseCallback: () => this.handleFoldGroup(),
         });
         // 주석 보이기 / 숨기기
-        this.registerCommandCheckContextMenu({
+        registerCommandCheckContextMenu({
             trueCommand: "myext.show.description",
             falseCommand: "myext.hide.description",
             whenCondition: "myext:show.description",
@@ -101,7 +72,7 @@ export class TabView extends CommandManager {
             falseCallback: () => this.handleViewDescription(),
         });
         // 탭 Alias 보이기 / 숨기기
-        this.registerCommandCheckContextMenu({
+        registerCommandCheckContextMenu({
             trueCommand: "myext.show.alias",
             falseCommand: "myext.hide.alias",
             whenCondition: "myext:show.alias",
