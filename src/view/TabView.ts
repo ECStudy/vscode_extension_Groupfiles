@@ -15,6 +15,7 @@ import { Command } from "../type/command";
 
 import { globalState } from "../globalState";
 import { registerCommandCheckContextMenu } from "./registerCommandCheckContextMenu";
+import { registerCommands } from "./registerCommands";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
@@ -27,6 +28,7 @@ export class TabView extends CommandManager {
         super();
         this.context = context;
         this.treeDataProvider = new TreeDataProvider(context);
+
         vscode.window.createTreeView(TAB_VIEW, {
             treeDataProvider: this.treeDataProvider,
             canSelectMany: true,
@@ -34,7 +36,8 @@ export class TabView extends CommandManager {
         });
 
         this.initializeGlobalState();
-        this.registerCommandHandler();
+
+        registerCommands(this);
         this.registerSubscriptionsCommandHandler();
     }
 
@@ -79,108 +82,6 @@ export class TabView extends CommandManager {
             trueCallback: () => this.handleViewAlias(),
             falseCallback: () => this.handleViewAlias(),
         });
-    }
-
-    //command 추가
-    private registerCommandHandler() {
-        //#region 생성 --------------------------------
-        //Group 추가
-        vscode.commands.registerCommand(Command.CREATE_GROUP, () => {
-            this.handleCreateGroup();
-        });
-
-        //Group 추가 + Tab 추가
-        vscode.commands.registerCommand(
-            Command.CREATE_GROUP_TAB,
-            async (uri: vscode.Uri, selectedUris: vscode.Uri[]) => {
-                //단축키 추가
-                if (!uri && !selectedUris) {
-                    const editor = vscode.window.activeTextEditor;
-                    if (editor) {
-                        await this.handleCreateGroupAndTab([
-                            editor.document.uri,
-                        ]);
-                    }
-                    return;
-                }
-
-                const uris = selectedUris?.length ? selectedUris : [uri];
-                await this.handleCreateGroupAndTab(uris);
-            }
-        );
-
-        //그룹에서 그룹 추가
-        vscode.commands.registerCommand(
-            Command.CREATE_GROUP_GROUP,
-            (group: Group) => {
-                this.handleCreateGroupAndGroup(group);
-            }
-        );
-        //#endregion 생성 끝
-
-        //#region 제거 --------------------------------
-        //모든 그룹 삭제
-        vscode.commands.registerCommand(Command.DELET_All, () => {
-            //그룹 모두 삭제
-            this.handleDeleteAll();
-        });
-
-        //그룹 제거
-        vscode.commands.registerCommand(Command.DELETE_GROUP, (node: Group) => {
-            this.handleDelete(node);
-        });
-
-        //그룹에 있는 탭 제거
-        vscode.commands.registerCommand(Command.DELET_TAB, (node: Tab) => {
-            this.handleDelete(node);
-        });
-        //#endregion 제거 끝
-
-        //#region 업데이트 --------------------------------
-        //그룹 라벨
-        vscode.commands.registerCommand(
-            Command.UPDATE_GROUP_LABEL,
-            (group: Group) => {
-                this.handleUpdateGroup(group, UpdateAction.LABEL);
-            }
-        );
-
-        //그룹 아이콘
-        vscode.commands.registerCommand(
-            Command.UPDATE_GROUP_COLOR,
-            (group: Group) => {
-                this.handleUpdateGroup(group, UpdateAction.COLOR);
-            }
-        );
-
-        //그룹 주석
-        vscode.commands.registerCommand(
-            Command.UPDATE_GROUP_DESCRIPTION,
-            (group: Group) => {
-                this.handleUpdateGroup(group, UpdateAction.DESCRIPTION);
-            }
-        );
-
-        //탭 라벨
-        vscode.commands.registerCommand(Command.UPDATE_TAB_LABEL, (tab) => {
-            this.handleUpdateTab(tab, UpdateAction.LABEL);
-        });
-
-        //탭 주석
-        vscode.commands.registerCommand(
-            Command.UPDATE_TAB_DESCRIPTION,
-            (tab) => {
-                this.handleUpdateTab(tab, UpdateAction.DESCRIPTION);
-            }
-        );
-        //#endregion 업데이트 끝
-
-        //#region 열기 --------------------------------
-        //그룹에 있는 탭 열기
-        vscode.commands.registerCommand("open.group", (group: Group) => {
-            this.handleOpenGroup(group);
-        });
-        //#endregion 열기 끝
     }
 
     private async clearGlobalState() {
