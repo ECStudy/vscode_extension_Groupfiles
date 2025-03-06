@@ -23,6 +23,7 @@ export const registerSubscriptionsCommandHandler = (tabView: TabView) => {
         trueCallback: () => tabView.handleFoldGroup(),
         falseCallback: () => tabView.handleFoldGroup(),
     });
+
     // 주석 보이기 / 숨기기
     registerCommandCheckContextMenu({
         trueCommand: "myext.show.description",
@@ -31,6 +32,7 @@ export const registerSubscriptionsCommandHandler = (tabView: TabView) => {
         trueCallback: () => tabView.handleViewDescription(),
         falseCallback: () => tabView.handleViewDescription(),
     });
+
     // 탭 Alias 보이기 / 숨기기
     registerCommandCheckContextMenu({
         trueCommand: "myext.show.alias",
