@@ -12,6 +12,7 @@ import { STORAGE_KEYS } from "../StorageManager";
 import { TreeItemType } from "../type/types";
 import { CREATE_TYPE } from "../type/group";
 import { Command } from "../type/command";
+import { globalState } from "../globalState";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
@@ -35,12 +36,8 @@ export class TabView extends CommandManager {
         this.registerSubscriptionsCommandHandler();
     }
 
-    private async initializeGlobalState() {
-        const existingGroups =
-            this.context.globalState.get<string>("tabGroups");
-        if (!existingGroups) {
-            await this.context.globalState.update("tabGroups", "[]");
-        }
+    private initializeGlobalState() {
+        globalState.initialize(this.context);
     }
 
     private registerCommandCheckContextMenu = ({
