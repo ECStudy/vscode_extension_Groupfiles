@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { TabView } from "./TabView";
+import { TabView } from "../view/TabView";
 import { Command } from "../type/command";
 import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";

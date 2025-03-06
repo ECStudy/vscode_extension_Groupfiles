@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { TabView } from "./TabView";
+import { TabView } from "../view/TabView";
 import { registerCommandCheckContextMenu } from "./registerCommandCheckContextMenu";
 
 export const registerSubscriptionsCommandHandler = (tabView: TabView) => {

@@ -1,22 +1,24 @@
 import * as vscode from "vscode";
 
-import { Confirm, TAB_VIEW, UpdateAction } from "../type/enums";
 import { TreeDataProvider } from "../provider/TreeDataProvider";
-import { CommandManager } from "../CommandManager";
-import { showInputBox } from "../util";
+
 import { Node } from "../node/Node";
 import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
+
 import { colorPalette } from "./color";
 import { STORAGE_KEYS } from "../StorageManager";
-import { TreeItemType } from "../type/types";
-import { CREATE_TYPE } from "../type/group";
-import { Command } from "../type/command";
+import { showInputBox } from "../util";
 
 import { globalState } from "../globalState";
-import { registerCommandCheckContextMenu } from "./registerCommandCheckContextMenu";
-import { registerCommands } from "./registerCommands";
-import { registerSubscriptionsCommandHandler } from "./registerSubscriptionsCommandHandler";
+import { CommandManager } from "../CommandManager";
+
+import { registerCommands } from "../command/registerCommands";
+import { registerSubscriptionsCommandHandler } from "../command/registerSubscriptionsCommandHandler";
+
+import { TreeItemType } from "../type/types";
+import { CREATE_TYPE } from "../type/group";
+import { Confirm, TAB_VIEW, UpdateAction } from "../type/enums";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
