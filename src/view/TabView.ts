@@ -6,7 +6,6 @@ import { Node } from "../node/Node";
 import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
 
-import { colorPalette } from "./color";
 import { STORAGE_KEYS } from "../StorageManager";
 import { showInputBox } from "../util";
 
@@ -19,6 +18,7 @@ import { registerSubscriptionsCommandHandler } from "../command/registerSubscrip
 import { TreeItemType } from "../type/types";
 import { CREATE_TYPE } from "../type/group";
 import { Confirm, TAB_VIEW, UpdateAction } from "../type/enums";
+import { colorPalette } from "../constants";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
@@ -66,6 +66,7 @@ export class TabView extends CommandManager {
         }
     }
 
+    //이거 유틸성으로 빼기
     async inputGroupPromptInputBox(mode = CREATE_TYPE.NEW) {
         const dispaly_placeHolder =
             mode === CREATE_TYPE.NEW
@@ -114,6 +115,7 @@ export class TabView extends CommandManager {
                 };
             });
 
+        //유틸로 이동
         const quickPick = vscode.window.createQuickPick();
         quickPick.placeholder = "Choose target group or type new group name";
         quickPick.items = groupList; //Group list
@@ -297,6 +299,7 @@ export class TabView extends CommandManager {
                     value: item.label, // 색상 키를 전달
                 }));
 
+                //유틸로 빼기
                 const selectedColor = await vscode.window.showQuickPick(
                     quickPickItems,
                     {

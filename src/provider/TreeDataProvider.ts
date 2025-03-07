@@ -93,6 +93,8 @@ export class TreeDataProvider
         }
     }
 
+    //https://chatgpt.com/c/67c08338-6c94-8008-84a9-970c2e443bee
+    //옵저버 패턴으로 빼기
     public triggerEventRerender() {
         this.saveData();
         this._onDidChangeTreeData.fire();
@@ -131,6 +133,7 @@ export class TreeDataProvider
         return this.tree.getAllGroups();
     }
 
+    //제거
     getAllParent() {
         const parent = this.tree.getAllGroups();
         //드래그앤 드랍이 가능한 부모를 위해서 tree 추가
@@ -138,6 +141,7 @@ export class TreeDataProvider
         return parent;
     }
 
+    //제거
     getGroupById(parentList: Node[], id: string): Node | undefined {
         // parentList 배열을 순회하며 탐색
         for (const parent of parentList) {
@@ -224,6 +228,7 @@ export class TreeDataProvider
         this.triggerEventRerender();
     }
 
+    //제거
     resetAll() {
         const children = [...this.tree.getChildren()];
         this.tree.reset();
