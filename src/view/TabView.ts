@@ -6,11 +6,8 @@ import { Node } from "../node/Node";
 import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
 
-import { STORAGE_KEYS } from "../StorageManager";
-import { showInputBox } from "../util";
-
-import { globalState } from "../globalState";
-import { CommandManager } from "../CommandManager";
+import { STORAGE_KEYS } from "../store/StorageManager";
+import { globalState } from "../store/globalState";
 
 import { registerCommands } from "../command/registerCommands";
 import { registerSubscriptionsCommandHandler } from "../command/registerSubscriptionsCommandHandler";
@@ -18,7 +15,12 @@ import { registerSubscriptionsCommandHandler } from "../command/registerSubscrip
 import { TreeItemType } from "../type/types";
 import { CREATE_TYPE } from "../type/group";
 import { Confirm, TAB_VIEW, UpdateAction } from "../type/enums";
+
 import { colorPalette } from "../constants";
+
+import { showInputBox } from "../utils/util";
+
+import { CommandManager } from "./CommandManager";
 
 export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;

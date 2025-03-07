@@ -10,7 +10,7 @@ import {
     TreeItemType,
 } from "../type/types";
 
-import { getFileName } from "../util";
+import { getFileName } from "../utils/util";
 import { Node } from "./Node";
 
 export class Tab extends Node implements TabItem {

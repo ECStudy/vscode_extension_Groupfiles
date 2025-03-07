@@ -14,9 +14,9 @@ import {
 import { Node } from "../node/Node";
 import { UpdateAction } from "../type/enums";
 import { v4 as uuidv4 } from "uuid";
-import { Serialize } from "../Serialize";
+import { Serialize } from "../utils/Serialize";
 import { TreeItemType } from "../type/types";
-import { STORAGE_KEYS, StoreageManager } from "../StorageManager";
+import { STORAGE_KEYS, StoreageManager } from "../store/StorageManager";
 
 export class TreeDataProvider
     implements

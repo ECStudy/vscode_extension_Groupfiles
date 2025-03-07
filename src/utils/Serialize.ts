@@ -1,9 +1,10 @@
 import * as vscode from "vscode";
 
-import { Group } from "./node/Group";
-import { Tab } from "./node/Tab";
-import { Tree } from "./node/Tree";
-import { TreeItemType } from "./type/types";
+import { Group } from "../node/Group";
+import { Tab } from "../node/Tab";
+import { Tree } from "../node/Tree";
+
+import { TreeItemType } from "../type/types";
 
 interface NodeJson {
     type: TreeItemType;
