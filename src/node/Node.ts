@@ -1,14 +1,12 @@
-import { EventHandler } from "../EventHandler";
 import { TreeItemType } from "../type/types";
 import { Tab } from "./Tab";
 
-export class Node extends EventHandler {
+export class Node {
     private children: any[];
     private parentNode?: Node;
     id: string;
 
     constructor(id: string) {
-        super();
         this.children = [];
         this.id = id;
     }
