@@ -133,34 +133,6 @@ export class TreeDataProvider
         return this.tree.getAllGroups();
     }
 
-    //제거
-    getAllParent() {
-        const parent = this.tree.getAllGroups();
-        //드래그앤 드랍이 가능한 부모를 위해서 tree 추가
-        parent.push(this.tree);
-        return parent;
-    }
-
-    //제거
-    getGroupById(parentList: Node[], id: string): Node | undefined {
-        // parentList 배열을 순회하며 탐색
-        for (const parent of parentList) {
-            // 현재 노드의 id와 비교
-            if (parent.id === id) {
-                return parent;
-            }
-
-            // 자식 노드 재귀 탐색
-            const result = this.getGroupById(parent.getChildren(), id);
-            if (result) {
-                return result; // 발견 시 즉시 반환
-            }
-        }
-
-        // 배열 전체를 탐색해도 결과를 찾지 못하면 undefined 반환
-        return undefined;
-    }
-
     /**
      * 그룹 생성
      */
@@ -226,14 +198,6 @@ export class TreeDataProvider
         }
 
         this.triggerEventRerender();
-    }
-
-    //제거
-    resetAll() {
-        const children = [...this.tree.getChildren()];
-        this.tree.reset();
-        this.triggerEventRerender();
-        return children;
     }
 
     remove(node: Node) {
