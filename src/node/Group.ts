@@ -3,7 +3,8 @@ import * as path from "path";
 
 import { RenderPayload, TreeItemType } from "../type/types";
 import { Node } from "./Node";
-import { groupIconPaths } from "../view/color";
+
+import { groupIconPaths } from "../assets";
 
 export class Group extends Node {
     readonly type = TreeItemType.Group;
