@@ -263,8 +263,8 @@ export class TabView extends CommandManager {
         switch (action) {
             case UpdateAction.LABEL: {
                 const result = await showInputBox(
-                    "Enter a name for the new group",
-                    "Modify Input group name",
+                    "Enter a label for the group",
+                    "Enter a label for the group",
                     group.label
                 );
                 if (result.state) {
@@ -304,7 +304,7 @@ export class TabView extends CommandManager {
                     );
                 } else {
                     vscode.window.showErrorMessage(
-                        "변경할 아이콘을 선택해주세요"
+                        "Choose a color for the group icon"
                     );
                 }
                 break;
@@ -312,7 +312,7 @@ export class TabView extends CommandManager {
             case UpdateAction.DESCRIPTION: {
                 const result = await showInputBox(
                     "Enter a description for the group",
-                    "디스크립션 입력",
+                    "Enter a description for the group",
                     group?.description
                 );
                 if (result.state) {
@@ -328,7 +328,7 @@ export class TabView extends CommandManager {
                 break;
             }
             default:
-                vscode.window.showErrorMessage("유효하지 않은 액션입니다.");
+                vscode.window.showErrorMessage("Invalid action");
                 break;
         }
     }
@@ -345,8 +345,8 @@ export class TabView extends CommandManager {
         switch (action) {
             case UpdateAction.LABEL: {
                 const result = await showInputBox(
-                    "Enter a name for the new group",
-                    "수정할 탭 이름 입력",
+                    "Enter a name for the tab",
+                    "Enter a name for the tab",
                     tab.label
                 );
                 if (result.state) {
@@ -364,8 +364,8 @@ export class TabView extends CommandManager {
             case UpdateAction.DESCRIPTION:
                 {
                     const result = await showInputBox(
-                        "Enter a description for the group",
-                        "디스크립션 입력",
+                        "Enter a description for the tab",
+                        "Enter a description for the tab",
                         tab?.description
                     );
                     if (result.state) {
@@ -382,12 +382,11 @@ export class TabView extends CommandManager {
 
                 break;
             default:
-                vscode.window.showErrorMessage("유효하지 않은 액션입니다.");
+                vscode.window.showErrorMessage("Invalid action");
                 break;
         }
     }
 
-    //그룹에 속한 파일 열기
     async handleOpenGroup(group: Group) {
         const nodes = group.getChildren();
         for (const node of nodes) {
@@ -397,7 +396,6 @@ export class TabView extends CommandManager {
         }
     }
 
-    //접기 펼치기
     async handleFoldGroup() {
         const viewCollapse = this.treeDataProvider.getGlobalState<boolean>(
             STORAGE_KEYS.VIEW_COLLAPSE
