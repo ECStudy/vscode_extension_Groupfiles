@@ -194,7 +194,7 @@
             },
             {
                 "command": "myext.show.description",
-                "title": "Show/Hide Description"
+                "title": "✓ Show/Hide Description"
             },
             {
                 "command": "myext.hide.description",
@@ -202,15 +202,15 @@
             },
             {
                 "command": "myext.show.alias",
-                "title": "Show/Hide Alias"
+                "title": "✓ Show/Hide Tab Alias"
             },
             {
                 "command": "myext.hide.alias",
-                "title": "Show/Hide Alias"
+                "title": "Show/Hide Tab Alias"
             },
             {
                 "command": "myext.group.fold",
-                "title": "Fold/Unfold Group"
+                "title": "✓ Fold/Unfold Group"
             },
             {
                 "command": "myext.group.unfold",
@@ -218,7 +218,7 @@
             },
             {
                 "command": "update.tab.label",
-                "title": "Change Tab Name",
+                "title": "Change Tab Alias",
                 "category": "tab"
             },
             {
