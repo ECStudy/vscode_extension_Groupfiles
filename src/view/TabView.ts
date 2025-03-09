@@ -68,39 +68,21 @@ export class TabView extends CommandManager {
         }
     }
 
-    //이거 유틸성으로 빼기
-    async inputGroupPromptInputBox(mode = CREATE_TYPE.NEW) {
-        const dispaly_placeHolder =
-            mode === CREATE_TYPE.NEW
-                ? "새 그룹 이름 추가"
-                : "수정할 그룹 이름 입력";
-        const label = await vscode.window.showInputBox({
-            prompt: "Enter a name for the new group",
-            placeHolder: dispaly_placeHolder,
-        });
-
-        if (!label) {
-            vscode.window.showErrorMessage("그룹 이름을 입력해주세요.");
-            return { label: "", result: false };
-        }
-
-        return { label, result: true };
-    }
-
     async handleCreateGroup() {
-        const inputResult = await this.inputGroupPromptInputBox(
-            CREATE_TYPE.NEW
+        const input = await showInputBox(
+            "Enter a name for the group",
+            "Modify Input group name"
         );
 
-        if (inputResult.result) {
+        if (input.state) {
             const groupInfo = {
                 createType: CREATE_TYPE.NEW,
-                label: inputResult.label,
+                label: input.input,
             };
 
             await this.treeDataProvider.createGroup(groupInfo);
             vscode.window.showInformationMessage(
-                `"${inputResult.label}" group has been updated`
+                `"${input.input}" group has been updated`
             );
         }
     }
@@ -246,14 +228,15 @@ export class TabView extends CommandManager {
 
     //그룹에서 그룹 추가하기
     async handleCreateGroupAndGroup(group: Group) {
-        const inputResult = await this.inputGroupPromptInputBox(
-            CREATE_TYPE.NEW
+        const input = await showInputBox(
+            "Enter a name for the group",
+            "Modify Input group name"
         );
 
-        if (inputResult.result) {
+        if (input.result) {
             const createPayload = {
                 createType: CREATE_TYPE.PREV,
-                label: inputResult.label,
+                label: input.input,
                 group: group,
             };
 
@@ -278,30 +261,30 @@ export class TabView extends CommandManager {
         };
 
         switch (action) {
-            case UpdateAction.LABEL:
-                const label = await showInputBox(
+            case UpdateAction.LABEL: {
+                const result = await showInputBox(
                     "Enter a name for the new group",
-                    "수정할 그룹 이름 입력",
+                    "Modify Input group name",
                     group.label
                 );
-                if (label) {
+                if (result.state) {
                     this.applyUpdate(
                         (updatedPayload: any) =>
                             this.treeDataProvider.updateGroup(updatedPayload),
                         payload,
                         {
-                            label,
+                            label: result.input,
                         }
                     );
                 }
                 break;
-            case UpdateAction.COLOR:
+            }
+            case UpdateAction.COLOR: {
                 const quickPickItems = colorPalette.map((item) => ({
                     label: `${item.icon} ${item.label}`,
                     value: item.label, // 색상 키를 전달
                 }));
 
-                //유틸로 빼기
                 const selectedColor = await vscode.window.showQuickPick(
                     quickPickItems,
                     {
@@ -325,23 +308,25 @@ export class TabView extends CommandManager {
                     );
                 }
                 break;
-            case UpdateAction.DESCRIPTION:
-                const description = await showInputBox(
+            }
+            case UpdateAction.DESCRIPTION: {
+                const result = await showInputBox(
                     "Enter a description for the group",
                     "디스크립션 입력",
                     group?.description
                 );
-                if (description) {
+                if (result.state) {
                     this.applyUpdate(
                         (updatedPayload: any) =>
                             this.treeDataProvider.updateGroup(updatedPayload),
                         payload,
                         {
-                            description,
+                            description: result.input,
                         }
                     );
                 }
                 break;
+            }
             default:
                 vscode.window.showErrorMessage("유효하지 않은 액션입니다.");
                 break;
@@ -358,38 +343,41 @@ export class TabView extends CommandManager {
         };
 
         switch (action) {
-            case UpdateAction.LABEL:
-                const label = await showInputBox(
+            case UpdateAction.LABEL: {
+                const result = await showInputBox(
                     "Enter a name for the new group",
                     "수정할 탭 이름 입력",
                     tab.label
                 );
-                if (label) {
+                if (result.state) {
                     this.applyUpdate(
                         (updatedPayload: any) =>
                             this.treeDataProvider.updateTab(updatedPayload),
                         payload,
                         {
-                            label,
+                            label: result.input,
                         }
                     );
                 }
                 break;
+            }
             case UpdateAction.DESCRIPTION:
-                const description = await showInputBox(
-                    "Enter a description for the group",
-                    "디스크립션 입력",
-                    tab?.description
-                );
-                if (description) {
-                    this.applyUpdate(
-                        (updatedPayload: any) =>
-                            this.treeDataProvider.updateTab(updatedPayload),
-                        payload,
-                        {
-                            description,
-                        }
+                {
+                    const result = await showInputBox(
+                        "Enter a description for the group",
+                        "디스크립션 입력",
+                        tab?.description
                     );
+                    if (result.state) {
+                        this.applyUpdate(
+                            (updatedPayload: any) =>
+                                this.treeDataProvider.updateTab(updatedPayload),
+                            payload,
+                            {
+                                label: result.input,
+                            }
+                        );
+                    }
                 }
 
                 break;

@@ -16,6 +16,7 @@ export const showInputBox = async (
     });
     if (!input) {
         vscode.window.showErrorMessage(`${placeHolder}을(를) 입력해주세요.`);
+        return { input: "", result: false };
     }
-    return input;
+    return { input, state: true };
 };
