@@ -50,10 +50,7 @@ export class TreeDataProvider
         this.viewCollapse = false;
         this.viewDescription = true;
         this.viewAlias = true; //탭 별칭
-        //
-        //this.tree.addEvent("create", () => this.triggerEventRerender());
-        //this.tree.addEvent("delete", () => this.triggerEventRerender());
-        //this.tree.addEvent("update", () => this.triggerEventRerender());
+
         this.storageManager = new StoreageManager(this.context);
 
         this.loadData();
@@ -93,8 +90,6 @@ export class TreeDataProvider
         }
     }
 
-    //https://chatgpt.com/c/67c08338-6c94-8008-84a9-970c2e443bee
-    //옵저버 패턴으로 빼기
     public triggerEventRerender() {
         this.saveData();
         this._onDidChangeTreeData.fire();
@@ -129,13 +124,39 @@ export class TreeDataProvider
         return target.getChildren();
     }
 
+    getTree() {
+        return this.tree;
+    }
+
     getGroups() {
         return this.tree.getAllGroups();
     }
 
-    /**
-     * 그룹 생성
-     */
+    setViewCollapsed(nodes: (Group | Tab)[], isCollapse: boolean) {
+        // 전체 접기/펼치기 상태 업데이트
+        this.viewCollapse = isCollapse;
+
+        // 각 그룹의 상태 업데이트
+        nodes.forEach((node) => {
+            if (node?.type === TreeItemType.Group) {
+                // Group인 경우만 setCollapsed 호출
+                node.setCollapsed(isCollapse);
+            }
+        });
+
+        this.triggerEventRerender();
+    }
+
+    setViewDescription(state: boolean) {
+        this.viewDescription = state;
+        this.triggerEventRerender();
+    }
+
+    setViewAlias(state: boolean) {
+        this.viewAlias = state;
+        this.triggerEventRerender();
+    }
+
     async createGroup(payload: ICreateGroup) {
         //그룹 신규 생성
         if (payload.createType === CREATE_TYPE.NEW) {
@@ -238,21 +259,6 @@ export class TreeDataProvider
         this.triggerEventRerender();
     }
 
-    setCollapsed(nodes: (Group | Tab)[], isCollapse: boolean) {
-        // 전체 접기/펼치기 상태 업데이트
-        this.viewCollapse = isCollapse;
-
-        // 각 그룹의 상태 업데이트
-        nodes.forEach((node) => {
-            if (node?.type === TreeItemType.Group) {
-                // Group인 경우만 setCollapsed 호출
-                node.setCollapsed(isCollapse);
-            }
-        });
-
-        this.triggerEventRerender();
-    }
-
     moveNode(target: any, dropNodeArr: any[]) {
         if (!dropNodeArr) {
             return;
@@ -302,20 +308,6 @@ export class TreeDataProvider
             //tab은 tree에 붙을 수 없음
             targetGroup.add(node);
         });
-        this.triggerEventRerender();
-    }
-
-    getTree() {
-        return this.tree;
-    }
-
-    setViewDescription(state: boolean) {
-        this.viewDescription = state;
-        this.triggerEventRerender();
-    }
-
-    setViewAlias(state: boolean) {
-        this.viewAlias = state;
         this.triggerEventRerender();
     }
 }

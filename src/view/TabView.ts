@@ -416,7 +416,7 @@ export class TabView extends CommandManager {
         );
 
         const allGroup = this.treeDataProvider.getGroups() as Group[];
-        this.treeDataProvider.setCollapsed(allGroup, !viewCollapse);
+        this.treeDataProvider.setViewCollapsed(allGroup, !viewCollapse);
     }
 
     async handleViewDescription() {
