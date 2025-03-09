@@ -54,7 +54,7 @@ export class TabView extends CommandManager {
         const nodes = this.treeDataProvider.getTree();
 
         const confirm = await vscode.window.showInformationMessage(
-            `Extension reset. Cannot be restored.`,
+            `Extension reset. Cannot be restored!`,
             Confirm.OK,
             Confirm.Cancel
         );
@@ -71,7 +71,7 @@ export class TabView extends CommandManager {
     async handleCreateGroup() {
         const input = await showInputBox(
             "Enter a name for the group",
-            "Modify Input group name"
+            "Enter the group name"
         );
 
         if (input.state) {
@@ -82,7 +82,7 @@ export class TabView extends CommandManager {
 
             await this.treeDataProvider.createGroup(groupInfo);
             vscode.window.showInformationMessage(
-                `"${input.input}" group has been updated`
+                `Group "${input.input}" has been created`
             );
         }
     }
@@ -183,7 +183,7 @@ export class TabView extends CommandManager {
         }
 
         const confirm = await vscode.window.showInformationMessage(
-            `Delete groups and tabs?`,
+            `Delete all groups and tabs?`,
             Confirm.DELETE,
             Confirm.Cancel
         );
@@ -213,7 +213,7 @@ export class TabView extends CommandManager {
     async handleDelete(node: Group | Tab) {
         if (node.type === TreeItemType.Group) {
             const confirm = await vscode.window.showInformationMessage(
-                `Delete group?`,
+                `Delete this group?`,
                 Confirm.DELETE,
                 Confirm.Cancel
             );
@@ -229,8 +229,8 @@ export class TabView extends CommandManager {
     //그룹에서 그룹 추가하기
     async handleCreateGroupAndGroup(group: Group) {
         const input = await showInputBox(
-            "Enter a name for the group",
-            "Modify Input group name"
+            "Enter a label for the group",
+            "Enter the group label"
         );
 
         if (input.result) {
@@ -264,7 +264,7 @@ export class TabView extends CommandManager {
             case UpdateAction.LABEL: {
                 const result = await showInputBox(
                     "Enter a label for the group",
-                    "Enter a label for the group",
+                    "Enter the group label",
                     group.label
                 );
                 if (result.state) {
@@ -303,9 +303,7 @@ export class TabView extends CommandManager {
                         }
                     );
                 } else {
-                    vscode.window.showErrorMessage(
-                        "Choose a color for the group icon"
-                    );
+                    vscode.window.showErrorMessage("Please choose a color.");
                 }
                 break;
             }
@@ -346,7 +344,7 @@ export class TabView extends CommandManager {
             case UpdateAction.LABEL: {
                 const result = await showInputBox(
                     "Enter a name for the tab",
-                    "Enter a name for the tab",
+                    "Enter the tab name",
                     tab.label
                 );
                 if (result.state) {
@@ -365,7 +363,7 @@ export class TabView extends CommandManager {
                 {
                     const result = await showInputBox(
                         "Enter a description for the tab",
-                        "Enter a description for the tab",
+                        "Enter the tab description",
                         tab?.description
                     );
                     if (result.state) {
