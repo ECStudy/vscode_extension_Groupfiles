@@ -46,11 +46,6 @@
                     "group": "navigation"
                 },
                 {
-                    "command": "option1",
-                    "when": "view == tabview",
-                    "group": "mygr@9"
-                },
-                {
                     "command": "myext.group.fold",
                     "when": "view == tabview && !myext:group.fold",
                     "group": "mygr@1"
@@ -159,12 +154,12 @@
             },
             {
                 "command": "delete.all",
-                "title": "Delete All Group",
+                "title": "Delete All Groups",
                 "icon": "$(trash)"
             },
             {
                 "command": "create.group.group",
-                "title": "Create Group In Group",
+                "title": "Create Group Inside Another Group",
                 "icon": "$(add)"
             },
             {
@@ -184,12 +179,12 @@
             },
             {
                 "command": "update.group.color",
-                "title": "그룹 아이콘 변경",
+                "title": "Change Group Icon",
                 "category": "tab"
             },
             {
                 "command": "update.group.label",
-                "title": "그룹 이름 변경",
+                "title": "Change Group Name",
                 "category": "tab"
             },
             {
@@ -198,46 +193,42 @@
                 "icon": "$(debug-restart)"
             },
             {
-                "command": "option1",
-                "title": "옵션1"
-            },
-            {
                 "command": "myext.show.description",
-                "title": "✓ Description Show / Hide"
+                "title": "Show/Hide Description"
             },
             {
                 "command": "myext.hide.description",
-                "title": "Description Show / Hide"
+                "title": "Show/Hide Description"
             },
             {
                 "command": "myext.show.alias",
-                "title": "✓ Alias Show / Hide"
+                "title": "Show/Hide Alias"
             },
             {
                 "command": "myext.hide.alias",
-                "title": "Alias Show / Hide"
+                "title": "Show/Hide Alias"
             },
             {
                 "command": "myext.group.fold",
-                "title": "✓ Group Fold / UnFold"
+                "title": "Fold/Unfold Group"
             },
             {
                 "command": "myext.group.unfold",
-                "title": "Group Fold / UnFold"
+                "title": "Fold/Unfold Group"
             },
             {
                 "command": "update.tab.label",
-                "title": "탭 이름 변경",
+                "title": "Change Tab Name",
                 "category": "tab"
             },
             {
                 "command": "update.tab.description",
-                "title": "주석 추가",
+                "title": "Add Tab Description",
                 "category": "tab"
             },
             {
                 "command": "update.group.description",
-                "title": "주석 추가",
+                "title": "Add Group Description",
                 "category": "group"
             }
         ],
