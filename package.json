@@ -1,11 +1,12 @@
 {
     "name": "group-files",
-    "displayName": "GroupFils",
+    "displayName": "GroupFiles",
     "description": "",
     "version": "0.0.1",
     "engines": {
         "vscode": "^1.94.0"
     },
+    "publisher": "GroupFiles",
     "categories": [
         "Other"
     ],
