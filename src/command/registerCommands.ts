@@ -1,9 +1,9 @@
 import * as vscode from "vscode";
-import { TabView } from "../view/TabView";
-import { Command } from "../type/command";
+import { TabView } from "../view/views/TabView";
+import { Command } from "../types/command";
 import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
-import { UpdateAction } from "../type/enums";
+import { UpdateAction } from "../types/enums";
 
 export const registerCommands = (tabView: TabView) => {
     //#region 생성 --------------------------------

@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { TabView } from "./view/TabView";
+import { TabView } from "./view/views/TabView";
 
 export function activate(context: vscode.ExtensionContext) {
     const tabView = new TabView(context);

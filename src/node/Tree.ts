@@ -1,10 +1,6 @@
-import * as vscode from "vscode";
+import { TreeItemType } from "../types/types";
 
-import { GroupItem, TabItem, TreeItemType } from "../type/types";
-
-import { Group } from "./Group";
-import { Tab } from "./Tab";
-import { ICreateGroup } from "../type/group";
+import { ICreateGroup } from "../types/group";
 import { Node } from "./Node";
 
 export class Tree extends Node {

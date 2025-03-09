@@ -9,13 +9,13 @@ import {
     ICreateGroup,
     IUpdateGroup,
     IUpdateTab,
-} from "../type/group";
+} from "../types/group";
 
 import { Node } from "../node/Node";
-import { UpdateAction } from "../type/enums";
+import { UpdateAction } from "../types/enums";
 import { v4 as uuidv4 } from "uuid";
 import { Serialize } from "../utils/Serialize";
-import { TreeItemType } from "../type/types";
+import { TreeItemType } from "../types/types";
 import { STORAGE_KEYS, StoreageManager } from "../store/StorageManager";
 
 export class TreeDataProvider

@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { TabView } from "../view/TabView";
+import { TabView } from "../view/views/TabView";
 import { registerCommandCheckContextMenu } from "./registerCommandCheckContextMenu";
 
 export const registerSubscriptionsCommandHandler = (tabView: TabView) => {
@@ -8,11 +8,6 @@ export const registerSubscriptionsCommandHandler = (tabView: TabView) => {
         vscode.commands.registerCommand("global.state.reset", () => {
             tabView.handleClearGlobalState();
         })
-    );
-
-    // option1 명령 핸들러
-    tabView.context.subscriptions.push(
-        vscode.commands.registerCommand("option1", () => {})
     );
 
     // 전체 그룹 접기 / 펼치기

@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { Node } from "../node/Node";
+
 import { Group } from "../node/Group";
 import { UpdateAction } from "./enums";
 import { Tab } from "../node/Tab";

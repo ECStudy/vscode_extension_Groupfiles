@@ -8,7 +8,7 @@ import {
     RenderPayload,
     TabItem,
     TreeItemType,
-} from "../type/types";
+} from "../types/types";
 
 import { getFileName } from "../utils/util";
 import { Node } from "./Node";

@@ -4,7 +4,7 @@ import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
 import { Tree } from "../node/Tree";
 
-import { TreeItemType } from "../type/types";
+import { TreeItemType } from "../types/types";
 
 interface NodeJson {
     type: TreeItemType;

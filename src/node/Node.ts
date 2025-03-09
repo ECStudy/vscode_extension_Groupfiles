@@ -1,4 +1,4 @@
-import { TreeItemType } from "../type/types";
+import { TreeItemType } from "../types/types";
 import { Tab } from "./Tab";
 
 export class Node {

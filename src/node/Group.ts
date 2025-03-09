@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
 
-import { RenderPayload, TreeItemType } from "../type/types";
+import { RenderPayload, TreeItemType } from "../types/types";
 import { Node } from "./Node";
 
 import { groupIconPaths } from "../assets";
