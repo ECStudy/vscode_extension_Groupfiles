@@ -1,6 +1,6 @@
 {
-    "name": "tab-group-bookmark",
-    "displayName": "Tab Group Bookmark",
+    "name": "group-files",
+    "displayName": "GroupFils",
     "description": "",
     "version": "0.0.1",
     "engines": {
@@ -17,14 +17,14 @@
         "viewsContainers": {
             "activitybar": [
                 {
-                    "id": "tab-group-bookmark",
+                    "id": "group-files",
                     "title": "Package Explorer",
                     "icon": "images/my-icon.svg"
                 }
             ]
         },
         "views": {
-            "tab-group-bookmark": [
+            "group-files": [
                 {
                     "id": "tabview",
                     "name": "tab",
