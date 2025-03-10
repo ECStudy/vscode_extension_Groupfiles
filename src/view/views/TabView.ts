@@ -372,7 +372,7 @@ export class TabView extends CommandManager {
                                 this.treeDataProvider.updateTab(updatedPayload),
                             payload,
                             {
-                                label: result.input,
+                                description: result.input,
                             }
                         );
                     }
