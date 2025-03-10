@@ -17,6 +17,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Serialize } from "../utils/Serialize";
 import { TreeItemType } from "../types/types";
 import { STORAGE_KEYS, StoreageManager } from "../store/StorageManager";
+import { parseGitGraphUri } from "../utils/util";
 
 export class TreeDataProvider
     implements
@@ -158,6 +159,8 @@ export class TreeDataProvider
     }
 
     async createGroup(payload: ICreateGroup) {
+        console.log("111111111111111111111111111", payload);
+
         //그룹 신규 생성
         if (payload.createType === CREATE_TYPE.NEW) {
             //그룹 생성
@@ -191,18 +194,43 @@ export class TreeDataProvider
             if (payload?.group && payload?.uris) {
                 const group = payload?.group;
                 for (const uri of payload.uris || []) {
-                    const stat = await vscode.workspace.fs.stat(uri);
-                    //다중 선택해도 파일만 Tab 생성
-                    if (stat.type === vscode.FileType.File) {
+                    // Git-graph URI 처리
+                    if (uri.scheme === "git-graph") {
+                        const { filePath, metadata } = parseGitGraphUri(uri);
+
                         const nativeTab: vscode.Tab = {
                             input: { uri },
-                            label: uri.path.split("/").pop() || "Unknown",
+                            label: filePath.split("/").pop() || "Unknown", // 파일명만 가져오기
                         } as vscode.Tab;
 
                         const tab = new Tab(`tab_${uuidv4()}`, nativeTab);
                         group.add(tab);
-                        //TODO : group 인터페이스 수정
+
+                        // TODO: group 인터페이스 수정
                         (group as any)?.setUpdateCollapsed(false);
+                    } else {
+                        // 일반적인 파일 시스템 처리
+                        try {
+                            const stat = await vscode.workspace.fs.stat(uri);
+                            if (stat.type === vscode.FileType.File) {
+                                const nativeTab: vscode.Tab = {
+                                    input: { uri },
+                                    label:
+                                        uri.path.split("/").pop() || "Unknown",
+                                } as vscode.Tab;
+
+                                const tab = new Tab(
+                                    `tab_${uuidv4()}`,
+                                    nativeTab
+                                );
+                                group.add(tab);
+
+                                // TODO: group 인터페이스 수정
+                                (group as any)?.setUpdateCollapsed(false);
+                            }
+                        } catch (error) {
+                            console.error("Error accessing the file:", error);
+                        }
                     }
                 }
             }
