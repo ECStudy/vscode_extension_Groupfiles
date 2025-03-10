@@ -51,6 +51,8 @@ export class Group extends Node {
             dark: path.join(context.extensionPath, iconPath),
         };
 
+        item.tooltip = this.getPath() + this.label; //마우스 오버하면 그룹 경로 표기
+
         if (
             payload?.viewDescription &&
             this.description &&
