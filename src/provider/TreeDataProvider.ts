@@ -159,7 +159,11 @@ export class TreeDataProvider
     }
 
     // 공통된 Tab 생성 로직을 처리하는 함수
-    private async createTabForGroup(group: Group, uri: vscode.Uri) {
+    private async createTabForGroup(
+        group: Group,
+        uri: vscode.Uri,
+        payload: any
+    ) {
         if (uri.scheme === "git-graph") {
             const { filePath, metadata } = parseGitGraphUri(uri);
             const nativeTab: vscode.Tab = {
@@ -167,7 +171,13 @@ export class TreeDataProvider
                 label: filePath.split("/").pop() || "Unknown", // 파일명만 가져오기
             } as vscode.Tab;
 
-            const tab = new Tab(`tab_${uuidv4()}`, nativeTab);
+            //@TODO 임시로 tabCreatePayload 나누기
+            //label 관련 페이로드 정리 필요함
+            const tabCreatePayload = {
+                workspaceUri: payload.workspaceUri,
+            };
+
+            const tab = new Tab(`tab_${uuidv4()}`, nativeTab, tabCreatePayload);
             group.add(tab);
 
             // TODO: group 인터페이스 수정
@@ -181,7 +191,15 @@ export class TreeDataProvider
                         label: uri.path.split("/").pop() || "Unknown",
                     } as vscode.Tab;
 
-                    const tab = new Tab(`tab_${uuidv4()}`, nativeTab);
+                    const tabCreatePayload = {
+                        workspaceUri: payload.workspaceUri,
+                    };
+
+                    const tab = new Tab(
+                        `tab_${uuidv4()}`,
+                        nativeTab,
+                        tabCreatePayload
+                    );
                     group.add(tab);
 
                     // TODO: group 인터페이스 수정
@@ -204,7 +222,7 @@ export class TreeDataProvider
                 //탭 있는 경우 탭 생성
                 if (payload?.uris) {
                     for (const uri of payload.uris || []) {
-                        await this.createTabForGroup(group, uri);
+                        await this.createTabForGroup(group, uri, payload);
                     }
                 }
             }
@@ -215,7 +233,7 @@ export class TreeDataProvider
             if (payload?.group && payload?.uris) {
                 const group = payload?.group;
                 for (const uri of payload.uris || []) {
-                    await this.createTabForGroup(group, uri);
+                    await this.createTabForGroup(group, uri, payload);
                 }
             }
         }

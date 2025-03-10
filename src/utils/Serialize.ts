@@ -43,6 +43,7 @@ export class Serialize {
             } else if (node.type === TreeItemType.Tab) {
                 json.payload.path = (node as Tab).path;
                 json.payload.uri = (node as Tab).uri;
+                json.payload.workspaceUri = (node as Tab)?.workspaceUri;
                 json.payload.label = (node as Tab).label;
                 json.payload.description = (node as Tab).description;
             }
@@ -84,6 +85,11 @@ export class Serialize {
                     //nodeJson.payload.uri.path : 파일명까지 나옴
                     const filePath = nodeJson.payload.uri.path;
                     const uri = vscode.Uri.parse(filePath);
+
+                    const woirkspacePath =
+                        nodeJson?.payload?.workspaceUri?.path;
+                    const workspaceuri = vscode.Uri.parse(woirkspacePath);
+
                     node = new Tab(
                         nodeJson.payload.id,
                         {
@@ -92,6 +98,7 @@ export class Serialize {
                         {
                             label: nodeJson?.payload?.label,
                             description: nodeJson?.payload?.description,
+                            workspaceUri: workspaceuri,
                         }
                     );
                     break;

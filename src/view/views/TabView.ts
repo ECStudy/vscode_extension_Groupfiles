@@ -1,4 +1,6 @@
 import * as vscode from "vscode";
+import * as path from "path";
+import * as os from "os";
 
 import { TreeDataProvider } from "../../provider/TreeDataProvider";
 
@@ -145,11 +147,24 @@ export class TabView extends CommandManager {
                 vscode.window.showInformationMessage(
                     `New group "${newGroupLabel}" created!`
                 );
+                selectedGroup = (selectedItem as any)?.group as Group;
+
+                // 워크스페이스 폴더 확인
+                const workspaceFolders = vscode.workspace.workspaceFolders;
+                if (!workspaceFolders) {
+                    vscode.window.showErrorMessage("No workspace found.");
+                    return;
+                }
+
+                const workspaceRootUri = workspaceFolders[0].uri; // 현재 워크스페이스 루트 URI
+                const workspaceUri = workspaceRootUri;
+
                 if (newGroupLabel) {
                     const createPayload = {
                         createType: CREATE_TYPE.NEW,
                         label: newGroupLabel,
                         uris: uris,
+                        workspaceUri: workspaceUri, //워크스페이스 저장
                     };
 
                     //신규 Group 추가
@@ -161,11 +176,22 @@ export class TabView extends CommandManager {
             } else {
                 selectedGroup = (selectedItem as any)?.group as Group;
 
+                // 워크스페이스 폴더 확인
+                const workspaceFolders = vscode.workspace.workspaceFolders;
+                if (!workspaceFolders) {
+                    vscode.window.showErrorMessage("No workspace found.");
+                    return;
+                }
+
+                const workspaceRootUri = workspaceFolders[0].uri; // 현재 워크스페이스 루트 URI
+                const workspaceUri = workspaceRootUri;
+
                 if (selectedGroup) {
                     const createPayload = {
                         createType: CREATE_TYPE.PREV,
                         uris: uris,
                         group: selectedGroup,
+                        workspaceUri: workspaceUri, //워크스페이스 저장
                     };
 
                     //신규 Group 추가
@@ -462,5 +488,42 @@ export class TabView extends CommandManager {
         );
 
         this.treeDataProvider.moveNode(target, dataTransferItem?.value);
+    }
+
+    openNewWorkspace = async (workspaceUri: vscode.Uri) => {
+        if (!workspaceUri) {
+            vscode.window.showErrorMessage("No workspace found.");
+            return;
+        }
+
+        // 새로운 워크스페이스 파일 이름 및 경로
+        const newWorkspaceFileName = "duplicated_workspace.code-workspace";
+        const newWorkspaceFilePath = path.join(
+            os.tmpdir(),
+            newWorkspaceFileName
+        );
+
+        try {
+            // 새로 생성된 워크스페이스 파일 경로를 URI로 변환
+            const newWorkspaceUri = vscode.Uri.file(newWorkspaceFilePath);
+
+            // 새로 생성된 워크스페이스 열기 (새 창에서 열기)
+            await vscode.commands.executeCommand(
+                "vscode.openFolder",
+                newWorkspaceUri,
+                true
+            );
+            vscode.window.showInformationMessage(
+                `Workspace duplicated and opened in new window: ${newWorkspaceUri.fsPath}`
+            );
+        } catch (error) {
+            vscode.window.showErrorMessage(`Failed to duplicate workspace`);
+        }
+    };
+
+    // 그룹에 속한 탭들을 포함하는 새로운 워크스페이스 생성
+    async handleOpenWorkspace(tab: Tab) {
+        const workspaceFolder = tab.getWorkspace();
+        await this.openNewWorkspace(workspaceFolder);
     }
 }

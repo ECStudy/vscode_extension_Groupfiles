@@ -15,6 +15,7 @@ export interface ICreateGroup {
     label?: string;
     uris?: vscode.Uri[];
     group?: Group;
+    workspaceUri?: any;
 }
 
 export interface IUpdateGroup {

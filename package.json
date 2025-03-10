@@ -104,34 +104,39 @@
                     "group": "inline"
                 },
                 {
+                    "command": "update.group.label",
+                    "when": "viewItem == group",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "update.group.description",
+                    "when": "viewItem == group",
+                    "group": "navigation@2"
+                },
+                {
+                    "command": "update.group.color",
+                    "when": "viewItem == group",
+                    "group": "navigation@3"
+                },
+                {
                     "command": "delete.tab",
                     "when": "viewItem == tab",
                     "group": "inline"
                 },
                 {
-                    "command": "update.group.color",
-                    "when": "viewItem == group",
-                    "group": "navigation"
-                },
-                {
-                    "command": "update.group.label",
-                    "when": "viewItem == group",
-                    "group": "navigation"
-                },
-                {
                     "command": "update.tab.label",
                     "when": "viewItem == tab",
-                    "group": "navigation"
+                    "group": "navigation@1"
                 },
                 {
                     "command": "update.tab.description",
                     "when": "viewItem == tab",
-                    "group": "navigation"
+                    "group": "navigation@2"
                 },
                 {
-                    "command": "update.group.description",
-                    "when": "viewItem == group",
-                    "group": "navigation"
+                    "command": "open.tab.workspace",
+                    "when": "viewItem == tab",
+                    "group": "navigation@3"
                 }
             ],
             "editor/title/context": [
@@ -224,6 +229,11 @@
             {
                 "command": "update.tab.description",
                 "title": "Set Tab Description",
+                "category": "tab"
+            },
+            {
+                "command": "open.tab.workspace",
+                "title": "Open Saved workspace",
                 "category": "tab"
             },
             {

@@ -20,6 +20,7 @@ export class Tab extends Node implements TabItem {
     uri: vscode.Uri;
     label?: string;
     description?: string;
+    workspaceUri?: any;
 
     constructor(id: string, nativeTab: any, payload?: any) {
         super(id);
@@ -28,6 +29,7 @@ export class Tab extends Node implements TabItem {
         this.uri = (nativeTab.input as NativeTabInput)?.uri;
         this.label = payload?.label || "";
         this.description = payload?.description || "";
+        this.workspaceUri = payload?.workspaceUri; //저장시점의 워크스페이스를 저장한다.
     }
 
     render(
@@ -62,6 +64,10 @@ export class Tab extends Node implements TabItem {
 
     getLabel(): string {
         return getFileName(this.path);
+    }
+
+    getWorkspace(): any {
+        return this.workspaceUri;
     }
 
     remove(item: Tab): void {
