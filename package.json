@@ -19,7 +19,7 @@
             "activitybar": [
                 {
                     "id": "group-files",
-                    "title": "Package Explorer",
+                    "title": "GroupFiles",
                     "icon": "images/my-icon.svg"
                 }
             ]
@@ -29,8 +29,7 @@
                 {
                     "id": "tabview",
                     "name": "tab",
-                    "type": "tree",
-                    "contextualTitle": "tab"
+                    "type": "tree"
                 }
             ]
         },
@@ -150,7 +149,7 @@
             },
             {
                 "command": "create.group.tab",
-                "title": "GroupTab: Add Tab",
+                "title": "GroupTabs: Add Tab",
                 "category": "tab"
             },
             {
@@ -180,12 +179,12 @@
             },
             {
                 "command": "update.group.color",
-                "title": "Change Group Icon",
+                "title": "Set Group Icon",
                 "category": "tab"
             },
             {
                 "command": "update.group.label",
-                "title": "Change Group Name",
+                "title": "Set Group Name",
                 "category": "tab"
             },
             {
@@ -219,23 +218,23 @@
             },
             {
                 "command": "update.tab.label",
-                "title": "Change Tab Alias",
+                "title": "Set Tab Alias",
                 "category": "tab"
             },
             {
                 "command": "update.tab.description",
-                "title": "Add Tab Description",
+                "title": "Set Tab Description",
                 "category": "tab"
             },
             {
                 "command": "update.group.description",
-                "title": "Add Group Description",
+                "title": "Set Group Description",
                 "category": "group"
             }
         ],
         "configuration": {
             "type": "object",
-            "title": "Tab and Bookmark",
+            "title": "GroupFiles",
             "properties": {
                 "openFilesAtStartup": {
                     "type": "array",
