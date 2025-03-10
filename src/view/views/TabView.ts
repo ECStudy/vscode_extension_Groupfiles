@@ -89,6 +89,13 @@ export class TabView extends CommandManager {
 
     //기존 Group 추가 → Tab 추가
     async handleCreateGroupAndTab(uris?: vscode.Uri[]) {
+        const allowUris = uris?.some(
+            (uri) => uri.scheme === "file" || uri.scheme === "git-graph"
+        );
+
+        if (!allowUris) {
+            return;
+        }
         const groupList = this.treeDataProvider
             .getGroups()
             .map((group: Node) => {
