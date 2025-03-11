@@ -17,7 +17,8 @@ import { v4 as uuidv4 } from "uuid";
 import { Serialize } from "../utils/Serialize";
 import { TreeItemType } from "../types/types";
 import { STORAGE_KEYS, StoreageManager } from "../store/StorageManager";
-import { parseGitGraphUri } from "../utils/util";
+
+import { NodeFactory } from "../node/NodeFactory";
 
 export class TreeDataProvider
     implements
@@ -175,49 +176,12 @@ export class TreeDataProvider
         uri: vscode.Uri,
         payload: any
     ) {
-        if (uri.scheme === "git-graph") {
-            const { filePath, metadata } = parseGitGraphUri(uri);
-            const nativeTab: vscode.Tab = {
-                input: { uri },
-                label: filePath.split("/").pop() || "Unknown", // 파일명만 가져오기
-            } as vscode.Tab;
-
-            //@TODO 임시로 tabCreatePayload 나누기
-            //label 관련 페이로드 정리 필요함
-            const tabCreatePayload = {
-                workspaceUri: payload.workspaceUri,
-            };
-
-            const tab = new Tab(`tab_${uuidv4()}`, nativeTab, tabCreatePayload);
+        const tab = await NodeFactory.createTab(uri, payload);
+        if (tab) {
             group.add(tab);
-
-            // TODO: group 인터페이스 수정
-            (group as any)?.setUpdateCollapsed(false);
-        } else {
-            try {
-                const stat = await vscode.workspace.fs.stat(uri);
-                if (stat.type === vscode.FileType.File) {
-                    const nativeTab: vscode.Tab = {
-                        input: { uri },
-                        label: uri.path.split("/").pop() || "Unknown",
-                    } as vscode.Tab;
-
-                    const tabCreatePayload = {
-                        workspaceUri: payload.workspaceUri,
-                    };
-
-                    const tab = new Tab(
-                        `tab_${uuidv4()}`,
-                        nativeTab,
-                        tabCreatePayload
-                    );
-                    group.add(tab);
-
-                    // TODO: group 인터페이스 수정
-                    (group as any)?.setUpdateCollapsed(false);
-                }
-            } catch (error) {
-                console.error("Error accessing the file:", error);
+            // 그룹 상태 업데이트
+            if (typeof group.setUpdateCollapsed === "function") {
+                group.setUpdateCollapsed(false);
             }
         }
     }
@@ -227,7 +191,7 @@ export class TreeDataProvider
         if (payload.createType === CREATE_TYPE.NEW) {
             //그룹 생성
             if (payload?.label) {
-                const group = new Group(`group_${uuidv4()}`, payload?.label);
+                const group = NodeFactory.createGroup(payload.label);
                 this.tree.add(group);
 
                 //탭 있는 경우 탭 생성
