@@ -8,10 +8,21 @@ export enum STORAGE_KEYS {
 }
 
 export class StoreageManager {
+    private static instance: StoreageManager | null = null;
     private context: vscode.ExtensionContext;
 
-    constructor(contex: vscode.ExtensionContext) {
+    private constructor(contex: vscode.ExtensionContext) {
         this.context = contex;
+    }
+
+    public static getInstance(
+        context: vscode.ExtensionContext
+    ): StoreageManager {
+        if (!StoreageManager.instance) {
+            StoreageManager.instance = new StoreageManager(context);
+        }
+
+        return StoreageManager.instance;
     }
 
     get<T>(key: STORAGE_KEYS): T | undefined {

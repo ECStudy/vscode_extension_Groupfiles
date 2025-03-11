@@ -25,16 +25,17 @@ import { showInputBox } from "../../utils/util";
 import { CommandManager } from "../managers/CommandManager";
 
 export class TabView extends CommandManager {
+    private static instance: TabView | null = null;
     private treeDataProvider: TreeDataProvider;
     context: vscode.ExtensionContext;
 
     readonly dropMimeTypes: string[] = ["application/vnd.code.tree.tab"];
     readonly dragMimeTypes: string[] = ["application/vnd.code.tree.tab"];
 
-    constructor(context: vscode.ExtensionContext) {
+    private constructor(context: vscode.ExtensionContext) {
         super();
         this.context = context;
-        this.treeDataProvider = new TreeDataProvider(context);
+        this.treeDataProvider = TreeDataProvider.getInstance(context);
 
         vscode.window.createTreeView(TAB_VIEW, {
             treeDataProvider: this.treeDataProvider,
@@ -46,6 +47,14 @@ export class TabView extends CommandManager {
 
         registerCommands(this);
         registerSubscriptionsCommandHandler(this);
+    }
+
+    public static getInstance(context: vscode.ExtensionContext): TabView {
+        if (!TabView.instance) {
+            TabView.instance = new TabView(context);
+        }
+
+        return TabView.instance;
     }
 
     private initializeGlobalState() {

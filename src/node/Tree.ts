@@ -4,12 +4,21 @@ import { ICreateGroup } from "../types/group";
 import { Node } from "./Node";
 
 export class Tree extends Node {
+    private static instance: Tree | null = null;
     readonly type = TreeItemType.Tree;
     id: string;
 
-    constructor(id: string) {
+    private constructor(id: string) {
         super(id);
         this.id = id;
+    }
+
+    public static getInstance(id: string): Tree {
+        if (!Tree.instance) {
+            Tree.instance = new Tree(id);
+        }
+
+        return Tree.instance;
     }
 
     createGroup(payload: ICreateGroup) {}

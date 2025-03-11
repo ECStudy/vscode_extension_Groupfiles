@@ -24,6 +24,7 @@ export class TreeDataProvider
         vscode.TreeDataProvider<vscode.TreeItem>,
         vscode.TreeDragAndDropController<Group | Tab>
 {
+    private static instance: TreeDataProvider | null = null;
     private tree: Tree;
     private storageManager: StoreageManager;
 
@@ -45,16 +46,26 @@ export class TreeDataProvider
     private viewDescription: boolean;
     private viewAlias: boolean; //탭 별칭
 
-    constructor(context: vscode.ExtensionContext) {
+    private constructor(context: vscode.ExtensionContext) {
         this.context = context;
-        this.tree = new Tree("root");
+        this.tree = Tree.getInstance("root");
         this.viewCollapse = false;
         this.viewDescription = true;
         this.viewAlias = true; //탭 별칭
 
-        this.storageManager = new StoreageManager(this.context);
+        this.storageManager = StoreageManager.getInstance(this.context);
 
         this.loadData();
+    }
+
+    public static getInstance(
+        context: vscode.ExtensionContext
+    ): TreeDataProvider {
+        if (!TreeDataProvider.instance) {
+            TreeDataProvider.instance = new TreeDataProvider(context);
+        }
+
+        return TreeDataProvider.instance;
     }
 
     public getGlobalState<T>(key: STORAGE_KEYS) {
