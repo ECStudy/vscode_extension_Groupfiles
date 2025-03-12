@@ -1,3 +1,7 @@
+![main_icon](./assets/main_icon.png)
+
+
+
 # GroupFiles
 
 `GroupFiles` is a VS Code extension for managing file groups and tabs. 
@@ -74,4 +78,6 @@ It lets you organize your workspace with groups, tabs, and drag-and-drop functio
 
 
 
-**Update Group Name and Tab Alias**![update_label](./assets/update_label.gif)
+**Update Group Name and Tab Alias**
+
+![update_label](./assets/update_label.gif)
