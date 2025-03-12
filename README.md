@@ -1,30 +1,77 @@
-#GroupFiles
+# GroupFiles
 
-## 그룹 관리
+`GroupFiles` is a VS Code extension for managing file groups and tabs. 
 
-새 그룹 생성
-그룹 안에 하위 그룹 생성 (중첩 구조)
-그룹 삭제
-그룹 이름, 설명, 색상 업데이트
+It lets you organize your workspace with groups, tabs, and drag-and-drop functionality.
 
-## 탭 관리
 
-그룹 내에 파일을 탭으로 추가
-탭 이름과 설명 업데이트
-탭 삭제
 
-## 보기 제어
+## Features
 
-설명 표시/숨기기 토글
-탭 별칭 표시/숨기기 토글
-그룹 접기/펼치기
+### Group Management
 
-## 워크스페이스 기능
+- **Create, delete, and update groups** (name, description, color).
+- **Create nested groups**.
 
-그룹 내 모든 파일 열기
-탭 참조를 기반으로 새 워크스페이스 생성
+### Tab Management
 
-## 드래그 앤 드롭
+- **Add, update, and delete tabs** within groups.
 
-그룹 간에 탭 이동
-그룹과 탭 재정렬
+### View Control
+
+- Toggle **description** and **alias** visibility.
+- Toggle **group collapse** state.
+
+### Workspace Features
+
+- Open **all files** within a group.
+- Create a new **workspace** based on tab references.
+
+### Drag & Drop
+
+- **Move tabs** between groups.
+- **Reorder groups** and tabs.
+
+
+
+## Demos
+
+**Create new Group and Tab**
+
+![create_empty_group_and_new_tab](./assets/create_empty_group_and_new_tab.gif)
+
+![create_new_group_add_tab](./assets/create_new_group_add_tab.gif)
+
+
+
+**Create Group and Inner Group**
+
+![create_inner_group_and_tab](./assets/create_inner_group_and_tab.gif)
+
+
+
+**Open Group Inner Tab**
+
+![open_tab](./assets/open_tab.gif)
+
+
+
+**Group and Tab Drag and Drop**
+
+![drag_and_droup](./assets/drag_and_droup.gif)
+
+
+
+**Update Description**
+
+![update_description](./assets/update_description.gif)
+
+
+
+**Update Icon**
+
+![update_icon](./assets/update_icon.gif)
+
+
+
+**Update Group Name and Tab Alias**![update_label](./assets/update_label.gif)
