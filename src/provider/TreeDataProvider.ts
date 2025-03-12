@@ -1,9 +1,5 @@
 import * as vscode from "vscode";
 
-import { Tree } from "../node/Tree";
-
-import { Group } from "../node/Group";
-import { Tab } from "../node/Tab";
 import {
     CREATE_TYPE,
     ICreateGroup,
@@ -11,13 +7,17 @@ import {
     IUpdateTab,
 } from "../types/group";
 
-import { Node } from "../node/Node";
 import { UpdateAction } from "../types/enums";
-import { v4 as uuidv4 } from "uuid";
-import { Serialize } from "../utils/Serialize";
 import { TreeItemType } from "../types/types";
+
+import { Serialize } from "../utils/Serialize";
+
 import { STORAGE_KEYS, StoreageManager } from "../store/StorageManager";
 
+import { Tree } from "../node/Tree";
+import { Group } from "../node/Group";
+import { Tab } from "../node/Tab";
+import { Node } from "../node/Node";
 import { NodeFactory } from "../node/NodeFactory";
 
 export class TreeDataProvider
@@ -219,7 +219,7 @@ export class TreeDataProvider
     createGroupAndGroup(payload: ICreateGroup) {
         //그룹에서 그룹 생성
         if (payload?.label) {
-            const group = new Group(`group_${uuidv4()}`, payload?.label);
+            const group = NodeFactory.createGroup(payload.label);
             payload?.group?.add(group);
         }
 

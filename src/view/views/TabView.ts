@@ -275,7 +275,7 @@ export class TabView extends CommandManager {
             "Enter the group label"
         );
 
-        if (input.result) {
+        if (input.input) {
             const createPayload = {
                 createType: CREATE_TYPE.PREV,
                 label: input.input,
