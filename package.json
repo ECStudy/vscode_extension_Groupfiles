@@ -94,17 +94,17 @@
                 {
                     "command": "create.group.group",
                     "when": "viewItem == group",
-                    "group": "inline"
+                    "group": "inline@2"
                 },
                 {
                     "command": "delete.group",
                     "when": "viewItem == group",
-                    "group": "inline"
+                    "group": "inline@3"
                 },
                 {
                     "command": "open.group",
                     "when": "viewItem == group",
-                    "group": "inline"
+                    "group": "inline@1"
                 },
                 {
                     "command": "update.group.label",
