@@ -79,11 +79,13 @@ export class TabView extends CommandManager {
         }
     }
 
+    //빈 그룹 추가하기
     async handleCreateGroup() {
-        const input = await showInputBox(
-            "Enter a name for the group",
-            "Enter the group name"
-        );
+        const input = await showInputBox({
+            prompt: "Enter a name for the group",
+            placeHolder: "Enter the group name",
+            errorMessage: "Enter the group name",
+        });
 
         if (input.state) {
             const groupInfo = {
@@ -95,6 +97,25 @@ export class TabView extends CommandManager {
             vscode.window.showInformationMessage(
                 `Group "${input.input}" has been created`
             );
+        }
+    }
+
+    //그룹에서 그룹 추가하기
+    async handleCreateGroupAndGroup(group: Group) {
+        const input = await showInputBox({
+            prompt: "Enter a name for the group",
+            placeHolder: "Enter the group name",
+            errorMessage: "Enter the group name",
+        });
+
+        if (input.state) {
+            const createPayload = {
+                createType: CREATE_TYPE.PREV,
+                label: input.input,
+                group: group,
+            };
+
+            this.treeDataProvider.createGroupAndGroup(createPayload);
         }
     }
 
@@ -268,24 +289,6 @@ export class TabView extends CommandManager {
         }
     }
 
-    //그룹에서 그룹 추가하기
-    async handleCreateGroupAndGroup(group: Group) {
-        const input = await showInputBox(
-            "Enter a label for the group",
-            "Enter the group label"
-        );
-
-        if (input.input) {
-            const createPayload = {
-                createType: CREATE_TYPE.PREV,
-                label: input.input,
-                group: group,
-            };
-
-            this.treeDataProvider.createGroupAndGroup(createPayload);
-        }
-    }
-
     applyUpdate(setter: any, payload: any, updatedPayload: any) {
         setter({
             ...payload,
@@ -304,11 +307,11 @@ export class TabView extends CommandManager {
 
         switch (action) {
             case UpdateAction.LABEL: {
-                const result = await showInputBox(
-                    "Enter a label for the group",
-                    "Enter the group label",
-                    group.label
-                );
+                const result = await showInputBox({
+                    prompt: "Enter a label for the group",
+                    placeHolder: "Enter the group label",
+                    value: group.label,
+                });
                 if (result.state) {
                     this.applyUpdate(
                         (updatedPayload: any) =>
@@ -350,11 +353,11 @@ export class TabView extends CommandManager {
                 break;
             }
             case UpdateAction.DESCRIPTION: {
-                const result = await showInputBox(
-                    "Enter a description for the group",
-                    "Enter a description for the group",
-                    group?.description
-                );
+                const result = await showInputBox({
+                    prompt: "Enter a description for the group",
+                    placeHolder: "Enter a description for the group",
+                    value: group?.description,
+                });
                 if (result.state) {
                     this.applyUpdate(
                         (updatedPayload: any) =>
@@ -384,11 +387,11 @@ export class TabView extends CommandManager {
 
         switch (action) {
             case UpdateAction.LABEL: {
-                const result = await showInputBox(
-                    "Enter a name for the tab",
-                    "Enter the tab name",
-                    tab.label
-                );
+                const result = await showInputBox({
+                    prompt: "Enter a name for the tab",
+                    placeHolder: "Enter the tab name",
+                    value: tab.label,
+                });
                 if (result.state) {
                     this.applyUpdate(
                         (updatedPayload: any) =>
@@ -403,11 +406,11 @@ export class TabView extends CommandManager {
             }
             case UpdateAction.DESCRIPTION:
                 {
-                    const result = await showInputBox(
-                        "Enter a description for the tab",
-                        "Enter the tab description",
-                        tab?.description
-                    );
+                    const result = await showInputBox({
+                        prompt: "Enter a description for the tab",
+                        placeHolder: "Enter the tab description",
+                        value: tab?.description,
+                    });
                     if (result.state) {
                         this.applyUpdate(
                             (updatedPayload: any) =>

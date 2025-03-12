@@ -4,20 +4,31 @@ export const getFileName = (path: string) => {
     return path.substring(path.lastIndexOf("/") + 1);
 };
 
-export const showInputBox = async (
-    prompt: string,
-    placeHolder: string,
-    value?: string
-) => {
+export const showInputBox = async ({
+    prompt,
+    placeHolder,
+    value,
+    errorMessage,
+}: {
+    prompt: string;
+    placeHolder: string;
+    value?: string;
+    errorMessage?: string;
+}): Promise<{ input: string; state: boolean }> => {
     const input = await vscode.window.showInputBox({
         prompt,
         placeHolder,
         value,
     });
+
     if (!input) {
-        vscode.window.showErrorMessage(`${placeHolder}을(를) 입력해주세요.`);
-        return { input: "", result: false };
+        if (errorMessage) {
+            vscode.window.showErrorMessage(errorMessage);
+        }
+
+        return { input: "", state: false };
     }
+
     return { input, state: true };
 };
 
