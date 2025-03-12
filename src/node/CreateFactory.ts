@@ -6,7 +6,7 @@ import { Tab } from "../node/Tab";
 
 import { parseGitGraphUri } from "../utils/util";
 
-export class NodeFactory {
+export class CreateFactory {
     static createGroup(label: string, payload?: any): Group {
         const id = `group_${uuidv4()}`;
         return new Group(id, label, payload);

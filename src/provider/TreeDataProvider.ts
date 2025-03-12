@@ -18,7 +18,7 @@ import { Tree } from "../node/Tree";
 import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
 import { Node } from "../node/Node";
-import { NodeFactory } from "../node/NodeFactory";
+import { CreateFactory } from "../node/CreateFactory";
 
 export class TreeDataProvider
     implements
@@ -176,7 +176,7 @@ export class TreeDataProvider
         uri: vscode.Uri,
         payload: any
     ) {
-        const tab = await NodeFactory.createTab(uri, payload);
+        const tab = await CreateFactory.createTab(uri, payload);
         if (tab) {
             group.add(tab);
             // 그룹 상태 업데이트
@@ -191,7 +191,7 @@ export class TreeDataProvider
         if (payload.createType === CREATE_TYPE.NEW) {
             //그룹 생성
             if (payload?.label) {
-                const group = NodeFactory.createGroup(payload.label);
+                const group = CreateFactory.createGroup(payload.label);
                 this.tree.add(group);
 
                 //탭 있는 경우 탭 생성
@@ -219,7 +219,7 @@ export class TreeDataProvider
     createGroupAndGroup(payload: ICreateGroup) {
         //그룹에서 그룹 생성
         if (payload?.label) {
-            const group = NodeFactory.createGroup(payload.label);
+            const group = CreateFactory.createGroup(payload.label);
             payload?.group?.add(group);
         }
 
