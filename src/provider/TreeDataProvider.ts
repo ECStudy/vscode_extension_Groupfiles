@@ -270,6 +270,8 @@ export class TreeDataProvider
         }
 
         let targetGroup: Tree | Group;
+        let targetIndex: number | undefined;
+
         if (!target) {
             targetGroup = this.tree;
         } else {
@@ -295,6 +297,15 @@ export class TreeDataProvider
             })
             .filter((node: any) => node);
 
+        const targetGroupParent = target.getParentNode() as Group;
+        const targetGroupChildren = targetGroupParent.getChildren();
+
+        if (targetGroupChildren.length > 0) {
+            targetIndex = targetGroupChildren.findIndex(
+                (node) => node.id === target.id
+            );
+        }
+
         filterDropNodeArr.forEach((node) => {
             //자기 자신이 자기 자신 그룹인 경우 넣을 수 없다.
             if (node.id === targetGroup.id) {
@@ -311,7 +322,7 @@ export class TreeDataProvider
 
             //자기자신 못넣음
             //tab은 tree에 붙을 수 없음
-            targetGroup.add(node);
+            targetGroup.add(node, targetIndex);
         });
         this.triggerEventRerender();
     }

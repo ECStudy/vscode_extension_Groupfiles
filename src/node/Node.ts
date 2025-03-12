@@ -20,7 +20,7 @@ export class Node {
     }
 
     //item이 지금 옮기려고 넣은 item
-    add(item: Node) {
+    add(item: Node, index?: number) {
         //원래 내 부모인가?
         if (this.isMyParent(item)) {
             return;
@@ -31,7 +31,13 @@ export class Node {
             item.parentNode.remove(item);
         }
 
-        this.children.push(item);
+        // 인덱스가 유효한 경우 해당 위치에 삽입
+        if (index !== undefined && index >= 0 && index < this.children.length) {
+            this.children.splice(index, 0, item);
+        } else {
+            // 기본적으로 맨 뒤에 추가
+            this.children.push(item);
+        }
 
         //자식에 node 넣기
         item.setParentNode(this);
