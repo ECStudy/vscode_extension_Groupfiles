@@ -538,4 +538,72 @@ export class TabView extends CommandManager {
         const workspaceFolder = tab.getWorkspace();
         await this.openNewWorkspace(workspaceFolder);
     }
+
+    //열린 정보로 바로 라인 추가하는 기능도있어야함
+    async handleSetLine(node: any) {
+        //현재 열린 에디터에 정보 가져오기
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            //커서 위치, 라인정보, uri 정보 가져오기
+            const cursorPosition = editor.selection.active; // 커서의 위치
+            const line = cursorPosition.line;
+            const character = cursorPosition.character;
+            const uri = editor.document.uri; // 열린 파일의 URI
+
+            console.log(
+                `👠File URI: ${uri.toString()}, Line: ${line}, Character: ${character}`
+            );
+
+            //전체 탭 정보 찾기
+            const allTabs = this.treeDataProvider.getAllTabs() as Tab[];
+            //일단 path 동일한거 필터하기
+            const tabs = allTabs.filter(
+                (tab) => (tab as Tab).path === uri.path
+            );
+            let targetTab: Tab | undefined;
+
+            console.log("🥖allTabs", allTabs);
+            console.log("🥖tabs", tabs);
+
+            //초면인 경우 -> 그룹 생성 + Tab 생성
+            if (tabs.length === 0) {
+                this.handleCreateGroupAndTab([uri]);
+            }
+            //한개만 있는 경우 -> Tab 하위로 넣기
+            else if (tabs.length === 1) {
+                targetTab = tabs[0];
+                this.treeDataProvider.setLine({
+                    tab: targetTab,
+                    createInfo: { uri, line, character, cursorPosition },
+                });
+            }
+            //여러개 있는 경우 -> Select 띄워주기
+            else if (tabs.length > 1) {
+                const quickPickItems = tabs.map((tab) => ({
+                    label: tab?.path,
+                    value: tab?.label, // 색상 키를 전달
+                    uri: tab.uri,
+                    id: tab.id,
+                }));
+
+                const selectedTab = await vscode.window.showQuickPick(
+                    quickPickItems,
+                    {
+                        placeHolder: "Choose a color for the group icon",
+                        canPickMany: false,
+                    }
+                );
+
+                if (selectedTab) {
+                    console.log(selectedTab);
+                    targetTab = tabs.find((tab) => tab.id === selectedTab.id);
+                    this.treeDataProvider.setLine({
+                        tab: targetTab, //이거
+                        createInfo: { uri, line, character, cursorPosition },
+                    });
+                }
+            }
+            //this.treeDataProvider.setLine(uri, { line });
+        }
+    }
 }

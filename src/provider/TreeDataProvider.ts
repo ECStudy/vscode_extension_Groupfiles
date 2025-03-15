@@ -19,6 +19,7 @@ import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
 import { Node } from "../node/Node";
 import { CreateFactory } from "../node/CreateFactory";
+import { Line } from "../node/Line";
 
 export class TreeDataProvider
     implements
@@ -74,33 +75,29 @@ export class TreeDataProvider
     }
 
     public saveData() {
-        const tree = this.tree;
-        const jsonTree = Serialize.toJson(tree);
-
-        this.storageManager.set(STORAGE_KEYS.TREE_DATA, jsonTree);
-        this.storageManager.set(STORAGE_KEYS.VIEW_COLLAPSE, this.viewCollapse);
-        this.storageManager.set(
-            STORAGE_KEYS.VIEW_DESCRIPTION,
-            this.viewDescription
-        );
-
-        this.storageManager.set(STORAGE_KEYS.VIEW_ALIAS, this.viewAlias);
+        // const tree = this.tree;
+        // const jsonTree = Serialize.toJson(tree);
+        // this.storageManager.set(STORAGE_KEYS.TREE_DATA, jsonTree);
+        // this.storageManager.set(STORAGE_KEYS.VIEW_COLLAPSE, this.viewCollapse);
+        // this.storageManager.set(
+        //     STORAGE_KEYS.VIEW_DESCRIPTION,
+        //     this.viewDescription
+        // );
+        // this.storageManager.set(STORAGE_KEYS.VIEW_ALIAS, this.viewAlias);
     }
 
     private loadData() {
-        const jsonTree = this.getGlobalState<string>(STORAGE_KEYS.TREE_DATA);
-
-        if (jsonTree) {
-            const tree = Serialize.fromJson(jsonTree, this.tree);
-            this.tree.setChildren(tree.getChildren());
-        }
-
-        const viewCollapse = this.getGlobalState<boolean>(
-            STORAGE_KEYS.VIEW_COLLAPSE
-        );
-        if (viewCollapse !== undefined) {
-            this.viewCollapse = viewCollapse;
-        }
+        // const jsonTree = this.getGlobalState<string>(STORAGE_KEYS.TREE_DATA);
+        // if (jsonTree) {
+        //     const tree = Serialize.fromJson(jsonTree, this.tree);
+        //     this.tree.setChildren(tree.getChildren());
+        // }
+        // const viewCollapse = this.getGlobalState<boolean>(
+        //     STORAGE_KEYS.VIEW_COLLAPSE
+        // );
+        // if (viewCollapse !== undefined) {
+        //     this.viewCollapse = viewCollapse;
+        // }
     }
 
     public triggerEventRerender() {
@@ -108,11 +105,17 @@ export class TreeDataProvider
         this._onDidChangeTreeData.fire();
     }
 
-    getTreeItem(element: Group | Tab): vscode.TreeItem {
+    getTreeItem(element: Group | Tab | Line): vscode.TreeItem {
         const itemPayload = {
             viewDescription: this.viewDescription,
             viewAlias: this.viewAlias,
         };
+
+        // Line 타입 확인 추가
+        if (element.type === TreeItemType.Line) {
+            return element.render(this.context, itemPayload);
+        }
+
         const treeItem = element.render(this.context, itemPayload);
         if (element.type === TreeItemType.Group) {
             //접기 펼치기 캐싱 때문에 렌더 할 때 아이디 변경
@@ -123,13 +126,20 @@ export class TreeDataProvider
             treeItem.collapsibleState = element.collapsed
                 ? vscode.TreeItemCollapsibleState.Collapsed //닫힘 1
                 : vscode.TreeItemCollapsibleState.Expanded; //열림 2
+        } else if (
+            element.type === TreeItemType.Tab &&
+            element.getChildren().length > 0
+        ) {
+            // Tab에 자식이 있으면 확장 가능하도록 설정
+            treeItem.collapsibleState =
+                vscode.TreeItemCollapsibleState.Expanded;
         }
 
         return treeItem;
     }
 
-    getChildren(element?: Group | Tab): Group[] {
-        if (element instanceof Tab) {
+    getChildren(element?: Group | Tab | Line): (Group | Tab | Line)[] {
+        if (element instanceof Line) {
             return [];
         }
 
@@ -307,6 +317,10 @@ export class TreeDataProvider
         }
 
         filterDropNodeArr.forEach((node) => {
+            if (node.type === TreeItemType.Line) {
+                return;
+            }
+
             //자기 자신이 자기 자신 그룹인 경우 넣을 수 없다.
             if (node.id === targetGroup.id) {
                 return;
@@ -325,5 +339,31 @@ export class TreeDataProvider
             targetGroup.add(node, targetIndex);
         });
         this.triggerEventRerender();
+    }
+
+    async setLine(payload: {
+        tab: any;
+        createInfo: {
+            uri: any;
+            line: any;
+            character: any;
+            cursorPosition: any;
+        };
+    }) {
+        const { tab, createInfo } = payload;
+
+        const line = await CreateFactory.createLine(
+            payload.createInfo.uri,
+            createInfo
+        );
+
+        if (tab) {
+            tab?.add(line);
+            this.triggerEventRerender();
+        }
+    }
+
+    getAllTabs(): Node[] {
+        return this.tree.getAllTabs();
     }
 }

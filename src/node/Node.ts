@@ -112,6 +112,27 @@ export class Node {
         return items;
     }
 
+    getAllTabs(): Node[] {
+        const items: Node[] = [];
+        if (this.children.length === 0) {
+            return items;
+        }
+        this.children.forEach((node) => {
+            const target = node;
+
+            if (target.type === TreeItemType.Line) {
+                return;
+            }
+
+            if (target.type === TreeItemType.Tab) {
+                items.push(node);
+            }
+
+            items.push(...node.getAllTabs());
+        });
+        return items;
+    }
+
     findPath(treePath: string[] = []) {
         const [id, ...other] = treePath;
         if (!id) {

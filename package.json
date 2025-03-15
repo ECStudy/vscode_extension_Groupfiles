@@ -146,6 +146,12 @@
                 {
                     "command": "create.group.tab"
                 }
+            ],
+            "editor/context": [
+                {
+                    "command": "create.tab.line",
+                    "when": "editorTextFocus"
+                }
             ]
         },
         "commands": [
@@ -242,6 +248,10 @@
                 "command": "update.group.description",
                 "title": "Set Group Description",
                 "category": "group"
+            },
+            {
+                "command": "create.tab.line",
+                "title": "GroupTabs: Set Line"
             }
         ],
         "configuration": {
@@ -259,6 +269,11 @@
             {
                 "command": "create.group.tab",
                 "key": "ctrl+alt+g",
+                "when": "editorTextFocus"
+            },
+            {
+                "command": "create.tab.line",
+                "key": "ctrl+alt+l",
                 "when": "editorTextFocus"
             }
         ]

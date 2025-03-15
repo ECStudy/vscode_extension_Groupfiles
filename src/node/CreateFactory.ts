@@ -5,6 +5,7 @@ import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
 
 import { parseGitGraphUri } from "../utils/util";
+import { Line } from "./Line";
 
 export class CreateFactory {
     static createGroup(label: string, payload?: any): Group {
@@ -47,5 +48,32 @@ export class CreateFactory {
         }
 
         return null;
+    }
+
+    static async createLine(
+        uri: vscode.Uri,
+        payload?: any
+    ): Promise<Line | null> {
+        const nativeTab: vscode.Tab = {
+            input: { uri },
+            label: uri.path.split("/").pop() || "Unknown",
+        } as vscode.Tab;
+
+        try {
+            const document = await vscode.workspace.openTextDocument(uri);
+            const updatePayload = { ...payload };
+
+            //내가 등록하려고 한 라인이 0보다 큼, 전체 길이보다 작음
+            if (payload?.line >= 0 && payload?.line < document.lineCount) {
+                const lineText = document
+                    .lineAt(payload.line)
+                    .text.slice(0, 40)
+                    .trim();
+                updatePayload.lineText = lineText;
+            }
+            return new Line(`line_${uuidv4()}`, nativeTab, updatePayload);
+        } catch (err) {
+            return null;
+        }
     }
 }

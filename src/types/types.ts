@@ -6,6 +6,7 @@ export const enum TreeItemType {
     Tree, //0
     Tab, //1
     Group, //2
+    Line, //3
 }
 
 export type GroupItem = {

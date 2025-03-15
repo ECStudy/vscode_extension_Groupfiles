@@ -21,6 +21,8 @@ export class Tab extends Node implements TabItem {
     label?: string;
     description?: string;
     workspaceUri?: any;
+    // 접기 펼치기 여부
+    collapsed: boolean;
 
     constructor(id: string, nativeTab: any, payload?: any) {
         super(id);
@@ -30,6 +32,8 @@ export class Tab extends Node implements TabItem {
         this.label = payload?.label || "";
         this.description = payload?.description || "";
         this.workspaceUri = payload?.workspaceUri; //저장시점의 워크스페이스를 저장한다.
+
+        this.collapsed = false;
     }
 
     render(

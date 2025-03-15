@@ -106,5 +106,10 @@ export const registerCommands = (tabView: TabView) => {
     vscode.commands.registerCommand("open.group", (group: Group) => {
         tabView.handleOpenGroup(group);
     });
+
     //#endregion 열기 끝
+
+    vscode.commands.registerCommand("create.tab.line", (node: any) => {
+        tabView.handleSetLine(node);
+    });
 };
