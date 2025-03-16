@@ -162,80 +162,121 @@ export class TabView extends CommandManager {
             }
         });
 
-        quickPick.onDidAccept(async () => {
-            const selectedItem = quickPick.selectedItems[0];
+        return new Promise<Group | undefined>((resolve) => {
+            // Promise가 이미 해결되었는지 추적하는 플래그
+            let isResolved = false;
 
-            let selectedGroup: Group | undefined;
-            let newGroupLabel: string | undefined;
-
-            //새그룹
-            if (selectedItem.label.startsWith("$(add)")) {
-                newGroupLabel = selectedItem.label.replace(
-                    /\$\(add\) Create new group\: "([^"]+)"/g,
-                    "$1"
-                );
-                vscode.window.showInformationMessage(
-                    `New group "${newGroupLabel}" created!`
-                );
-                selectedGroup = (selectedItem as any)?.group as Group;
-
-                // 워크스페이스 폴더 확인
-                const workspaceFolders = vscode.workspace.workspaceFolders;
-                if (!workspaceFolders) {
-                    vscode.window.showErrorMessage("No workspace found.");
-                    return;
+            const resolveOnce = (value: Group | undefined) => {
+                if (!isResolved) {
+                    isResolved = true;
+                    resolve(value);
                 }
+            };
 
-                const workspaceRootUri = workspaceFolders[0].uri; // 현재 워크스페이스 루트 URI
-                const workspaceUri = workspaceRootUri;
+            quickPick.onDidAccept(async () => {
+                try {
+                    // 선택된 항목이 없으면 일찍 반환
+                    if (
+                        !quickPick.selectedItems ||
+                        quickPick.selectedItems.length === 0
+                    ) {
+                        quickPick.hide();
+                        resolveOnce(undefined);
+                        return;
+                    }
 
-                if (newGroupLabel) {
-                    const createPayload = {
-                        createType: CREATE_TYPE.NEW,
-                        label: newGroupLabel,
-                        uris: uris,
-                        workspaceUri: workspaceUri, //워크스페이스 저장
-                    };
+                    const selectedItem = quickPick.selectedItems[0];
 
-                    //신규 Group 추가
-                    await this.treeDataProvider.createGroup(createPayload);
-                    vscode.window.showInformationMessage(
-                        `"${newGroupLabel}" group has been updated with new tab(s)`
-                    );
+                    let selectedGroup: Group | undefined;
+                    let newGroupLabel: string | undefined;
+                    let resultGroup: Group | undefined;
+
+                    // 워크스페이스 폴더 확인
+                    const workspaceFolders = vscode.workspace.workspaceFolders;
+                    if (!workspaceFolders) {
+                        vscode.window.showErrorMessage("No workspace found.");
+                        quickPick.hide();
+                        resolveOnce(undefined);
+                        return;
+                    }
+                    const workspaceRootUri = workspaceFolders[0].uri;
+                    const workspaceUri = workspaceRootUri;
+
+                    // 새그룹
+                    if (selectedItem.label.startsWith("$(add)")) {
+                        newGroupLabel = selectedItem.label.replace(
+                            /\$\(add\) Create new group\: "([^"]+)"/g,
+                            "$1"
+                        );
+                        vscode.window.showInformationMessage(
+                            `New group "${newGroupLabel}" created!`
+                        );
+
+                        if (newGroupLabel) {
+                            const createPayload = {
+                                createType: CREATE_TYPE.NEW,
+                                label: newGroupLabel,
+                                uris: uris,
+                                workspaceUri: workspaceUri,
+                            };
+
+                            resultGroup =
+                                await this.treeDataProvider.createGroup(
+                                    createPayload
+                                );
+                            vscode.window.showInformationMessage(
+                                `"${newGroupLabel}" group has been updated with new tab(s)`
+                            );
+                        }
+                    } // 기존 그룹 사용 케이스
+                    else {
+                        if (!selectedItem || !(selectedItem as any)?.group) {
+                            console.error(
+                                "Selected item or group is undefined:",
+                                selectedItem
+                            );
+                            quickPick.hide();
+                            resolveOnce(undefined);
+                            return;
+                        }
+
+                        selectedGroup = (selectedItem as any)?.group as Group;
+
+                        if (selectedGroup) {
+                            const createPayload = {
+                                createType: CREATE_TYPE.PREV,
+                                uris: uris,
+                                group: selectedGroup,
+                                workspaceUri: workspaceUri,
+                            };
+
+                            resultGroup =
+                                await this.treeDataProvider.createGroup(
+                                    createPayload
+                                );
+                            vscode.window.showInformationMessage(
+                                `"${selectedGroup.label}" group has been updated with new tab(s)`
+                            );
+                        }
+                    }
+
+                    quickPick.hide();
+                    // 그룹 반환
+                    resolveOnce(resultGroup);
+                } catch (error) {
+                    console.error("Error in handleCreateGroupAndTab:", error);
+                    quickPick.hide();
+                    resolveOnce(undefined);
                 }
-            } else {
-                selectedGroup = (selectedItem as any)?.group as Group;
+            });
 
-                // 워크스페이스 폴더 확인
-                const workspaceFolders = vscode.workspace.workspaceFolders;
-                if (!workspaceFolders) {
-                    vscode.window.showErrorMessage("No workspace found.");
-                    return;
-                }
+            quickPick.onDidHide(() => {
+                // 아직 Promise가 해결되지 않았다면 undefined로 해결
+                resolveOnce(undefined);
+            });
 
-                const workspaceRootUri = workspaceFolders[0].uri; // 현재 워크스페이스 루트 URI
-                const workspaceUri = workspaceRootUri;
-
-                if (selectedGroup) {
-                    const createPayload = {
-                        createType: CREATE_TYPE.PREV,
-                        uris: uris,
-                        group: selectedGroup,
-                        workspaceUri: workspaceUri, //워크스페이스 저장
-                    };
-
-                    //신규 Group 추가
-                    await this.treeDataProvider.createGroup(createPayload);
-                    vscode.window.showInformationMessage(
-                        `"${selectedGroup.label}" group has been updated with new tab(s)`
-                    );
-                }
-            }
-
-            quickPick.hide();
+            quickPick.show();
         });
-
-        quickPick.show();
     }
 
     async handleDeleteAll() {
@@ -562,12 +603,15 @@ export class TabView extends CommandManager {
             );
             let targetTab: Tab | undefined;
 
-            console.log("🥖allTabs", allTabs);
-            console.log("🥖tabs", tabs);
-
             //초면인 경우 -> 그룹 생성 + Tab 생성
             if (tabs.length === 0) {
-                this.handleCreateGroupAndTab([uri]);
+                const group = await this.handleCreateGroupAndTab([uri]);
+                const allTabs = group?.getAllTabs() as Tab[];
+                targetTab = allTabs[0];
+                this.treeDataProvider.setLine({
+                    tab: targetTab,
+                    createInfo: { uri, line, character, cursorPosition },
+                });
             }
             //한개만 있는 경우 -> Tab 하위로 넣기
             else if (tabs.length === 1) {
@@ -603,7 +647,6 @@ export class TabView extends CommandManager {
                     });
                 }
             }
-            //this.treeDataProvider.setLine(uri, { line });
         }
     }
 }

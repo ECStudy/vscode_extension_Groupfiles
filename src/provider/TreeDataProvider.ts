@@ -197,6 +197,7 @@ export class TreeDataProvider
     }
 
     async createGroup(payload: ICreateGroup) {
+        let newGroup;
         //그룹 신규 생성
         if (payload.createType === CREATE_TYPE.NEW) {
             //그룹 생성
@@ -210,6 +211,8 @@ export class TreeDataProvider
                         await this.createTabForGroup(group, uri, payload);
                     }
                 }
+
+                newGroup = group;
             }
         }
 
@@ -220,10 +223,12 @@ export class TreeDataProvider
                 for (const uri of payload.uris || []) {
                     await this.createTabForGroup(group, uri, payload);
                 }
+                newGroup = group;
             }
         }
 
         this.triggerEventRerender();
+        return newGroup;
     }
 
     createGroupAndGroup(payload: ICreateGroup) {
