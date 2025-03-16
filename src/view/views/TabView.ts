@@ -23,10 +23,12 @@ import { colorPalette } from "../../constants";
 import { showInputBox } from "../../utils/util";
 
 import { CommandManager } from "../managers/CommandManager";
+import { GutterIconProvider } from "../../provider/GutterIconProvider";
 
 export class TabView extends CommandManager {
     private static instance: TabView | null = null;
     private treeDataProvider: TreeDataProvider;
+    private gutterIconProvider: GutterIconProvider;
     context: vscode.ExtensionContext;
 
     readonly dropMimeTypes: string[] = ["application/vnd.code.tree.tab"];
@@ -35,7 +37,9 @@ export class TabView extends CommandManager {
     private constructor(context: vscode.ExtensionContext) {
         super();
         this.context = context;
+
         this.treeDataProvider = TreeDataProvider.getInstance(context);
+        this.gutterIconProvider = GutterIconProvider.getInstance(context);
 
         vscode.window.createTreeView(TAB_VIEW, {
             treeDataProvider: this.treeDataProvider,
@@ -578,6 +582,43 @@ export class TabView extends CommandManager {
         await this.openNewWorkspace(workspaceFolder);
     }
 
+    // 라인에 데코레이션 추가
+    addGutterIcon(editor: vscode.TextEditor, line: number) {
+        const uri = editor.document.uri.toString();
+        const lineStart = new vscode.Position(line, 0);
+        const lineEnd = new vscode.Position(
+            line,
+            editor.document.lineAt(line).text.length
+        );
+        const range = new vscode.Range(lineStart, lineEnd);
+
+        // 기존 데코레이션 범위 가져오기
+        let ranges = this.gutterIconProvider.get(uri) || [];
+
+        // 이미 같은 라인에 데코레이션이 있는지 확인
+        const existingIndex = ranges.findIndex(
+            (r) =>
+                r.start.line === range.start.line &&
+                r.end.line === range.end.line
+        );
+
+        // 없으면 추가, 있으면 업데이트
+        if (existingIndex === -1) {
+            ranges.push(range);
+        } else {
+            ranges[existingIndex] = range;
+        }
+
+        // 범위 맵 업데이트
+        this.gutterIconProvider.set(uri, ranges);
+
+        // 데코레이션 적용
+        editor.setDecorations(
+            this.gutterIconProvider.getLineMarkerDecoration(),
+            ranges
+        );
+    }
+
     //열린 정보로 바로 라인 추가하는 기능도있어야함
     async handleSetLine(node: any) {
         //현재 열린 에디터에 정보 가져오기
@@ -588,6 +629,10 @@ export class TabView extends CommandManager {
             const line = cursorPosition.line;
             const character = cursorPosition.character;
             const uri = editor.document.uri; // 열린 파일의 URI
+
+            if (editor) {
+                this.addGutterIcon(editor, line); // 6번째 라인에 아이콘 표시 (0부터 시작)
+            }
 
             console.log(
                 `👠File URI: ${uri.toString()}, Line: ${line}, Character: ${character}`
