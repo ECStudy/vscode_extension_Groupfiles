@@ -622,7 +622,7 @@ export class TabView extends CommandManager {
             //여러개 있는 경우 -> Select 띄워주기
             else if (tabs.length > 1) {
                 const quickPickItems = tabs.map((tab) => ({
-                    label: tab?.path,
+                    label: `${tab?.getPath()}${tab?.getLabel()}`,
                     value: tab?.label, // 색상 키를 전달
                     uri: tab.uri,
                     id: tab.id,
