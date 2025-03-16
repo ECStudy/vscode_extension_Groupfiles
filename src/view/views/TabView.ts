@@ -84,7 +84,6 @@ export class TabView extends CommandManager {
         const input = await showInputBox({
             prompt: "Enter a name for the group",
             placeHolder: "Enter the group name",
-            errorMessage: "Enter the group name",
         });
 
         if (input.state) {
@@ -105,7 +104,6 @@ export class TabView extends CommandManager {
         const input = await showInputBox({
             prompt: "Enter a name for the group",
             placeHolder: "Enter the group name",
-            errorMessage: "Enter the group name",
         });
 
         if (input.state) {
