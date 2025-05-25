@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 import { TabView } from "../view/views/TabView";
-import { registerCommandCheckContextMenu } from "./registerCommandCheckContextMenu";
+import { registerToggleContextCommand } from "./registerToggleContextCommand";
 
-export const registerSubscriptionsCommandHandler = (tabView: TabView) => {
+export const registerToggleContextCommands = (tabView: TabView) => {
     //TODO : provider로 빼기
     tabView.context.subscriptions.push(
         vscode.commands.registerCommand("global.state.reset", () => {
@@ -11,7 +11,7 @@ export const registerSubscriptionsCommandHandler = (tabView: TabView) => {
     );
 
     // 전체 그룹 접기 / 펼치기
-    registerCommandCheckContextMenu({
+    registerToggleContextCommand({
         trueCommand: "myext.group.fold",
         falseCommand: "myext.group.unfold",
         whenCondition: "myext:group.fold",
@@ -20,7 +20,7 @@ export const registerSubscriptionsCommandHandler = (tabView: TabView) => {
     });
 
     // 주석 보이기 / 숨기기
-    registerCommandCheckContextMenu({
+    registerToggleContextCommand({
         trueCommand: "myext.show.description",
         falseCommand: "myext.hide.description",
         whenCondition: "myext:show.description",
@@ -29,7 +29,7 @@ export const registerSubscriptionsCommandHandler = (tabView: TabView) => {
     });
 
     // 탭 Alias 보이기 / 숨기기
-    registerCommandCheckContextMenu({
+    registerToggleContextCommand({
         trueCommand: "myext.show.alias",
         falseCommand: "myext.hide.alias",
         whenCondition: "myext:show.alias",

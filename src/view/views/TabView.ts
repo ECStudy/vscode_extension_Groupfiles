@@ -11,8 +11,8 @@ import { Tab } from "../../node/Tab";
 import { STORAGE_KEYS } from "../../store/StorageManager";
 import { globalState } from "../../store/globalState";
 
-import { registerCommands } from "../../command/registerCommands";
-import { registerSubscriptionsCommandHandler } from "../../command/registerSubscriptionsCommandHandler";
+import { registerTabViewCommands } from "../../command/registerTabViewCommands";
+import { registerToggleContextCommands } from "../../command/registerToggleContextCommands";
 
 import { TreeItemType } from "../../types/types";
 import { CREATE_TYPE } from "../../types/group";
@@ -49,8 +49,9 @@ export class TabView extends CommandManager {
 
         this.initializeGlobalState();
 
-        registerCommands(this);
-        registerSubscriptionsCommandHandler(this);
+        //command 등록
+        registerTabViewCommands(this);
+        registerToggleContextCommands(this);
     }
 
     public static getInstance(context: vscode.ExtensionContext): TabView {

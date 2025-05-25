@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-export const registerCommandCheckContextMenu = ({
+export const registerToggleContextCommand = ({
     trueCommand,
     falseCommand,
     whenCondition,

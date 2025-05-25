@@ -5,7 +5,7 @@ import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
 import { UpdateAction } from "../types/enums";
 
-export const registerCommands = (tabView: TabView) => {
+export const registerTabViewCommands = (tabView: TabView) => {
     //#region 생성 --------------------------------
     //Group 추가
     vscode.commands.registerCommand(Command.CREATE_GROUP, () => {
