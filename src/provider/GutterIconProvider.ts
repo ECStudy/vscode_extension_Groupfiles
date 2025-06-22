@@ -41,7 +41,11 @@ export class GutterIconProvider {
         return GutterIconProvider.instance;
     }
 
-    public getLineMarkerDecoration() {
+    /**
+     * 아이콘 svg, 아이콘 사이즈 반환
+     * @returns
+     */
+    public getLineMarkerDecoration(): vscode.TextEditorDecorationType {
         return this.lineMarkerDecoration;
     }
 

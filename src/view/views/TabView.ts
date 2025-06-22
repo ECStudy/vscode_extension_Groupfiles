@@ -583,20 +583,26 @@ export class TabView extends CommandManager {
         await this.openNewWorkspace(workspaceFolder);
     }
 
-    // 라인에 데코레이션 추가
-    addGutterIcon(editor: vscode.TextEditor, line: number) {
-        const uri = editor.document.uri.toString();
+    // 라인에 게터 아이콘 추가
+    addGutterIcon(editor: vscode.TextEditor) {
+        const cursorPosition = editor.selection.active; // 커서의 위치
+        const line = cursorPosition.line; //라인
+        const character = cursorPosition.character;
+
+        const uri = editor.document.uri.toString(); //uri
+
         const lineStart = new vscode.Position(line, 0);
         const lineEnd = new vscode.Position(
             line,
             editor.document.lineAt(line).text.length
         );
+
         const range = new vscode.Range(lineStart, lineEnd);
 
-        // 기존 데코레이션 범위 가져오기
+        // 기존 게터 범위 가져오기
         let ranges = this.gutterIconProvider.get(uri) || [];
 
-        // 이미 같은 라인에 데코레이션이 있는지 확인
+        // 이미 같은 라인에 게터 있는지 확인
         const existingIndex = ranges.findIndex(
             (r) =>
                 r.start.line === range.start.line &&
@@ -610,10 +616,10 @@ export class TabView extends CommandManager {
             ranges[existingIndex] = range;
         }
 
-        // 범위 맵 업데이트
+        // 게터 아이콘 데이터 업데이트
         this.gutterIconProvider.set(uri, ranges);
 
-        // 데코레이션 적용
+        // 데코레이션 화면에 적용
         editor.setDecorations(
             this.gutterIconProvider.getLineMarkerDecoration(),
             ranges
@@ -632,7 +638,7 @@ export class TabView extends CommandManager {
             const uri = editor.document.uri; // 열린 파일의 URI
 
             if (editor) {
-                this.addGutterIcon(editor, line); // 6번째 라인에 아이콘 표시 (0부터 시작)
+                this.addGutterIcon(editor);
             }
 
             console.log(
@@ -649,9 +655,10 @@ export class TabView extends CommandManager {
 
             //초면인 경우 -> 그룹 생성 + Tab 생성
             if (tabs.length === 0) {
-                const group = await this.handleCreateGroupAndTab([uri]);
+                const group = await this.handleCreateGroupAndTab([uri]); //그룹 + 탭 생성
                 const allTabs = group?.getAllTabs() as Tab[];
-                targetTab = allTabs[0];
+                //방금 생성한 그룹 안에 생성된 0 번째 탭
+                const targetTab = allTabs.find(tab => tab.path === uri.path);
                 this.treeDataProvider.setLine({
                     tab: targetTab,
                     createInfo: { uri, line, character, cursorPosition },
@@ -659,7 +666,7 @@ export class TabView extends CommandManager {
             }
             //한개만 있는 경우 -> Tab 하위로 넣기
             else if (tabs.length === 1) {
-                targetTab = tabs[0];
+                const targetTab = tabs.find(tabs => tabs.uri.toString() === uri.toString());
                 this.treeDataProvider.setLine({
                     tab: targetTab,
                     createInfo: { uri, line, character, cursorPosition },
