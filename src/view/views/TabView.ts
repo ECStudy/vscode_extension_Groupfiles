@@ -699,7 +699,7 @@ export class TabView extends CommandManager {
      * 2.게터 데코레이션 제거
      * @param node
      */
-    async handleDeleteLine() {
+    async handleDeleteLine(node: any) {
         const editor = vscode.window.activeTextEditor;
         if (!editor) return;
 
@@ -707,17 +707,44 @@ export class TabView extends CommandManager {
         const line = editor.selection.active.line;
         const uriStr = uri.toString();
 
+        //저정되어있는 모든 탭 중에서 활성화된 tab의 uri로 목록 찾기
         const allTabs = this.treeDataProvider.getAllTabs() as Tab[];
-        const targetTab = allTabs.find((tab) => tab.uri.toString() === uriStr);
+        const matchingTabs = allTabs.filter(
+            (tab) => tab.uri.toString() === uriStr
+        );
+
+        console.log("탭 전체", matchingTabs);
+
+        if (matchingTabs.length === 0) return;
+
+        let targetTab: Tab | undefined;
+
+        if (matchingTabs.length === 1) {
+            targetTab = matchingTabs[0];
+        } else {
+            const pickItems = matchingTabs.map((tab) => ({
+                label: `${tab.getPath()}${tab.getLabel()}`,
+                id: tab.id,
+            }));
+
+            const selected = await vscode.window.showQuickPick(pickItems, {
+                placeHolder: "어떤 탭에서 라인을 삭제할까요?",
+            });
+
+            if (selected) {
+                targetTab = matchingTabs.find((tab) => tab.id === selected.id);
+            }
+        }
+
         if (!targetTab) return;
 
         // Line 제거
         //현재 열려있는 Tab의 line만 지워야함
         this.treeDataProvider.removeLine(targetTab, line);
 
-        // Gutter 제거
+        // 2. Gutter 데코레이션 제거
         const ranges = this.gutterIconProvider.get(uriStr) || [];
-        const filtered = ranges.filter((r) => r.start.line !== line);
-        this.deleteGutterIcon(uriStr, filtered);
+        const updatedRanges = ranges.filter((r) => r.start.line !== line);
+        this.deleteGutterIcon(uriStr, updatedRanges);
     }
 }

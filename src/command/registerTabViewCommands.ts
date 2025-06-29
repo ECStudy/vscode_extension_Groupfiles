@@ -113,7 +113,7 @@ export const registerTabViewCommands = (tabView: TabView) => {
         tabView.handleSetLine();
     });
 
-    vscode.commands.registerCommand("delete.tab.line", () => {
-        tabView.handleDeleteLine();
+    vscode.commands.registerCommand("delete.tab.line", (node) => {
+        tabView.handleDeleteLine(node);
     });
 };

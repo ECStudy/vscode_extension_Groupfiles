@@ -107,12 +107,12 @@ export class Tab extends Node implements TabItem {
         this.add(lineNode);
     }
 
-    removeLineByLineNumber(lineNumber: number) {
-        const target = this.getChildren().find(
-            (child) => child instanceof Line && child.line === lineNumber
-        );
-        if (target) {
-            this.remove(target);
-        }
+    removeLineByLineNumber(lineNumber: number): void {
+        const updated = this.getChildren().filter((child) => {
+            return !(
+                child.type === TreeItemType.Line && child.line === lineNumber
+            );
+        });
+        this.setChildren(updated);
     }
 }
