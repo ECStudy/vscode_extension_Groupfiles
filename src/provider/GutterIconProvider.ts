@@ -1,9 +1,10 @@
 import * as vscode from "vscode";
+import { FileUriString, GutterDecorationMap } from "../types/types";
 
 export class GutterIconProvider {
     private static instance: GutterIconProvider | null = null;
     private lineMarkerDecoration: vscode.TextEditorDecorationType;
-    private decorationRanges: Map<string, vscode.Range[]> = new Map(); // URI 별로 범위 저장
+    private decorationRanges: GutterDecorationMap = new Map(); // URI 별로 범위 저장
 
     constructor(context: any) {
         // 데코레이션 타입 초기화
@@ -49,11 +50,11 @@ export class GutterIconProvider {
         return this.lineMarkerDecoration;
     }
 
-    get(uri: any) {
+    get(uri: FileUriString) {
         return this.decorationRanges.get(uri);
     }
 
-    set(uri: any, ranges: any) {
+    set(uri: FileUriString, ranges: any) {
         this.decorationRanges.set(uri, ranges);
     }
 

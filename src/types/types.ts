@@ -32,3 +32,7 @@ export interface RenderPayload {
     viewDescription?: boolean;
     viewAlias?: boolean;
 }
+
+export type GutterDecorationMap = Map<string, vscode.Range[]>;
+
+export type FileUriString = string;

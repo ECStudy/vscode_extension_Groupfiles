@@ -347,7 +347,7 @@ export class TreeDataProvider
     }
 
     async setLine(payload: {
-        tab: any;
+        tab?: Tab; //tab 무조건 있을거임, 있게 바꿔야함
         createInfo: {
             uri: any;
             line: any;
@@ -357,15 +357,19 @@ export class TreeDataProvider
     }) {
         const { tab, createInfo } = payload;
 
-        const line = await CreateFactory.createLine(
-            payload.createInfo.uri,
-            createInfo
-        );
+        const lineNode = await CreateFactory.createLine(createInfo.uri, {
+            line: createInfo.line,
+        });
 
-        if (tab) {
-            tab?.add(line);
+        if (lineNode) {
+            tab?.add(lineNode);
             this.triggerEventRerender();
         }
+    }
+
+    removeLine(tab: Tab, line: number) {
+        tab.removeLineByLineNumber(line);
+        this.triggerEventRerender();
     }
 
     getAllTabs(): Node[] {

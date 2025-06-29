@@ -626,78 +626,98 @@ export class TabView extends CommandManager {
         );
     }
 
-    //열린 정보로 바로 라인 추가하는 기능도있어야함
-    async handleSetLine(node: any) {
-        //현재 열린 에디터에 정보 가져오기
+    //열린 정보로 바로라인 추가하는 기능도있어야함
+    async handleSetLine() {
         const editor = vscode.window.activeTextEditor;
-        if (editor) {
-            //커서 위치, 라인정보, uri 정보 가져오기
-            const cursorPosition = editor.selection.active; // 커서의 위치
-            const line = cursorPosition.line;
-            const character = cursorPosition.character;
-            const uri = editor.document.uri; // 열린 파일의 URI
+        if (!editor) return;
 
-            if (editor) {
-                this.addGutterIcon(editor);
-            }
+        const cursorPosition = editor.selection.active;
+        const uri = editor.document.uri;
+        const line = cursorPosition.line;
+        const character = cursorPosition.character;
 
-            console.log(
-                `👠File URI: ${uri.toString()}, Line: ${line}, Character: ${character}`
+        const allTabs = this.treeDataProvider.getAllTabs() as Tab[];
+        const matchingTabs = allTabs.filter((tab) => tab.path === uri.path);
+
+        let targetTab: Tab | undefined;
+
+        // 1. Tab이 없는 경우 → 그룹 및 탭 생성
+        if (matchingTabs.length === 0) {
+            const group = await this.handleCreateGroupAndTab([uri]);
+            targetTab = (group?.getAllTabs() as Tab[]).find(
+                (tab) => tab.path === uri.path
             );
+        }
 
-            //전체 탭 정보 찾기
-            const allTabs = this.treeDataProvider.getAllTabs() as Tab[];
-            //일단 path 동일한거 필터하기
-            const tabs = allTabs.filter(
-                (tab) => (tab as Tab).path === uri.path
-            );
-            let targetTab: Tab | undefined;
+        // 2. Tab이 1개 있는 경우 → 바로 사용
+        else if (matchingTabs.length === 1) {
+            targetTab = matchingTabs[0];
+        }
 
-            //초면인 경우 -> 그룹 생성 + Tab 생성
-            if (tabs.length === 0) {
-                const group = await this.handleCreateGroupAndTab([uri]); //그룹 + 탭 생성
-                const allTabs = group?.getAllTabs() as Tab[];
-                //방금 생성한 그룹 안에 생성된 0 번째 탭
-                const targetTab = allTabs.find(tab => tab.path === uri.path);
-                this.treeDataProvider.setLine({
-                    tab: targetTab,
-                    createInfo: { uri, line, character, cursorPosition },
-                });
-            }
-            //한개만 있는 경우 -> Tab 하위로 넣기
-            else if (tabs.length === 1) {
-                const targetTab = tabs.find(tabs => tabs.uri.toString() === uri.toString());
-                this.treeDataProvider.setLine({
-                    tab: targetTab,
-                    createInfo: { uri, line, character, cursorPosition },
-                });
-            }
-            //여러개 있는 경우 -> Select 띄워주기
-            else if (tabs.length > 1) {
-                const quickPickItems = tabs.map((tab) => ({
-                    label: `${tab?.getPath()}${tab?.getLabel()}`,
-                    value: tab?.label, // 색상 키를 전달
-                    uri: tab.uri,
-                    id: tab.id,
-                }));
+        // 3. Tab이 여러 개 있는 경우 → 사용자에게 선택 받기
+        else {
+            const pickItems = matchingTabs.map((tab) => ({
+                label: `${tab.getPath()}${tab.getLabel()}`,
+                id: tab.id,
+            }));
 
-                const selectedTab = await vscode.window.showQuickPick(
-                    quickPickItems,
-                    {
-                        placeHolder: "Choose a color for the group icon",
-                        canPickMany: false,
-                    }
-                );
+            const selected = await vscode.window.showQuickPick(pickItems, {
+                placeHolder: "Choose the tab to attach this line",
+            });
 
-                if (selectedTab) {
-                    console.log(selectedTab);
-                    targetTab = tabs.find((tab) => tab.id === selectedTab.id);
-                    this.treeDataProvider.setLine({
-                        tab: targetTab, //이거
-                        createInfo: { uri, line, character, cursorPosition },
-                    });
-                }
+            if (selected) {
+                targetTab = matchingTabs.find((tab) => tab.id === selected.id);
             }
         }
+
+        if (targetTab) {
+            await this.treeDataProvider.setLine({
+                tab: targetTab,
+                createInfo: { uri, line, character, cursorPosition },
+            });
+            this.addGutterIcon(editor);
+        }
+    }
+
+    deleteGutterIcon(uri: any, ranges: any) {
+        // 게터 아이콘 데이터 업데이트
+        this.gutterIconProvider.set(uri, ranges);
+
+        const editor = vscode.window.visibleTextEditors.find(
+            (ed) => ed.document.uri.toString() === uri
+        );
+        if (editor) {
+            editor.setDecorations(
+                this.gutterIconProvider.getLineMarkerDecoration(),
+                ranges
+            );
+        }
+    }
+
+    /**
+     * 1.라인 제거
+     * 2.게터 데코레이션 제거
+     * @param node
+     */
+    async handleDeleteLine() {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) return;
+
+        const uri = editor.document.uri;
+        const line = editor.selection.active.line;
+        const uriStr = uri.toString();
+
+        const allTabs = this.treeDataProvider.getAllTabs() as Tab[];
+        const targetTab = allTabs.find((tab) => tab.uri.toString() === uriStr);
+        if (!targetTab) return;
+
+        // Line 제거
+        //현재 열려있는 Tab의 line만 지워야함
+        this.treeDataProvider.removeLine(targetTab, line);
+
+        // Gutter 제거
+        const ranges = this.gutterIconProvider.get(uriStr) || [];
+        const filtered = ranges.filter((r) => r.start.line !== line);
+        this.deleteGutterIcon(uriStr, filtered);
     }
 }

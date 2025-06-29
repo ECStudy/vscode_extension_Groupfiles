@@ -151,6 +151,10 @@
                 {
                     "command": "create.tab.line",
                     "when": "editorTextFocus"
+                },
+                {
+                    "command": "delete.tab.line",
+                    "when": "editorTextFocus"
                 }
             ]
         },
@@ -252,6 +256,10 @@
             {
                 "command": "create.tab.line",
                 "title": "GroupTabs: Set Line"
+            },
+            {
+                "command": "delete.tab.line",
+                "title": "GroupTabs: Delete Line"
             }
         ],
         "configuration": {

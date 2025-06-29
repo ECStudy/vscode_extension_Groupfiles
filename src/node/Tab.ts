@@ -12,6 +12,7 @@ import {
 
 import { getFileName } from "../utils/util";
 import { Node } from "./Node";
+import { Line } from "./Line";
 
 export class Tab extends Node implements TabItem {
     readonly type = TreeItemType.Tab;
@@ -94,5 +95,24 @@ export class Tab extends Node implements TabItem {
 
     setDescription(description?: string) {
         this.description = description;
+    }
+
+    getLines(): Line[] {
+        return this.getChildren().filter(
+            (child) => child instanceof Line
+        ) as Line[];
+    }
+
+    addLine(lineNode: Line) {
+        this.add(lineNode);
+    }
+
+    removeLineByLineNumber(lineNumber: number) {
+        const target = this.getChildren().find(
+            (child) => child instanceof Line && child.line === lineNumber
+        );
+        if (target) {
+            this.remove(target);
+        }
     }
 }
