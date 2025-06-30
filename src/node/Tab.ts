@@ -103,6 +103,14 @@ export class Tab extends Node implements TabItem {
         ) as Line[];
     }
 
+    getTargetLine(lineNumber: number): Line[] {
+        const lines = this.getChildren().filter(
+            (child) =>
+                child.type === TreeItemType.Line && child.line === lineNumber
+        );
+        return lines;
+    }
+
     addLine(lineNode: Line) {
         this.add(lineNode);
     }

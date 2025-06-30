@@ -707,23 +707,27 @@ export class TabView extends CommandManager {
         const line = editor.selection.active.line;
         const uriStr = uri.toString();
 
-        //저정되어있는 모든 탭 중에서 활성화된 tab의 uri로 목록 찾기
+        //현재 열려 있는 파일(uri)과 같은 경로를 가진 Tab 전체 가져오기
         const allTabs = this.treeDataProvider.getAllTabs() as Tab[];
         const matchingTabs = allTabs.filter(
             (tab) => tab.uri.toString() === uriStr
         );
 
+        const lineTabs = matchingTabs.filter((tab) => {
+            const lines = tab.getLines();
+            return lines.some((lineNode) => lineNode.line === line);
+        });
         console.log("탭 전체", matchingTabs);
 
-        if (matchingTabs.length === 0) return;
+        if (lineTabs.length === 0) return;
 
         let targetTab: Tab | undefined;
 
-        if (matchingTabs.length === 1) {
-            targetTab = matchingTabs[0];
+        if (lineTabs.length === 1) {
+            targetTab = lineTabs[0];
         } else {
-            const pickItems = matchingTabs.map((tab) => ({
-                label: `${tab.getPath()}${tab.getLabel()}`,
+            const pickItems = lineTabs.map((tab) => ({
+                label: `${tab.getPath()}${tab.getLabel()} : ${line + 1}`,
                 id: tab.id,
             }));
 
@@ -732,7 +736,7 @@ export class TabView extends CommandManager {
             });
 
             if (selected) {
-                targetTab = matchingTabs.find((tab) => tab.id === selected.id);
+                targetTab = lineTabs.find((tab) => tab.id === selected.id);
             }
         }
 
