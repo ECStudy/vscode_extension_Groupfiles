@@ -1,8 +1,12 @@
 import * as vscode from "vscode";
+
 import { TabView } from "../view/views/TabView";
-import { Command } from "../types/command";
+
 import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
+import { Line } from "../node/Line";
+
+import { Command } from "../types/command";
 import { UpdateAction } from "../types/enums";
 
 export const registerTabViewCommands = (tabView: TabView) => {
@@ -51,6 +55,11 @@ export const registerTabViewCommands = (tabView: TabView) => {
     //그룹 제거
     vscode.commands.registerCommand(Command.DELETE_GROUP, (node: Group) => {
         tabView.handleDelete(node);
+    });
+
+    //라인 제거
+    vscode.commands.registerCommand(Command.DELETE_LINE, (node: Line) => {
+        tabView.handleDeleteLine(node);
     });
 
     //그룹에 있는 탭 제거

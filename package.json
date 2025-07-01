@@ -140,6 +140,11 @@
                     "command": "open.tab.workspace",
                     "when": "viewItem == tab",
                     "group": "navigation@3"
+                },
+                {
+                    "command": "delete.line",
+                    "when": "viewItem == line",
+                    "group": "inline"
                 }
             ],
             "editor/title/context": [
@@ -187,6 +192,11 @@
             {
                 "command": "delete.tab",
                 "title": "Delete Tab",
+                "icon": "$(trash)"
+            },
+            {
+                "command": "delete.line",
+                "title": "Delete Line",
                 "icon": "$(trash)"
             },
             {

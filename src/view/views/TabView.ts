@@ -23,6 +23,7 @@ import { Confirm, TAB_VIEW, UpdateAction } from "../../types/enums";
 
 import { colorPalette } from "../../constants";
 import { showInputBox } from "../../utils/util";
+import { Line } from "../../node/Line";
 
 export class TabView extends CommandManager {
     private static instance: TabView | null = null;
@@ -720,12 +721,15 @@ export class TabView extends CommandManager {
      * 2.게터 데코레이션 제거
      * @param node
      */
-    async handleDeleteLine(node: any) {
+    async handleDeleteLine(node?: Line) {
+        //열린 에디터를 기준으로
         const editor = vscode.window.activeTextEditor;
-        if (!editor) return;
+        if (!editor && node) return;
 
-        const uri = editor.document.uri;
-        const line = editor.selection.active.line;
+        //tree item에서 선택한 node를 기준으로 처리
+        //! : "내가 책임질 테니 이건 null 아님"이라고 강제로 확정하는 것
+        const uri = node?.uri ?? editor!.document.uri;
+        const line = node?.line ?? editor!.selection.active.line;
         const uriStr = uri.toString();
 
         //현재 열려 있는 파일(uri)과 같은 경로를 가진 Tab 전체 가져오기

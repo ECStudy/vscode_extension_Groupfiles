@@ -7,6 +7,7 @@ export enum Command {
     //제거
     DELET_TAB = "delete.tab",
     DELETE_GROUP = "delete.group",
+    DELETE_LINE = "delete.line",
     DELET_All = "delete.all",
 
     //업데이트
