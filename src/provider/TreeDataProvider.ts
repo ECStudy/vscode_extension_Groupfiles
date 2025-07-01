@@ -354,7 +354,7 @@ export class TreeDataProvider
             character: any;
             cursorPosition: any;
         };
-    }) {
+    }): Promise<Line | null> {
         const { tab, createInfo } = payload;
 
         const lineNode = await CreateFactory.createLine(createInfo.uri, {
@@ -365,6 +365,8 @@ export class TreeDataProvider
             tab?.add(lineNode);
             this.triggerEventRerender();
         }
+
+        return lineNode;
     }
 
     removeLine(tab: Tab, line: number) {

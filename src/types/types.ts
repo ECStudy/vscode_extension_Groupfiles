@@ -33,6 +33,13 @@ export interface RenderPayload {
     viewAlias?: boolean;
 }
 
-export type GutterDecorationMap = Map<string, vscode.Range[]>;
+export type GetterLineInfo = {
+    uri: vscode.Uri;
+    tabId: string;
+    lineId: string;
+    line: number;
+    range: vscode.Range;
+};
 
 export type FileUriString = string;
+export type GutterDecorationMap = Map<FileUriString, GetterLineInfo[]>;

@@ -1,5 +1,9 @@
 import * as vscode from "vscode";
-import { FileUriString, GutterDecorationMap } from "../types/types";
+import {
+    FileUriString,
+    GetterLineInfo,
+    GutterDecorationMap,
+} from "../types/types";
 
 export class GutterIconProvider {
     private static instance: GutterIconProvider | null = null;
@@ -54,8 +58,8 @@ export class GutterIconProvider {
         return this.decorationRanges.get(uri);
     }
 
-    set(uri: FileUriString, ranges: any) {
-        this.decorationRanges.set(uri, ranges);
+    set(uri: FileUriString, infos: GetterLineInfo[]) {
+        this.decorationRanges.set(uri, [...infos]);
     }
 
     // 에디터 변경 시 데코레이션 업데이트
@@ -68,3 +72,10 @@ export class GutterIconProvider {
         }
     }
 }
+
+// 데이터 구조
+// "file:///abc.ts" => [
+//   { tabId: "tab1", lineNumber: 10, range: ... },
+//   { tabId: "tab2", lineNumber: 12, range: ... },
+//   { tabId: "tab1", lineNumber: 20, range: ... }
+// ]

@@ -14,7 +14,7 @@ import { globalState } from "../../store/globalState";
 import { registerTabViewCommands } from "../../command/registerTabViewCommands";
 import { registerToggleContextCommands } from "../../command/registerToggleContextCommands";
 
-import { TreeItemType } from "../../types/types";
+import { GetterLineInfo, TreeItemType } from "../../types/types";
 import { CREATE_TYPE } from "../../types/group";
 import { Confirm, TAB_VIEW, UpdateAction } from "../../types/enums";
 
@@ -584,42 +584,33 @@ export class TabView extends CommandManager {
     }
 
     // 라인에 게터 아이콘 추가
-    addGutterIcon(editor: vscode.TextEditor) {
-        const cursorPosition = editor.selection.active; // 커서의 위치
-        const line = cursorPosition.line; //라인
-        const character = cursorPosition.character;
+    async addGutterIcon(
+        editor: vscode.TextEditor,
+        gutterLineInfo: GetterLineInfo
+    ) {
+        //const cursorPosition = editor.selection.active; // 커서의 위치
+        const line = gutterLineInfo.line; //라인
+        const uriStr = gutterLineInfo.uri.toString(); //uri
 
-        const uri = editor.document.uri.toString(); //uri
+        //1. 게터 map에서 기존 게터 정보 가져오기
+        const existingInfos = this.gutterIconProvider.get(uriStr) || [];
 
-        const lineStart = new vscode.Position(line, 0);
-        const lineEnd = new vscode.Position(
-            line,
-            editor.document.lineAt(line).text.length
+        // 2. 동일한 라인 & 동일한 탭의 정보가 있으면 제거
+        const updatedInfos = existingInfos.filter(
+            (info) =>
+                !(info.tabId === gutterLineInfo.tabId && info.line === line)
         );
 
-        const range = new vscode.Range(lineStart, lineEnd);
+        // 3. 새로운 정보 추가
+        updatedInfos.push(gutterLineInfo);
 
-        // 기존 게터 범위 가져오기
-        let ranges = this.gutterIconProvider.get(uri) || [];
+        // 4. 게터 아이콘 데이터 업데이트
+        this.gutterIconProvider.set(uriStr, updatedInfos);
 
-        // 이미 같은 라인에 게터 있는지 확인
-        const existingIndex = ranges.findIndex(
-            (r) =>
-                r.start.line === range.start.line &&
-                r.end.line === range.end.line
-        );
+        // 5. 데코레이션 적용을 위한 range 추출
+        const ranges = updatedInfos.map((info) => info.range);
 
-        // 없으면 추가, 있으면 업데이트
-        if (existingIndex === -1) {
-            ranges.push(range);
-        } else {
-            ranges[existingIndex] = range;
-        }
-
-        // 게터 아이콘 데이터 업데이트
-        this.gutterIconProvider.set(uri, ranges);
-
-        // 데코레이션 화면에 적용
+        // 6. 현재 editor에 데코레이션 적용
         editor.setDecorations(
             this.gutterIconProvider.getLineMarkerDecoration(),
             ranges
@@ -671,29 +662,58 @@ export class TabView extends CommandManager {
         }
 
         if (targetTab) {
-            await this.treeDataProvider.setLine({
+            const lineNode = await this.treeDataProvider.setLine({
                 tab: targetTab,
                 createInfo: { uri, line, character, cursorPosition },
             });
-            this.addGutterIcon(editor);
+
+            const lineStart = new vscode.Position(line, 0);
+            const lineEnd = new vscode.Position(
+                line,
+                editor.document.lineAt(line).text.length
+            );
+
+            const range = new vscode.Range(lineStart, lineEnd);
+
+            if (lineNode) {
+                const gutterLineInfo = {
+                    uri: uri,
+                    tabId: targetTab.id,
+                    line: line,
+                    range: range,
+                    lineId: lineNode.id,
+                };
+
+                await this.addGutterIcon(editor, gutterLineInfo);
+            }
         }
     }
 
-    deleteGutterIcon(uri: any, ranges: any) {
-        // 게터 아이콘 데이터 업데이트
-        this.gutterIconProvider.set(uri, ranges);
+    deleteGutterIcon(uriStr: string, tabId: string, line: number) {
+        //1. 게터 map에서 기존 게터 정보 가져오기
+        const existingInfos = this.gutterIconProvider.get(uriStr) || [];
 
-        const editor = vscode.window.visibleTextEditors.find(
-            (ed) => ed.document.uri.toString() === uri
+        // 1. 해당 tabId + line에 해당하는 정보만 제거
+        const updatedInfos = existingInfos.filter(
+            (info) => !(info.tabId === tabId && info.line === line)
         );
+
+        // 2. 다시 저장
+        this.gutterIconProvider.set(uriStr, updatedInfos);
+
+        // 3. 데코레이션 적용
+        const editor = vscode.window.visibleTextEditors.find(
+            (ed) => ed.document.uri.toString() === uriStr
+        );
+
         if (editor) {
+            const updatedRanges = updatedInfos.map((info) => info.range);
             editor.setDecorations(
                 this.gutterIconProvider.getLineMarkerDecoration(),
-                ranges
+                updatedRanges
             );
         }
     }
-
     /**
      * 1.라인 제거
      * 2.게터 데코레이션 제거
@@ -746,9 +766,7 @@ export class TabView extends CommandManager {
         //현재 열려있는 Tab의 line만 지워야함
         this.treeDataProvider.removeLine(targetTab, line);
 
-        // 2. Gutter 데코레이션 제거
-        const ranges = this.gutterIconProvider.get(uriStr) || [];
-        const updatedRanges = ranges.filter((r) => r.start.line !== line);
-        this.deleteGutterIcon(uriStr, updatedRanges);
+        // 2. Gutter 데코레이션 제거 (tabId, line 기준)
+        this.deleteGutterIcon(uriStr, targetTab.id, line);
     }
 }
