@@ -2,7 +2,10 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as os from "os";
 
+import { CommandManager } from "../managers/CommandManager";
+
 import { TreeDataProvider } from "../../provider/TreeDataProvider";
+import { GutterIconProvider } from "../../provider/GutterIconProvider";
 
 import { Node } from "../../node/Node";
 import { Group } from "../../node/Group";
@@ -19,17 +22,15 @@ import { CREATE_TYPE } from "../../types/group";
 import { Confirm, TAB_VIEW, UpdateAction } from "../../types/enums";
 
 import { colorPalette } from "../../constants";
-
 import { showInputBox } from "../../utils/util";
-
-import { CommandManager } from "../managers/CommandManager";
-import { GutterIconProvider } from "../../provider/GutterIconProvider";
 
 export class TabView extends CommandManager {
     private static instance: TabView | null = null;
+
+    context: vscode.ExtensionContext;
+
     private treeDataProvider: TreeDataProvider;
     private gutterIconProvider: GutterIconProvider;
-    context: vscode.ExtensionContext;
 
     readonly dropMimeTypes: string[] = ["application/vnd.code.tree.tab"];
     readonly dragMimeTypes: string[] = ["application/vnd.code.tree.tab"];

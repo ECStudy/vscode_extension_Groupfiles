@@ -8,8 +8,6 @@ import { groupIconPaths } from "../assets";
 
 export class Group extends Node {
     readonly type = TreeItemType.Group;
-    // 고유 id
-    id: string;
     // 그룹 이름
     label: string;
     // 컬러코드
@@ -22,7 +20,6 @@ export class Group extends Node {
 
     constructor(id: string, label: string, payload?: any) {
         super(id);
-        this.id = id;
         this.label = label;
         this.color = "default";
         this.collapsed = false; // 기본적으로 열림 상태

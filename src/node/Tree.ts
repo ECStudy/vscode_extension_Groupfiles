@@ -6,11 +6,9 @@ import { Node } from "./Node";
 export class Tree extends Node {
     private static instance: Tree | null = null;
     readonly type = TreeItemType.Tree;
-    id: string;
 
     private constructor(id: string) {
         super(id);
-        this.id = id;
     }
 
     public static getInstance(id: string): Tree {

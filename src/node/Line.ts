@@ -6,7 +6,6 @@ import { Node } from "./Node";
 
 export class Line extends Node {
     readonly type = TreeItemType.Line;
-    id: string;
     path: string;
     uri: vscode.Uri;
     label?: string;
@@ -15,7 +14,6 @@ export class Line extends Node {
 
     constructor(id: string, nativeTab: any, payload?: any) {
         super(id);
-        this.id = id;
         this.path = (nativeTab.input as NativeTabInput)?.uri?.path;
         this.uri = (nativeTab.input as NativeTabInput)?.uri;
         this.label = payload?.label || "";

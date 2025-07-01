@@ -16,7 +16,6 @@ import { Line } from "./Line";
 
 export class Tab extends Node implements TabItem {
     readonly type = TreeItemType.Tab;
-    id: string;
     path: string;
     uri: vscode.Uri;
     label?: string;
@@ -27,7 +26,6 @@ export class Tab extends Node implements TabItem {
 
     constructor(id: string, nativeTab: any, payload?: any) {
         super(id);
-        this.id = id;
         this.path = (nativeTab.input as NativeTabInput)?.uri?.path;
         this.uri = (nativeTab.input as NativeTabInput)?.uri;
         this.label = payload?.label || "";

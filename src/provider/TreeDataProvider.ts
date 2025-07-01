@@ -14,11 +14,11 @@ import { Serialize } from "../utils/Serialize";
 
 import { STORAGE_KEYS, StoreageManager } from "../store/StorageManager";
 
+import { CreateFactory } from "../node/CreateFactory";
+import { Node } from "../node/Node";
 import { Tree } from "../node/Tree";
 import { Group } from "../node/Group";
 import { Tab } from "../node/Tab";
-import { Node } from "../node/Node";
-import { CreateFactory } from "../node/CreateFactory";
 import { Line } from "../node/Line";
 
 export class TreeDataProvider
@@ -26,10 +26,6 @@ export class TreeDataProvider
         vscode.TreeDataProvider<vscode.TreeItem>,
         vscode.TreeDragAndDropController<Group | Tab>
 {
-    private static instance: TreeDataProvider | null = null;
-    private tree: Tree;
-    private storageManager: StoreageManager;
-
     // EventEmitter를 정의
     private _onDidChangeTreeData: vscode.EventEmitter<
         vscode.TreeItem | undefined | void
@@ -43,6 +39,12 @@ export class TreeDataProvider
     readonly dragMimeTypes: string[] = ["application/vnd.code.tree.tab"];
 
     private context: vscode.ExtensionContext;
+
+    private static instance: TreeDataProvider | null = null;
+
+    private storageManager: StoreageManager;
+
+    private tree: Tree;
 
     private viewCollapse: boolean;
     private viewDescription: boolean;
@@ -74,16 +76,20 @@ export class TreeDataProvider
         return this.storageManager.get<T>(key);
     }
 
+    public setGlobalState(key: STORAGE_KEYS, data: any) {
+        this.storageManager.set(key, data);
+    }
+
     public saveData() {
         // const tree = this.tree;
         // const jsonTree = Serialize.toJson(tree);
-        // this.storageManager.set(STORAGE_KEYS.TREE_DATA, jsonTree);
-        // this.storageManager.set(STORAGE_KEYS.VIEW_COLLAPSE, this.viewCollapse);
-        // this.storageManager.set(
+        // this.setGlobalState(STORAGE_KEYS.TREE_DATA, jsonTree);
+        // this.setGlobalState(STORAGE_KEYS.VIEW_COLLAPSE, this.viewCollapse);
+        // this.setGlobalState(
         //     STORAGE_KEYS.VIEW_DESCRIPTION,
         //     this.viewDescription
         // );
-        // this.storageManager.set(STORAGE_KEYS.VIEW_ALIAS, this.viewAlias);
+        // this.setGlobalState(STORAGE_KEYS.VIEW_ALIAS, this.viewAlias);
     }
 
     private loadData() {
