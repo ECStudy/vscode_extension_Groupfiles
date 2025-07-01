@@ -602,7 +602,7 @@ export class TabView extends CommandManager {
                 !(info.tabId === gutterLineInfo.tabId && info.line === line)
         );
 
-        // 3. 새로운 정보 추가
+        // 3. 새로운 정보 추가(중복한 라인은 제거되고 뒤에 들어감)
         updatedInfos.push(gutterLineInfo);
 
         // 4. 게터 아이콘 데이터 업데이트

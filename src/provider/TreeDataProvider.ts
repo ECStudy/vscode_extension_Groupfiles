@@ -363,12 +363,22 @@ export class TreeDataProvider
     }): Promise<Line | null> {
         const { tab, createInfo } = payload;
 
+        //라인 노드 생성
         const lineNode = await CreateFactory.createLine(createInfo.uri, {
             line: createInfo.line,
         });
 
         if (lineNode) {
+            const updatedLines = tab
+                ?.getChildren()
+                .filter((child) => child.line !== createInfo.line);
+
+            //동일한 라인있는 경우 필터링 해서 업데이트(중복방지)
+            tab?.setChildren(updatedLines);
+
+            //새로운건 맨 뒤에 넣기
             tab?.add(lineNode);
+
             this.triggerEventRerender();
         }
 
