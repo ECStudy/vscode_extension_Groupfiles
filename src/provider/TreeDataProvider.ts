@@ -1,25 +1,17 @@
 import * as vscode from "vscode";
 
-import {
-    CREATE_TYPE,
-    ICreateGroup,
-    IUpdateGroup,
-    IUpdateTab,
-} from "../types/group";
-
-import { UpdateAction } from "../types/enums";
 import { TreeItemType } from "../types/types";
 
 import { Serialize } from "../utils/Serialize";
 
 import { STORAGE_KEYS, StoreageManager } from "../store/StorageManager";
 
-import { CreateFactory } from "../models/CreateFactory";
 import { Node } from "../models/Node";
 import { Tree } from "../models/Tree";
 import { Group } from "../models/Group";
 import { Tab } from "../models/Tab";
 import { Line } from "../models/Line";
+import { TreeViewStateService } from "../services/TreeViewStateService";
 
 export class TreeDataProvider
     implements
@@ -43,6 +35,7 @@ export class TreeDataProvider
     private static instance: TreeDataProvider | null = null;
 
     private storageManager: StoreageManager;
+    private viewStateService: TreeViewStateService;
 
     private tree: Tree;
 
@@ -59,6 +52,11 @@ export class TreeDataProvider
 
         this.storageManager = StoreageManager.getInstance(this.context);
 
+        this.viewStateService = new TreeViewStateService(
+            () => this.triggerEventRerender(),
+            this.storageManager
+        );
+        this.viewStateService.initialize();
         this.loadData();
     }
 
@@ -113,8 +111,8 @@ export class TreeDataProvider
 
     getTreeItem(element: Group | Tab | Line): vscode.TreeItem {
         const itemPayload = {
-            viewDescription: this.viewDescription,
-            viewAlias: this.viewAlias,
+            viewDescription: this.viewStateService.getDescription(),
+            viewAlias: this.viewStateService.getAlias(),
         };
 
         // Line 타입 확인 추가
@@ -167,7 +165,7 @@ export class TreeDataProvider
 
     setViewCollapsed(nodes: (Group | Tab)[], isCollapse: boolean) {
         // 전체 접기/펼치기 상태 업데이트
-        this.viewCollapse = isCollapse;
+        this.viewStateService.setCollapse(isCollapse);
 
         // 각 그룹의 상태 업데이트
         nodes.forEach((node) => {
@@ -181,18 +179,11 @@ export class TreeDataProvider
     }
 
     setViewDescription(state: boolean) {
-        this.viewDescription = state;
-        this.triggerEventRerender();
+        this.viewStateService.setDescription(state);
     }
 
     setViewAlias(state: boolean) {
-        this.viewAlias = state;
-        this.triggerEventRerender();
-    }
-
-    remove(node: Node) {
-        node.remove(node);
-        this.triggerEventRerender();
+        this.viewStateService.setAlias(state);
     }
 
     moveNode(target: any, dropNodeArr: any[]) {

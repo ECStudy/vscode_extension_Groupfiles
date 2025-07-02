@@ -339,11 +339,13 @@ export class TabView extends CommandManager {
             );
 
             if (confirm === Confirm.DELETE) {
-                this.treeDataProvider.remove(node);
+                node.remove(node);
             }
         } else if (node.type === TreeItemType.Tab) {
-            this.treeDataProvider.remove(node);
+            node.remove(node);
         }
+
+        this.treeDataProvider.triggerEventRerender();
     }
 
     applyUpdate(setter: any, payload: any, updatedPayload: any) {
