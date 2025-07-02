@@ -25,6 +25,10 @@ import { colorPalette } from "../../constants";
 import { showInputBox } from "../../utils/util";
 import { Line } from "../../node/Line";
 
+import { TabService } from "../../services/TabService";
+import { GroupService } from "../../services/GroupService";
+import { LineService } from "../../services/LineService";
+
 export class TabView extends CommandManager {
     private static instance: TabView | null = null;
 
@@ -36,12 +40,20 @@ export class TabView extends CommandManager {
     readonly dropMimeTypes: string[] = ["application/vnd.code.tree.tab"];
     readonly dragMimeTypes: string[] = ["application/vnd.code.tree.tab"];
 
+    groupService: GroupService;
+    tabService: TabService;
+    lineService: LineService;
+
     private constructor(context: vscode.ExtensionContext) {
         super();
         this.context = context;
 
         this.treeDataProvider = TreeDataProvider.getInstance(context);
         this.gutterIconProvider = GutterIconProvider.getInstance(context);
+
+        this.groupService = new GroupService(this.treeDataProvider);
+        this.tabService = new TabService(this.treeDataProvider);
+        this.lineService = new LineService(this.treeDataProvider);
 
         vscode.window.createTreeView(TAB_VIEW, {
             treeDataProvider: this.treeDataProvider,
@@ -94,12 +106,14 @@ export class TabView extends CommandManager {
         });
 
         if (input.state) {
-            const groupInfo = {
+            const createPayload = {
                 createType: CREATE_TYPE.NEW,
                 label: input.input,
             };
 
-            await this.treeDataProvider.createGroup(groupInfo);
+            await this.groupService.createGroup(createPayload);
+            this.treeDataProvider.triggerEventRerender();
+
             vscode.window.showInformationMessage(
                 `Group "${input.input}" has been created`
             );
@@ -120,7 +134,8 @@ export class TabView extends CommandManager {
                 group: group,
             };
 
-            this.treeDataProvider.createGroupAndGroup(createPayload);
+            this.groupService.createGroupAndGroup(createPayload);
+            this.treeDataProvider.triggerEventRerender();
         }
     }
 
@@ -225,10 +240,10 @@ export class TabView extends CommandManager {
                                 workspaceUri: workspaceUri,
                             };
 
-                            resultGroup =
-                                await this.treeDataProvider.createGroup(
-                                    createPayload
-                                );
+                            resultGroup = await this.groupService.createGroup(
+                                createPayload
+                            );
+                            this.treeDataProvider.triggerEventRerender();
                             vscode.window.showInformationMessage(
                                 `"${newGroupLabel}" group has been updated with new tab(s)`
                             );
@@ -255,10 +270,10 @@ export class TabView extends CommandManager {
                                 workspaceUri: workspaceUri,
                             };
 
-                            resultGroup =
-                                await this.treeDataProvider.createGroup(
-                                    createPayload
-                                );
+                            resultGroup = await this.groupService.createGroup(
+                                createPayload
+                            );
+                            this.treeDataProvider.triggerEventRerender();
                             vscode.window.showInformationMessage(
                                 `"${selectedGroup.label}" group has been updated with new tab(s)`
                             );
@@ -361,7 +376,7 @@ export class TabView extends CommandManager {
                 if (result.state) {
                     this.applyUpdate(
                         (updatedPayload: any) =>
-                            this.treeDataProvider.updateGroup(updatedPayload),
+                            this.groupService.updateGroup(updatedPayload),
                         payload,
                         {
                             label: result.input,
@@ -387,7 +402,7 @@ export class TabView extends CommandManager {
                 if (selectedColor) {
                     this.applyUpdate(
                         (updatedPayload: any) =>
-                            this.treeDataProvider.updateGroup(updatedPayload),
+                            this.groupService.updateGroup(updatedPayload),
                         payload,
                         {
                             color: selectedColor.value,
@@ -407,7 +422,7 @@ export class TabView extends CommandManager {
                 if (result.state) {
                     this.applyUpdate(
                         (updatedPayload: any) =>
-                            this.treeDataProvider.updateGroup(updatedPayload),
+                            this.groupService.updateGroup(updatedPayload),
                         payload,
                         {
                             description: result.input,
@@ -420,6 +435,8 @@ export class TabView extends CommandManager {
                 vscode.window.showErrorMessage("Invalid action");
                 break;
         }
+
+        this.treeDataProvider.triggerEventRerender();
     }
 
     async handleUpdateTab(tab: Tab, action: UpdateAction) {
@@ -441,7 +458,7 @@ export class TabView extends CommandManager {
                 if (result.state) {
                     this.applyUpdate(
                         (updatedPayload: any) =>
-                            this.treeDataProvider.updateTab(updatedPayload),
+                            this.tabService.updateTab(updatedPayload),
                         payload,
                         {
                             label: result.input,
@@ -460,7 +477,7 @@ export class TabView extends CommandManager {
                     if (result.state) {
                         this.applyUpdate(
                             (updatedPayload: any) =>
-                                this.treeDataProvider.updateTab(updatedPayload),
+                                this.tabService.updateTab(updatedPayload),
                             payload,
                             {
                                 description: result.input,
@@ -474,6 +491,8 @@ export class TabView extends CommandManager {
                 vscode.window.showErrorMessage("Invalid action");
                 break;
         }
+
+        this.treeDataProvider.triggerEventRerender();
     }
 
     async handleOpenGroup(group: Group) {
@@ -664,7 +683,7 @@ export class TabView extends CommandManager {
         }
 
         if (targetTab) {
-            const lineNode = await this.treeDataProvider.setLine({
+            const lineNode = await this.lineService.setLine({
                 tab: targetTab,
                 createInfo: { uri, line, character, cursorPosition },
             });
@@ -687,6 +706,7 @@ export class TabView extends CommandManager {
                 };
 
                 await this.addGutterIcon(editor, gutterLineInfo);
+                this.treeDataProvider.triggerEventRerender();
             }
         }
     }
@@ -769,7 +789,8 @@ export class TabView extends CommandManager {
 
         // Line 제거
         //현재 열려있는 Tab의 line만 지워야함
-        this.treeDataProvider.removeLine(targetTab, line);
+        this.lineService.removeLine(targetTab, line);
+        this.treeDataProvider.triggerEventRerender();
 
         // 2. Gutter 데코레이션 제거 (tabId, line 기준)
         this.deleteGutterIcon(uriStr, targetTab.id, line);

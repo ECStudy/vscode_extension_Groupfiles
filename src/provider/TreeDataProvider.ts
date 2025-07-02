@@ -161,6 +161,10 @@ export class TreeDataProvider
         return this.tree.getAllGroups();
     }
 
+    getAllTabs(): Node[] {
+        return this.tree.getAllTabs();
+    }
+
     setViewCollapsed(nodes: (Group | Tab)[], isCollapse: boolean) {
         // 전체 접기/펼치기 상태 업데이트
         this.viewCollapse = isCollapse;
@@ -186,102 +190,8 @@ export class TreeDataProvider
         this.triggerEventRerender();
     }
 
-    // 공통된 Tab 생성 로직을 처리하는 함수
-    private async createTabForGroup(
-        group: Group,
-        uri: vscode.Uri,
-        payload: any
-    ) {
-        const tab = await CreateFactory.createTab(uri, payload);
-        if (tab) {
-            group.add(tab);
-            // 그룹 상태 업데이트
-            if (typeof group.setUpdateCollapsed === "function") {
-                group.setUpdateCollapsed(false);
-            }
-        }
-    }
-
-    async createGroup(payload: ICreateGroup) {
-        let newGroup;
-        //그룹 신규 생성
-        if (payload.createType === CREATE_TYPE.NEW) {
-            //그룹 생성
-            if (payload?.label) {
-                const group = CreateFactory.createGroup(payload.label);
-                this.tree.add(group);
-
-                //탭 있는 경우 탭 생성
-                if (payload?.uris) {
-                    for (const uri of payload.uris || []) {
-                        await this.createTabForGroup(group, uri, payload);
-                    }
-                }
-
-                newGroup = group;
-            }
-        }
-
-        //그룹이 이미 있는 경우
-        else if (payload.createType === CREATE_TYPE.PREV) {
-            if (payload?.group && payload?.uris) {
-                const group = payload?.group;
-                for (const uri of payload.uris || []) {
-                    await this.createTabForGroup(group, uri, payload);
-                }
-                newGroup = group;
-            }
-        }
-
-        this.triggerEventRerender();
-        return newGroup;
-    }
-
-    createGroupAndGroup(payload: ICreateGroup) {
-        //그룹에서 그룹 생성
-        if (payload?.label) {
-            const group = CreateFactory.createGroup(payload.label);
-            payload?.group?.add(group);
-        }
-
-        this.triggerEventRerender();
-    }
-
     remove(node: Node) {
         node.remove(node);
-        this.triggerEventRerender();
-    }
-
-    updateGroup(payload: IUpdateGroup) {
-        switch (payload.action) {
-            case UpdateAction.LABEL:
-                payload?.label && payload.group.setLabel(payload?.label);
-                break;
-            case UpdateAction.COLOR:
-                payload?.color && payload.group.setColor(payload?.color);
-                break;
-            case UpdateAction.DESCRIPTION:
-                payload?.description &&
-                    payload.group.setDescription(payload?.description);
-                break;
-            default:
-                break;
-        }
-        this.triggerEventRerender();
-    }
-
-    updateTab(payload: IUpdateTab) {
-        switch (payload.action) {
-            case UpdateAction.LABEL:
-                payload?.label && payload.tab.setLabel(payload?.label);
-                break;
-            case UpdateAction.DESCRIPTION:
-                payload?.description &&
-                    payload.tab.setDescription(payload?.description);
-                break;
-            default:
-                break;
-        }
         this.triggerEventRerender();
     }
 
@@ -350,47 +260,5 @@ export class TreeDataProvider
             targetGroup.add(node, targetIndex);
         });
         this.triggerEventRerender();
-    }
-
-    async setLine(payload: {
-        tab?: Tab; //tab 무조건 있을거임, 있게 바꿔야함
-        createInfo: {
-            uri: any;
-            line: any;
-            character: any;
-            cursorPosition: any;
-        };
-    }): Promise<Line | null> {
-        const { tab, createInfo } = payload;
-
-        //라인 노드 생성
-        const lineNode = await CreateFactory.createLine(createInfo.uri, {
-            line: createInfo.line,
-        });
-
-        if (lineNode) {
-            const updatedLines = tab
-                ?.getChildren()
-                .filter((child) => child.line !== createInfo.line);
-
-            //동일한 라인있는 경우 필터링 해서 업데이트(중복방지)
-            tab?.setChildren(updatedLines);
-
-            //새로운건 맨 뒤에 넣기
-            tab?.add(lineNode);
-
-            this.triggerEventRerender();
-        }
-
-        return lineNode;
-    }
-
-    removeLine(tab: Tab, line: number) {
-        tab.removeLineByLineNumber(line);
-        this.triggerEventRerender();
-    }
-
-    getAllTabs(): Node[] {
-        return this.tree.getAllTabs();
     }
 }
