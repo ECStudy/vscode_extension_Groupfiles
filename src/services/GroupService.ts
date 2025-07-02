@@ -21,6 +21,7 @@ export class GroupService {
                 group.setUpdateCollapsed(false);
             }
         }
+        this.treeProvider.triggerEventRerender();
     }
 
     /**
@@ -60,6 +61,7 @@ export class GroupService {
             }
         }
 
+        this.treeProvider.triggerEventRerender();
         return newGroup;
     }
 
@@ -71,6 +73,7 @@ export class GroupService {
         if (payload?.label) {
             const group = CreateFactory.createGroup(payload.label);
             payload?.group?.add(group);
+            this.treeProvider.triggerEventRerender();
         }
     }
 
@@ -89,5 +92,6 @@ export class GroupService {
             default:
                 break;
         }
+        this.treeProvider.triggerEventRerender();
     }
 }

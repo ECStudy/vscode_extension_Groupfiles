@@ -16,5 +16,7 @@ export class TabService {
             default:
                 break;
         }
+
+        this.treeProvider.triggerEventRerender();
     }
 }

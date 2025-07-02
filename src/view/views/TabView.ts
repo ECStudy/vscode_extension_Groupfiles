@@ -112,7 +112,6 @@ export class TabView extends CommandManager {
             };
 
             await this.groupService.createGroup(createPayload);
-            this.treeDataProvider.triggerEventRerender();
 
             vscode.window.showInformationMessage(
                 `Group "${input.input}" has been created`
@@ -135,7 +134,6 @@ export class TabView extends CommandManager {
             };
 
             this.groupService.createGroupAndGroup(createPayload);
-            this.treeDataProvider.triggerEventRerender();
         }
     }
 
@@ -243,7 +241,6 @@ export class TabView extends CommandManager {
                             resultGroup = await this.groupService.createGroup(
                                 createPayload
                             );
-                            this.treeDataProvider.triggerEventRerender();
                             vscode.window.showInformationMessage(
                                 `"${newGroupLabel}" group has been updated with new tab(s)`
                             );
@@ -273,7 +270,6 @@ export class TabView extends CommandManager {
                             resultGroup = await this.groupService.createGroup(
                                 createPayload
                             );
-                            this.treeDataProvider.triggerEventRerender();
                             vscode.window.showInformationMessage(
                                 `"${selectedGroup.label}" group has been updated with new tab(s)`
                             );
@@ -435,8 +431,6 @@ export class TabView extends CommandManager {
                 vscode.window.showErrorMessage("Invalid action");
                 break;
         }
-
-        this.treeDataProvider.triggerEventRerender();
     }
 
     async handleUpdateTab(tab: Tab, action: UpdateAction) {
@@ -491,8 +485,6 @@ export class TabView extends CommandManager {
                 vscode.window.showErrorMessage("Invalid action");
                 break;
         }
-
-        this.treeDataProvider.triggerEventRerender();
     }
 
     async handleOpenGroup(group: Group) {
@@ -706,7 +698,6 @@ export class TabView extends CommandManager {
                 };
 
                 await this.addGutterIcon(editor, gutterLineInfo);
-                this.treeDataProvider.triggerEventRerender();
             }
         }
     }
@@ -790,7 +781,6 @@ export class TabView extends CommandManager {
         // Line 제거
         //현재 열려있는 Tab의 line만 지워야함
         this.lineService.removeLine(targetTab, line);
-        this.treeDataProvider.triggerEventRerender();
 
         // 2. Gutter 데코레이션 제거 (tabId, line 기준)
         this.deleteGutterIcon(uriStr, targetTab.id, line);

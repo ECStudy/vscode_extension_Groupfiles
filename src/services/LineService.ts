@@ -33,10 +33,12 @@ export class LineService {
             tab?.add(lineNode);
         }
 
+        this.treeProvider.triggerEventRerender();
         return lineNode;
     }
 
     removeLine(tab: Tab, line: number) {
         tab.removeLineByLineNumber(line);
+        this.treeProvider.triggerEventRerender();
     }
 }
