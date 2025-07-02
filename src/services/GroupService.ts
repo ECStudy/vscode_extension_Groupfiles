@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
-import { CreateFactory } from "../node/CreateFactory";
-import { Group } from "../node/Group";
+import { CreateFactory } from "../models/CreateFactory";
+import { Group } from "../models/Group";
 import { CREATE_TYPE, ICreateGroup, IUpdateGroup } from "../types/group";
 import { UpdateAction } from "../types/enums";
 

@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 
-import { Group } from "../node/Group";
-import { Tab } from "../node/Tab";
-import { Tree } from "../node/Tree";
+import { Group } from "../models/Group";
+import { Tab } from "../models/Tab";
+import { Tree } from "../models/Tree";
 
 import { TreeItemType } from "../types/types";
 

@@ -2,9 +2,9 @@ import * as vscode from "vscode";
 
 import { TabView } from "../view/views/TabView";
 
-import { Group } from "../node/Group";
-import { Tab } from "../node/Tab";
-import { Line } from "../node/Line";
+import { Group } from "../models/Group";
+import { Tab } from "../models/Tab";
+import { Line } from "../models/Line";
 
 import { Command } from "../types/command";
 import { UpdateAction } from "../types/enums";

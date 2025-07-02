@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 import { v4 as uuidv4 } from "uuid";
 
-import { Group } from "../node/Group";
-import { Tab } from "../node/Tab";
+import { Group } from "./Group";
+import { Tab } from "./Tab";
 
 import { parseGitGraphUri } from "../utils/util";
 import { Line } from "./Line";

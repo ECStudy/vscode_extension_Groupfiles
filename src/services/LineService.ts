@@ -1,6 +1,6 @@
-import { CreateFactory } from "../node/CreateFactory";
-import { Line } from "../node/Line";
-import { Tab } from "../node/Tab";
+import { CreateFactory } from "../models/CreateFactory";
+import { Line } from "../models/Line";
+import { Tab } from "../models/Tab";
 
 export class LineService {
     constructor(private treeProvider: any) {}

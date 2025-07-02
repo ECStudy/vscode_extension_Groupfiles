@@ -7,15 +7,15 @@ import { CommandManager } from "../managers/CommandManager";
 import { TreeDataProvider } from "../../provider/TreeDataProvider";
 import { GutterIconProvider } from "../../provider/GutterIconProvider";
 
-import { Node } from "../../node/Node";
-import { Group } from "../../node/Group";
-import { Tab } from "../../node/Tab";
+import { Node } from "../../models/Node";
+import { Group } from "../../models/Group";
+import { Tab } from "../../models/Tab";
 
 import { STORAGE_KEYS } from "../../store/StorageManager";
 import { globalState } from "../../store/globalState";
 
-import { registerTabViewCommands } from "../../command/registerTabViewCommands";
-import { registerToggleContextCommands } from "../../command/registerToggleContextCommands";
+import { registerTabViewCommands } from "../../commands/registerTabViewCommands";
+import { registerToggleContextCommands } from "../../commands/registerToggleContextCommands";
 
 import { GetterLineInfo, TreeItemType } from "../../types/types";
 import { CREATE_TYPE } from "../../types/group";
@@ -23,7 +23,7 @@ import { Confirm, TAB_VIEW, UpdateAction } from "../../types/enums";
 
 import { colorPalette } from "../../constants";
 import { showInputBox } from "../../utils/util";
-import { Line } from "../../node/Line";
+import { Line } from "../../models/Line";
 
 import { TabService } from "../../services/TabService";
 import { GroupService } from "../../services/GroupService";

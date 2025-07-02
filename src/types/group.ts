@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 
-import { Group } from "../node/Group";
+import { Group } from "../models/Group";
 import { UpdateAction } from "./enums";
-import { Tab } from "../node/Tab";
+import { Tab } from "../models/Tab";
 
 export enum CREATE_TYPE {
     NEW = "new",

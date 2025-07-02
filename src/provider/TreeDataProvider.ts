@@ -14,12 +14,12 @@ import { Serialize } from "../utils/Serialize";
 
 import { STORAGE_KEYS, StoreageManager } from "../store/StorageManager";
 
-import { CreateFactory } from "../node/CreateFactory";
-import { Node } from "../node/Node";
-import { Tree } from "../node/Tree";
-import { Group } from "../node/Group";
-import { Tab } from "../node/Tab";
-import { Line } from "../node/Line";
+import { CreateFactory } from "../models/CreateFactory";
+import { Node } from "../models/Node";
+import { Tree } from "../models/Tree";
+import { Group } from "../models/Group";
+import { Tab } from "../models/Tab";
+import { Line } from "../models/Line";
 
 export class TreeDataProvider
     implements
