@@ -677,7 +677,7 @@ export class TabView extends CommandManager {
         }
 
         if (targetTab) {
-            const lineNode = await this.lineService.setLine({
+            const lineNode = await this.lineService.createLine({
                 tab: targetTab,
                 createInfo: { uri, line, character, cursorPosition },
             });

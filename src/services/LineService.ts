@@ -5,7 +5,7 @@ import { Tab } from "../models/Tab";
 export class LineService {
     constructor(private treeProvider: any) {}
 
-    async setLine(payload: {
+    async createLine(payload: {
         tab?: Tab; //tab 무조건 있을거임, 있게 바꿔야함
         createInfo: {
             uri: any;
