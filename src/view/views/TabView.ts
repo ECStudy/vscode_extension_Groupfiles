@@ -633,7 +633,7 @@ export class TabView extends CommandManager {
     }
 
     //열린 정보로 바로라인 추가하는 기능도있어야함
-    async handleSetLine() {
+    async handleCreateLine() {
         const editor = vscode.window.activeTextEditor;
         if (!editor) return;
 
@@ -786,5 +786,28 @@ export class TabView extends CommandManager {
 
         // 2. Gutter 데코레이션 제거 (tabId, line 기준)
         this.deleteGutterIcon(uriStr, targetTab.id, line);
+    }
+
+    async handleToggleLine(payload: { lineNumber: number; uri: vscode.Uri }) {
+        const { lineNumber, uri } = payload;
+
+        const uriStr = uri.toString();
+
+        //1. 게터 map에서 기존 게터 정보 가져오기
+        const existingInfos = this.gutterIconProvider.get(uriStr) || [];
+
+        const updatedInfos = existingInfos.filter(
+            (info) => info.line === lineNumber - 1
+        );
+
+        //TODO
+        //매개변수로 넘겨 받아서 처리할 수 있도록 변경이 필요함
+        if (updatedInfos.length > 0) {
+            //삭제
+            this.handleDeleteLine();
+        } else {
+            //새로 생성
+            this.handleCreateLine();
+        }
     }
 }

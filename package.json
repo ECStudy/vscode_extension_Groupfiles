@@ -161,6 +161,13 @@
                     "command": "delete.tab.line",
                     "when": "editorTextFocus"
                 }
+            ],
+            "editor/lineNumber/context": [
+                {
+                    "command": "toggle.line",
+                    "when": "editorLineNumber",
+                    "group": "bookmarks"
+                }
             ]
         },
         "commands": [
@@ -270,6 +277,10 @@
             {
                 "command": "delete.tab.line",
                 "title": "GroupTabs: Delete Line"
+            },
+            {
+                "command": "toggle.line",
+                "title": "GroupTabs: Toggle Bookmark"
             }
         ],
         "configuration": {

@@ -119,10 +119,14 @@ export const registerTabViewCommands = (tabView: TabView) => {
     //#endregion 열기 끝
 
     vscode.commands.registerCommand("create.tab.line", () => {
-        tabView.handleSetLine();
+        tabView.handleCreateLine();
     });
 
     vscode.commands.registerCommand("delete.tab.line", (node) => {
         tabView.handleDeleteLine(node);
+    });
+
+    vscode.commands.registerCommand("toggle.line", (node) => {
+        tabView.handleToggleLine(node);
     });
 };
