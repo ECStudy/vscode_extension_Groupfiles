@@ -633,13 +633,14 @@ export class TabView extends CommandManager {
     }
 
     //열린 정보로 바로라인 추가하는 기능도있어야함
-    async handleCreateLine() {
+    async handleCreateLine(payload?: { line: number; uri: vscode.Uri }) {
+        //라인 추가 시 activeTextEditor가 없을리는 없다.
         const editor = vscode.window.activeTextEditor;
         if (!editor) return;
 
         const cursorPosition = editor.selection.active;
-        const uri = editor.document.uri;
-        const line = cursorPosition.line;
+        const uri = payload?.uri ?? editor.document.uri;
+        const line = payload?.line ?? cursorPosition.line;
         const character = cursorPosition.character;
 
         const allTabs = this.treeDataProvider.getAllTabs() as Tab[];
@@ -734,15 +735,15 @@ export class TabView extends CommandManager {
      * 2.게터 데코레이션 제거
      * @param node
      */
-    async handleDeleteLine(node?: Line) {
+    async handleDeleteLine(payload?: { line: number; uri: vscode.Uri }) {
         //열린 에디터를 기준으로
         const editor = vscode.window.activeTextEditor;
-        if (!editor && node) return;
+        if (!editor && payload) return;
 
         //tree item에서 선택한 node를 기준으로 처리
         //! : "내가 책임질 테니 이건 null 아님"이라고 강제로 확정하는 것
-        const uri = node?.uri ?? editor!.document.uri;
-        const line = node?.line ?? editor!.selection.active.line;
+        const uri = payload?.uri ?? editor!.document.uri;
+        const line = payload?.line ?? editor!.selection.active.line;
         const uriStr = uri.toString();
 
         //현재 열려 있는 파일(uri)과 같은 경로를 가진 Tab 전체 가져오기
@@ -790,24 +791,26 @@ export class TabView extends CommandManager {
 
     async handleToggleLine(payload: { lineNumber: number; uri: vscode.Uri }) {
         const { lineNumber, uri } = payload;
+        const line = lineNumber - 1;
 
         const uriStr = uri.toString();
 
         //1. 게터 map에서 기존 게터 정보 가져오기
         const existingInfos = this.gutterIconProvider.get(uriStr) || [];
 
-        const updatedInfos = existingInfos.filter(
-            (info) => info.line === lineNumber - 1
-        );
+        const updatedInfos = existingInfos.filter((info) => info.line === line);
 
-        //TODO
-        //매개변수로 넘겨 받아서 처리할 수 있도록 변경이 필요함
+        const togglePayload = {
+            line: line,
+            uri,
+        };
+
         if (updatedInfos.length > 0) {
             //삭제
-            this.handleDeleteLine();
+            this.handleDeleteLine(togglePayload);
         } else {
             //새로 생성
-            this.handleCreateLine();
+            this.handleCreateLine(togglePayload);
         }
     }
 }
