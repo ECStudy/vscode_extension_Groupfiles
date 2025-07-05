@@ -311,6 +311,12 @@ export class TabView extends CommandManager {
         if (confirm === Confirm.DELETE) {
             const beforeChildren = [...nodes.getChildren()];
             nodes.reset();
+
+            // 라인 + 게터 아이콘 정리
+            for (const group of beforeChildren) {
+                this.removeTabWithDependencies(group);
+            }
+
             this.treeDataProvider.triggerEventRerender();
 
             //복구
@@ -329,6 +335,31 @@ export class TabView extends CommandManager {
         }
     }
 
+    removeTabWithDependencies(tab: Tab) {
+        // 라인 정보 제거
+        const lines = tab.getLines();
+        for (const line of lines) {
+            this.deleteGutterIcon(tab.uri, tab.id, line.line);
+        }
+        // 트리에서 제거
+        tab.remove(tab);
+    }
+
+    cleanupGutterIcon(node: Group | Tab) {
+        if (node.type === TreeItemType.Group) {
+            const tabs = node.getAllTabs() as Tab[];
+            tabs.forEach((tab) => this.removeTabWithDependencies(tab));
+            node.remove(node); // group 자체 제거
+        } else if (node.type === TreeItemType.Tab) {
+            // 라인 정보 제거
+            const lines = node.getLines();
+            for (const line of lines) {
+                this.deleteGutterIcon(node.uri, node.id, line.line);
+            }
+            node.remove(node);
+        }
+    }
+
     //그룹 제거 | 탭 제거
     async handleDelete(node: Group | Tab) {
         if (node.type === TreeItemType.Group) {
@@ -340,9 +371,11 @@ export class TabView extends CommandManager {
 
             if (confirm === Confirm.DELETE) {
                 node.remove(node);
+                this.cleanupGutterIcon(node);
             }
         } else if (node.type === TreeItemType.Tab) {
             node.remove(node);
+            this.cleanupGutterIcon(node);
         }
 
         this.treeDataProvider.triggerEventRerender();
