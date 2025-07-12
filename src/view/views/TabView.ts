@@ -312,6 +312,7 @@ export class TabView extends CommandManager {
             const beforeChildren = [...nodes.getChildren()];
             nodes.reset();
 
+            // 오류
             // 라인 + 게터 아이콘 정리
             for (const group of beforeChildren) {
                 this.removeTabWithDependencies(group);
@@ -320,12 +321,15 @@ export class TabView extends CommandManager {
             this.treeDataProvider.triggerEventRerender();
 
             //복구
+            // @TODO : 복구할 때 깊은 복사 안되는 문제로 json 복구로 다시 교체
             setTimeout(async () => {
                 const confirm = await vscode.window.showInformationMessage(
                     `Deleted all groups. Would you like to recover?`,
                     Confirm.RECOVER,
                     Confirm.DELETE
                 );
+
+                console.log("🎈", beforeChildren);
 
                 if (confirm === Confirm.RECOVER) {
                     nodes.setChildren(beforeChildren);
@@ -335,14 +339,19 @@ export class TabView extends CommandManager {
         }
     }
 
-    removeTabWithDependencies(tab: Tab) {
-        // 라인 정보 제거
-        const lines = tab.getLines();
-        for (const line of lines) {
-            this.deleteGutterIcon(tab.uri, tab.id, line.line);
+    removeTabWithDependencies(node: Tab | Group) {
+        if (node.type === TreeItemType.Group) {
+            const tabs = node.getAllTabs() as Tab[];
+            tabs.forEach((tab) => this.removeTabWithDependencies(tab));
+        } else if (node.type === TreeItemType.Tab) {
+            // 라인 정보 제거
+            const lines = node.getLines();
+            for (const line of lines) {
+                this.deleteGutterIcon(node.uri, node.id, line.line);
+            }
+            // 트리에서 제거
+            node.remove(node);
         }
-        // 트리에서 제거
-        tab.remove(tab);
     }
 
     cleanupGutterIcon(node: Group | Tab) {
