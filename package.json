@@ -137,11 +137,6 @@
                     "group": "navigation@2"
                 },
                 {
-                    "command": "open.tab.workspace",
-                    "when": "viewItem == tab",
-                    "group": "navigation@3"
-                },
-                {
                     "command": "delete.line",
                     "when": "viewItem == line",
                     "group": "inline"
@@ -258,11 +253,6 @@
             {
                 "command": "update.tab.description",
                 "title": "Set Tab Description",
-                "category": "tab"
-            },
-            {
-                "command": "open.tab.workspace",
-                "title": "Open Saved workspace",
                 "category": "tab"
             },
             {

@@ -605,42 +605,42 @@ export class TabView extends CommandManager {
         this.treeDataProvider.moveNode(target, dataTransferItem?.value);
     }
 
-    openNewWorkspace = async (workspaceUri: vscode.Uri) => {
-        if (!workspaceUri) {
-            vscode.window.showErrorMessage("No workspace found.");
-            return;
-        }
+    // openNewWorkspace = async (workspaceUri: vscode.Uri) => {
+    //     if (!workspaceUri) {
+    //         vscode.window.showErrorMessage("No workspace found.");
+    //         return;
+    //     }
 
-        // 새로운 워크스페이스 파일 이름 및 경로
-        const newWorkspaceFileName = "duplicated_workspace.code-workspace";
-        const newWorkspaceFilePath = path.join(
-            os.tmpdir(),
-            newWorkspaceFileName
-        );
+    //     // 새로운 워크스페이스 파일 이름 및 경로
+    //     const newWorkspaceFileName = "duplicated_workspace.code-workspace";
+    //     const newWorkspaceFilePath = path.join(
+    //         os.tmpdir(),
+    //         newWorkspaceFileName
+    //     );
 
-        try {
-            // 새로 생성된 워크스페이스 파일 경로를 URI로 변환
-            const newWorkspaceUri = vscode.Uri.file(newWorkspaceFilePath);
+    //     try {
+    //         // 새로 생성된 워크스페이스 파일 경로를 URI로 변환
+    //         const newWorkspaceUri = vscode.Uri.file(newWorkspaceFilePath);
 
-            // 새로 생성된 워크스페이스 열기 (새 창에서 열기)
-            await vscode.commands.executeCommand(
-                "vscode.openFolder",
-                newWorkspaceUri,
-                true
-            );
-            vscode.window.showInformationMessage(
-                `Workspace duplicated and opened in new window: ${newWorkspaceUri.fsPath}`
-            );
-        } catch (error) {
-            vscode.window.showErrorMessage(`Failed to duplicate workspace`);
-        }
-    };
+    //         // 새로 생성된 워크스페이스 열기 (새 창에서 열기)
+    //         await vscode.commands.executeCommand(
+    //             "vscode.openFolder",
+    //             newWorkspaceUri,
+    //             true
+    //         );
+    //         vscode.window.showInformationMessage(
+    //             `Workspace duplicated and opened in new window: ${newWorkspaceUri.fsPath}`
+    //         );
+    //     } catch (error) {
+    //         vscode.window.showErrorMessage(`Failed to duplicate workspace`);
+    //     }
+    // };
 
-    // 그룹에 속한 탭들을 포함하는 새로운 워크스페이스 생성
-    async handleOpenWorkspace(tab: Tab) {
-        const workspaceFolder = tab.getWorkspace();
-        await this.openNewWorkspace(workspaceFolder);
-    }
+    // // 그룹에 속한 탭들을 포함하는 새로운 워크스페이스 생성
+    // async handleOpenWorkspace(tab: Tab) {
+    //     const workspaceFolder = tab.getWorkspace();
+    //     await this.openNewWorkspace(workspaceFolder);
+    // }
 
     // 라인에 게터 아이콘 추가
     async addGutterIcon(
