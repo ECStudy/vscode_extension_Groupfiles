@@ -5,6 +5,7 @@ import { Tab } from "../models/Tab";
 import { Tree } from "../models/Tree";
 
 import { TreeItemType } from "../types/types";
+import { Line } from "../models/Line";
 
 interface NodeJson {
     type: TreeItemType;
@@ -46,6 +47,13 @@ export class Serialize {
                 json.payload.workspaceUri = (node as Tab)?.workspaceUri;
                 json.payload.label = (node as Tab).label;
                 json.payload.description = (node as Tab).description;
+            } else if (node.type === TreeItemType.Line) {
+                json.payload.path = (node as Line)?.path;
+                json.payload.uri = (node as Line)?.uri;
+                json.payload.lineText = (node as Line)?.lineText;
+                json.payload.line = (node as Line)?.line;
+                json.payload.label = (node as Line)?.label;
+                json.payload.description = (node as Line)?.description;
             }
 
             if (node.getChildren().length > 0) {
@@ -62,7 +70,7 @@ export class Serialize {
     }
 
     static fromJson(json: string, tree: Tree) {
-        const createNode = (nodeJson: any): Group | Tab | Tree => {
+        const createNode = (nodeJson: any): Group | Tab | Line | Tree => {
             let node;
             switch (nodeJson.type) {
                 case TreeItemType.Tree:
@@ -88,7 +96,13 @@ export class Serialize {
 
                     const woirkspacePath =
                         nodeJson?.payload?.workspaceUri?.path;
-                    const workspaceuri = vscode.Uri.parse(woirkspacePath);
+                    let workspaceUri = vscode.Uri.parse(woirkspacePath);
+
+                    if (nodeJson?.payload?.workspaceUri?.path) {
+                        workspaceUri = vscode.Uri.parse(
+                            nodeJson.payload.workspaceUri.path
+                        );
+                    }
 
                     node = new Tab(
                         nodeJson.payload.id,
@@ -98,7 +112,29 @@ export class Serialize {
                         {
                             label: nodeJson?.payload?.label,
                             description: nodeJson?.payload?.description,
-                            workspaceUri: workspaceuri,
+                            workspaceUri: workspaceUri, // 복구
+                        }
+                    );
+                    break;
+                case TreeItemType.Line:
+                    //nodeJson.payload.uri.external : 파일명까지 나옴
+                    //nodeJson.payload.uri.fsPath : 파일 경로가 통으로 나옴
+                    //nodeJson.payload.uri.path : 파일명까지 나옴
+
+                    const lineUri = vscode.Uri.parse(
+                        nodeJson.payload?.uri?.path
+                    );
+
+                    node = new Line(
+                        nodeJson.payload.id,
+                        {
+                            input: { uri: lineUri },
+                        },
+                        {
+                            line: nodeJson?.payload?.line,
+                            label: nodeJson?.payload?.label,
+                            lineText: nodeJson?.payload?.lineText,
+                            description: nodeJson?.payload?.description,
                         }
                     );
                     break;

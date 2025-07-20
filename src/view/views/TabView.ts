@@ -68,6 +68,10 @@ export class TabView extends CommandManager {
         //command 등록
         registerTabViewCommands(this);
         registerToggleContextCommands(this);
+
+        setTimeout(() => {
+            this.restoreGutterIcons();
+        }, 1000); // TreeView 초기화 후 복구
     }
 
     public static getInstance(context: vscode.ExtensionContext): TabView {
@@ -932,6 +936,61 @@ export class TabView extends CommandManager {
         } else {
             //새로 생성
             this.createLineAndDecorate(togglePayload);
+        }
+    }
+
+    // 3. 추가 개선: GutterIcon 복구 로직
+    // TreeDataProvider.ts에 추가
+    private async restoreGutterIcons() {
+        try {
+            // 모든 Tab을 순회하면서 GutterIcon 복구
+            const allTabs = this.treeDataProvider.getAllTabs() as Tab[];
+
+            for (const tab of allTabs) {
+                const lines = tab.getLines();
+
+                for (const line of lines) {
+                    // 해당 파일이 열려있는지 확인
+                    const editor = vscode.window.visibleTextEditors.find(
+                        (ed) =>
+                            ed.document.uri.toString() === line.uri.toString()
+                    );
+
+                    if (editor) {
+                        // Gutter 아이콘 복구
+                        const lineStart = new vscode.Position(line.line, 0);
+                        const lineEnd = new vscode.Position(
+                            line.line,
+                            editor.document.lineAt(line.line).text.length
+                        );
+                        const range = new vscode.Range(lineStart, lineEnd);
+
+                        const gutterLineInfo = {
+                            uri: line.uri,
+                            tabId: tab.id,
+                            line: line.line,
+                            range: range,
+                            lineId: line.id,
+                        };
+
+                        // GutterIconProvider에 추가
+                        const uriStr = line.uri.toString();
+                        const existingInfos =
+                            this.gutterIconProvider.get(uriStr) || [];
+                        existingInfos.push(gutterLineInfo);
+                        this.gutterIconProvider.set(uriStr, existingInfos);
+
+                        // 데코레이션 적용
+                        const ranges = existingInfos.map((info) => info.range);
+                        editor.setDecorations(
+                            this.gutterIconProvider.getLineMarkerDecoration(),
+                            ranges
+                        );
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("Failed to restore gutter icons:", error);
         }
     }
 }

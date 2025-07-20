@@ -21,6 +21,7 @@ export class Line extends Node {
         this.label = payload?.label || "";
         this.line = payload?.line;
         this.lineText = payload.lineText;
+        this.description = payload?.description || "";
     }
 
     render(

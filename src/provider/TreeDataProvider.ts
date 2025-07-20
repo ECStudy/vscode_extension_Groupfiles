@@ -81,29 +81,51 @@ export class TreeDataProvider
     }
 
     public saveData() {
-        // const tree = this.tree;
-        // const jsonTree = Serialize.toJson(tree);
-        // this.setGlobalState(STORAGE_KEYS.TREE_DATA, jsonTree);
-        // this.setGlobalState(STORAGE_KEYS.VIEW_COLLAPSE, this.viewCollapse);
-        // this.setGlobalState(
-        //     STORAGE_KEYS.VIEW_DESCRIPTION,
-        //     this.viewDescription
-        // );
-        // this.setGlobalState(STORAGE_KEYS.VIEW_ALIAS, this.viewAlias);
+        const tree = this.tree;
+        const jsonTree = Serialize.toJson(tree);
+        this.setGlobalState(STORAGE_KEYS.TREE_DATA, jsonTree);
+        this.setGlobalState(STORAGE_KEYS.VIEW_COLLAPSE, this.viewCollapse);
+        this.setGlobalState(
+            STORAGE_KEYS.VIEW_DESCRIPTION,
+            this.viewDescription
+        );
+        this.setGlobalState(STORAGE_KEYS.VIEW_ALIAS, this.viewAlias);
     }
 
     private loadData() {
-        // const jsonTree = this.getGlobalState<string>(STORAGE_KEYS.TREE_DATA);
-        // if (jsonTree) {
-        //     const tree = Serialize.fromJson(jsonTree, this.tree);
-        //     this.tree.setChildren(tree.getChildren());
-        // }
-        // const viewCollapse = this.getGlobalState<boolean>(
-        //     STORAGE_KEYS.VIEW_COLLAPSE
-        // );
-        // if (viewCollapse !== undefined) {
-        //     this.viewCollapse = viewCollapse;
-        // }
+        try {
+            const jsonTree = this.getGlobalState<string>(
+                STORAGE_KEYS.TREE_DATA
+            );
+            if (jsonTree) {
+                const tree = Serialize.fromJson(jsonTree, this.tree);
+                this.tree.setChildren(tree.getChildren());
+            }
+            const viewCollapse = this.getGlobalState<boolean>(
+                STORAGE_KEYS.VIEW_COLLAPSE
+            );
+            if (viewCollapse !== undefined) {
+                this.viewCollapse = viewCollapse;
+            }
+
+            const viewDescription = this.getGlobalState<boolean>(
+                STORAGE_KEYS.VIEW_DESCRIPTION
+            );
+            if (viewDescription !== undefined) {
+                this.viewDescription = viewDescription;
+            }
+
+            const viewAlias = this.getGlobalState<boolean>(
+                STORAGE_KEYS.VIEW_ALIAS
+            );
+            if (viewAlias !== undefined) {
+                this.viewAlias = viewAlias;
+            }
+        } catch (error) {
+            console.error(`Error : loadData() ${error}`);
+
+            this.tree.reset();
+        }
     }
 
     public triggerEventRerender() {
@@ -191,6 +213,10 @@ export class TreeDataProvider
 
         const target = element ?? this.tree;
         return target.getChildren();
+    }
+
+    getParent(element: Group | Tab | Line): Node | undefined {
+        return element.getParentNode();
     }
 
     getTree() {
@@ -293,5 +319,9 @@ export class TreeDataProvider
             targetGroup.add(node, targetIndex);
         });
         this.triggerEventRerender();
+    }
+
+    private async restoreGutterIcons() {
+        const allTabs = this.getAllTabs() as Tab[];
     }
 }
