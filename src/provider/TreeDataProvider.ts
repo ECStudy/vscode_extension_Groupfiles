@@ -155,6 +155,7 @@ export class TreeDataProvider
             // Tab이 Line을 가지고 있으면서 접힌 상태가 아니라면 강제로 펼치기
             const hasLines = element.getLines().length > 0;
             if (hasLines) {
+                // Tab 펼칠때 타겟 Tab만 펼칠수 있는 꼼수
                 const shouldForceExpand = this.shouldForceExpandTab?.(
                     element.id
                 );

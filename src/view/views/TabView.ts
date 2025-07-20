@@ -748,11 +748,9 @@ export class TabView extends CommandManager {
             });
 
             if (lineNode) {
+                // Tab 펼칠때 타겟 Tab만 펼칠수 있는 꼼수
                 // Tab을 펼칠 목록에 추가
                 this.treeDataProvider.addForceExpandTab(targetTab.id);
-
-                // 강제 Tab 펼치기 로직
-                await this.forceExpandNode(targetTab);
 
                 // 잠시 후 목록에서 제거 (다음 렌더링에서는 정상 작동하도록)
                 setTimeout(() => {
@@ -777,23 +775,6 @@ export class TabView extends CommandManager {
 
                 await this.addGutterIcon(editor, gutterLineInfo);
             }
-        }
-    }
-
-    /**
-     * 강제로 접힌 node 펼차게 수행
-     * @param tab
-     */
-    private async forceExpandNode(node: Tab) {
-        try {
-            // 4. reveal 실행
-            await this.treeView.reveal(node, {
-                expand: true,
-                focus: false,
-                select: false,
-            });
-        } catch (error) {
-            console.log(`Error: forceExpandNode - ${error}`);
         }
     }
 
