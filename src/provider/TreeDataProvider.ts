@@ -43,6 +43,8 @@ export class TreeDataProvider
     private viewDescription: boolean;
     private viewAlias: boolean; //탭 별칭
 
+    private tabsToExpand = new Set<string>();
+
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.tree = Tree.getInstance("root");
@@ -109,6 +111,18 @@ export class TreeDataProvider
         this._onDidChangeTreeData.fire();
     }
 
+    shouldForceExpandTab(tabId: string): boolean {
+        return this.tabsToExpand.has(tabId);
+    }
+
+    addForceExpandTab(tabId: string): void {
+        this.tabsToExpand.add(tabId);
+    }
+
+    deleteForceExpandTab(tabId: string): void {
+        this.tabsToExpand.delete(tabId);
+    }
+
     getTreeItem(element: Group | Tab | Line): vscode.TreeItem {
         const itemPayload = {
             viewDescription: this.viewStateService.getDescription(),
@@ -121,8 +135,10 @@ export class TreeDataProvider
         }
 
         const treeItem = element.render(this.context, itemPayload);
+        // Group
         if (element.type === TreeItemType.Group) {
             //접기 펼치기 캐싱 때문에 렌더 할 때 아이디 변경
+            //collapsed 상태에 따라 ID 설정
             treeItem.id = `${element.id}_${
                 element.collapsed ? "collapsed" : "expanded"
             }`;
@@ -130,13 +146,38 @@ export class TreeDataProvider
             treeItem.collapsibleState = element.collapsed
                 ? vscode.TreeItemCollapsibleState.Collapsed //닫힘 1
                 : vscode.TreeItemCollapsibleState.Expanded; //열림 2
-        } else if (
+        }
+        // Tab
+        else if (
             element.type === TreeItemType.Tab &&
             element.getChildren().length > 0
         ) {
-            // Tab에 자식이 있으면 확장 가능하도록 설정
-            treeItem.collapsibleState =
-                vscode.TreeItemCollapsibleState.Expanded;
+            // Tab이 Line을 가지고 있으면서 접힌 상태가 아니라면 강제로 펼치기
+            const hasLines = element.getLines().length > 0;
+            if (hasLines) {
+                const shouldForceExpand = this.shouldForceExpandTab?.(
+                    element.id
+                );
+                if (!element.collapsed || shouldForceExpand) {
+                    treeItem.collapsibleState =
+                        vscode.TreeItemCollapsibleState.Expanded;
+
+                    // 강제 펼치기가 필요한 경우에만 새로운 ID 생성
+                    treeItem.id = shouldForceExpand
+                        ? `${element.id}_expanded_${Date.now()}`
+                        : `${element.id}`;
+                } else {
+                    // 접힌 상태일 때는 고정 ID 사용
+                    treeItem.id = `${element.id}`;
+                    treeItem.collapsibleState =
+                        vscode.TreeItemCollapsibleState.Collapsed;
+                }
+            }
+            //line 없음
+            else {
+                treeItem.collapsibleState =
+                    vscode.TreeItemCollapsibleState.None;
+            }
         }
 
         return treeItem;

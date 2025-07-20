@@ -41,7 +41,7 @@ export class Tab extends Node implements TabItem {
     ): vscode.TreeItem {
         const item = new vscode.TreeItem(
             this.uri,
-            vscode.TreeItemCollapsibleState.None
+            vscode.TreeItemCollapsibleState.None //열림/닫힘 없음
         );
         item.id = this.id;
         item.contextValue = "tab";
@@ -120,5 +120,20 @@ export class Tab extends Node implements TabItem {
             );
         });
         this.setChildren(updated);
+    }
+
+    setCollapsed(collapsed: boolean) {
+        this.collapsed = collapsed;
+    }
+
+    //@TODO GROUP이랑 올림
+    setUpdateCollapsed(collapsed: boolean) {
+        //현재 노드 collapsed 업데이트
+        this.setCollapsed(collapsed);
+        //부모 노드 collapsed 업데이트
+        const parentNode = this.getParentNode() as Tab;
+        if (parentNode && parentNode.type === TreeItemType.Tab) {
+            parentNode.setUpdateCollapsed(collapsed);
+        }
     }
 }

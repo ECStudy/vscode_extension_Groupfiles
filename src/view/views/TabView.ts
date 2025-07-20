@@ -37,6 +37,8 @@ export class TabView extends CommandManager {
     private treeDataProvider: TreeDataProvider;
     private gutterIconProvider: GutterIconProvider;
 
+    private treeView: vscode.TreeView<any>;
+
     readonly dropMimeTypes: string[] = ["application/vnd.code.tree.tab"];
     readonly dragMimeTypes: string[] = ["application/vnd.code.tree.tab"];
 
@@ -55,7 +57,7 @@ export class TabView extends CommandManager {
         this.tabService = new TabService(this.treeDataProvider);
         this.lineService = new LineService(this.treeDataProvider);
 
-        vscode.window.createTreeView(TAB_VIEW, {
+        this.treeView = vscode.window.createTreeView(TAB_VIEW, {
             treeDataProvider: this.treeDataProvider,
             canSelectMany: true,
             dragAndDropController: this, // Drag & Drop 활성화
@@ -745,15 +747,26 @@ export class TabView extends CommandManager {
                 createInfo: { uri, line, character, cursorPosition },
             });
 
-            const lineStart = new vscode.Position(line, 0);
-            const lineEnd = new vscode.Position(
-                line,
-                editor.document.lineAt(line).text.length
-            );
-
-            const range = new vscode.Range(lineStart, lineEnd);
-
             if (lineNode) {
+                // Tab을 펼칠 목록에 추가
+                this.treeDataProvider.addForceExpandTab(targetTab.id);
+
+                // 강제 Tab 펼치기 로직
+                await this.forceExpandNode(targetTab);
+
+                // 잠시 후 목록에서 제거 (다음 렌더링에서는 정상 작동하도록)
+                setTimeout(() => {
+                    this.treeDataProvider.deleteForceExpandTab(targetTab!.id);
+                }, 1000);
+
+                const lineStart = new vscode.Position(line, 0);
+                const lineEnd = new vscode.Position(
+                    line,
+                    editor.document.lineAt(line).text.length
+                );
+
+                const range = new vscode.Range(lineStart, lineEnd);
+
                 const gutterLineInfo = {
                     uri: uri,
                     tabId: targetTab.id,
@@ -764,6 +777,23 @@ export class TabView extends CommandManager {
 
                 await this.addGutterIcon(editor, gutterLineInfo);
             }
+        }
+    }
+
+    /**
+     * 강제로 접힌 node 펼차게 수행
+     * @param tab
+     */
+    private async forceExpandNode(node: Tab) {
+        try {
+            // 4. reveal 실행
+            await this.treeView.reveal(node, {
+                expand: true,
+                focus: false,
+                select: false,
+            });
+        } catch (error) {
+            console.log(`Error: forceExpandNode - ${error}`);
         }
     }
 
