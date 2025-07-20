@@ -18,7 +18,9 @@ export class Tab extends Node implements TabItem {
     readonly type = TreeItemType.Tab;
     path: string;
     uri: vscode.Uri;
+    //가칭
     label?: string;
+    //주석
     description?: string;
     workspaceUri?: any;
     // 접기 펼치기 여부

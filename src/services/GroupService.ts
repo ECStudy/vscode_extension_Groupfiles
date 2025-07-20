@@ -77,17 +77,17 @@ export class GroupService {
         }
     }
 
-    updateGroup(payload: IUpdateGroup) {
+    update(payload: IUpdateGroup) {
         switch (payload.action) {
             case UpdateAction.LABEL:
-                payload?.label && payload.group.setLabel(payload?.label);
+                payload?.label && payload.node.setLabel(payload?.label);
                 break;
             case UpdateAction.COLOR:
-                payload?.color && payload.group.setColor(payload?.color);
+                payload?.color && payload.node.setColor(payload?.color);
                 break;
             case UpdateAction.DESCRIPTION:
                 payload?.description &&
-                    payload.group.setDescription(payload?.description);
+                    payload.node.setDescription(payload?.description);
                 break;
             default:
                 break;

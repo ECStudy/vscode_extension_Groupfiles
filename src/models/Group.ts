@@ -16,6 +16,7 @@ export class Group extends Node {
     collapsed: boolean;
     // 경로
     path: string;
+    //주석
     description?: string;
 
     constructor(id: string, label: string, payload?: any) {

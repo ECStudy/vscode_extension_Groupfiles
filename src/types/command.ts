@@ -18,6 +18,9 @@ export enum Command {
     UPDATE_TAB_LABEL = "update.tab.label",
     UPDATE_TAB_DESCRIPTION = "update.tab.description",
 
+    UPDATE_LINE_LABEL = "update.line.label",
+    UPDATE_LINE_DESCRIPTION = "update.line.description",
+
     //열기
     OPEN_TAB_WORKSPACE = "open.tab.workspace",
 }

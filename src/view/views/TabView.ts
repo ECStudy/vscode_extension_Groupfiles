@@ -402,7 +402,7 @@ export class TabView extends CommandManager {
     async handleUpdateGroup(group: Group, action: UpdateAction) {
         const payload = {
             label: group.label || "",
-            group,
+            node: group,
             action,
             color: undefined,
             description: group.description || "",
@@ -418,7 +418,7 @@ export class TabView extends CommandManager {
                 if (result.state) {
                     this.applyUpdate(
                         (updatedPayload: any) =>
-                            this.groupService.updateGroup(updatedPayload),
+                            this.groupService.update(updatedPayload),
                         payload,
                         {
                             label: result.input,
@@ -444,7 +444,7 @@ export class TabView extends CommandManager {
                 if (selectedColor) {
                     this.applyUpdate(
                         (updatedPayload: any) =>
-                            this.groupService.updateGroup(updatedPayload),
+                            this.groupService.update(updatedPayload),
                         payload,
                         {
                             color: selectedColor.value,
@@ -464,7 +464,7 @@ export class TabView extends CommandManager {
                 if (result.state) {
                     this.applyUpdate(
                         (updatedPayload: any) =>
-                            this.groupService.updateGroup(updatedPayload),
+                            this.groupService.update(updatedPayload),
                         payload,
                         {
                             description: result.input,
@@ -482,7 +482,7 @@ export class TabView extends CommandManager {
     async handleUpdateTab(tab: Tab, action: UpdateAction) {
         const payload = {
             label: tab.label || "",
-            tab,
+            node: tab,
             action,
             color: undefined,
             description: tab.description || "",
@@ -498,7 +498,7 @@ export class TabView extends CommandManager {
                 if (result.state) {
                     this.applyUpdate(
                         (updatedPayload: any) =>
-                            this.tabService.updateTab(updatedPayload),
+                            this.tabService.update(updatedPayload),
                         payload,
                         {
                             label: result.input,
@@ -517,7 +517,61 @@ export class TabView extends CommandManager {
                     if (result.state) {
                         this.applyUpdate(
                             (updatedPayload: any) =>
-                                this.tabService.updateTab(updatedPayload),
+                                this.tabService.update(updatedPayload),
+                            payload,
+                            {
+                                description: result.input,
+                            }
+                        );
+                    }
+                }
+
+                break;
+            default:
+                vscode.window.showErrorMessage("Invalid action");
+                break;
+        }
+    }
+
+    async handleUpdateLine(line: Line, action: UpdateAction) {
+        const payload = {
+            label: line.label || "",
+            node: line,
+            action,
+            color: undefined,
+            description: line.description || "",
+        };
+
+        switch (action) {
+            case UpdateAction.LABEL: {
+                const result = await showInputBox({
+                    prompt: "Enter a name for the line",
+                    placeHolder: "Enter the line name",
+                    value: line.label,
+                });
+                if (result.state) {
+                    this.applyUpdate(
+                        (updatedPayload: any) =>
+                            this.lineService.update(updatedPayload),
+                        payload,
+                        {
+                            label: result.input,
+                        }
+                    );
+                }
+                break;
+            }
+            case UpdateAction.DESCRIPTION:
+                {
+                    const result = await showInputBox({
+                        prompt: "Enter a description for the line",
+                        placeHolder: "Enter the line description",
+                        value: line?.description,
+                    });
+                    if (result.state) {
+                        this.applyUpdate(
+                            (updatedPayload: any) =>
+                                this.lineService.update(updatedPayload),
                             payload,
                             {
                                 description: result.input,
@@ -715,9 +769,8 @@ export class TabView extends CommandManager {
         // 1. Tab이 없는 경우 → 그룹 및 탭 생성
         if (matchingTabs.length === 0) {
             const group = await this.handleCreateGroupAndTab([uri]);
-            targetTab = (group?.getAllTabs() as Tab[]).find(
-                (tab) => tab.path === uri.path
-            );
+            const allGroups = group?.getAllTabs() as Tab[];
+            targetTab = allGroups?.find((tab) => tab.path === uri.path);
         }
 
         // 2. Tab이 1개 있는 경우 → 바로 사용

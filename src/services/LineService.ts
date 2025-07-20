@@ -1,6 +1,8 @@
 import { CreateFactory } from "../models/CreateFactory";
 import { Line } from "../models/Line";
 import { Tab } from "../models/Tab";
+import { UpdateAction } from "../types/enums";
+import { IUpdateLine } from "../types/group";
 
 export class LineService {
     constructor(private treeProvider: any) {}
@@ -40,6 +42,22 @@ export class LineService {
 
     removeLine(tab: Tab, line: number) {
         tab.removeLineByLineNumber(line);
+        this.treeProvider.triggerEventRerender();
+    }
+
+    update(payload: IUpdateLine) {
+        switch (payload.action) {
+            case UpdateAction.LABEL:
+                payload?.label && payload.node.setLabel(payload?.label);
+                break;
+            case UpdateAction.DESCRIPTION:
+                payload?.description &&
+                    payload.node.setDescription(payload?.description);
+                break;
+            default:
+                break;
+        }
+
         this.treeProvider.triggerEventRerender();
     }
 }

@@ -4,14 +4,14 @@ import { IUpdateTab } from "../types/group";
 export class TabService {
     constructor(private treeProvider: any) {}
 
-    updateTab(payload: IUpdateTab) {
+    update(payload: IUpdateTab) {
         switch (payload.action) {
             case UpdateAction.LABEL:
-                payload?.label && payload.tab.setLabel(payload?.label);
+                payload?.label && payload.node.setLabel(payload?.label);
                 break;
             case UpdateAction.DESCRIPTION:
                 payload?.description &&
-                    payload.tab.setDescription(payload?.description);
+                    payload.node.setDescription(payload?.description);
                 break;
             default:
                 break;

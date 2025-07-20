@@ -103,6 +103,16 @@ export const registerTabViewCommands = (tabView: TabView) => {
         tabView.handleUpdateTab(tab, UpdateAction.DESCRIPTION);
     });
 
+    //라인 라벨
+    vscode.commands.registerCommand(Command.UPDATE_LINE_LABEL, (line) => {
+        tabView.handleUpdateLine(line, UpdateAction.LABEL);
+    });
+
+    //라인 주석
+    vscode.commands.registerCommand(Command.UPDATE_LINE_DESCRIPTION, (line) => {
+        tabView.handleUpdateLine(line, UpdateAction.DESCRIPTION);
+    });
+
     // //저장시점 워크스페이스 열기
     // vscode.commands.registerCommand(Command.OPEN_TAB_WORKSPACE, (tab) => {
     //     tabView.handleOpenWorkspace(tab);

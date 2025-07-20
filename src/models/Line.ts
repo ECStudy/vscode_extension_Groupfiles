@@ -11,6 +11,8 @@ export class Line extends Node {
     label?: string;
     lineText?: string;
     line: number;
+    //주석
+    description?: string;
 
     constructor(id: string, nativeTab: any, payload?: any) {
         super(id);
@@ -49,6 +51,25 @@ export class Line extends Node {
 
         item.tooltip = `${this.path}:${this.line + 1}`;
 
+        if (payload?.viewAlias && this.label && this.label.trim() !== "") {
+            item.label = this.label;
+        }
+        if (
+            payload?.viewDescription &&
+            this.description &&
+            this.description.trim() !== ""
+        ) {
+            item.description = this.description;
+        }
+
         return item;
+    }
+
+    setLabel(label?: string) {
+        this.label = label;
+    }
+
+    setDescription(description?: string) {
+        this.description = description;
     }
 }

@@ -140,6 +140,16 @@
                     "command": "delete.line",
                     "when": "viewItem == line",
                     "group": "inline"
+                },
+                {
+                    "command": "update.line.label",
+                    "when": "viewItem == line",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "update.line.description",
+                    "when": "viewItem == line",
+                    "group": "navigation@2"
                 }
             ],
             "editor/title/context": [
@@ -259,6 +269,16 @@
                 "command": "update.group.description",
                 "title": "Set Group Description",
                 "category": "group"
+            },
+            {
+                "command": "update.line.label",
+                "title": "Set Line Alias",
+                "category": "line"
+            },
+            {
+                "command": "update.line.description",
+                "title": "Set Line Description",
+                "category": "line"
             },
             {
                 "command": "create.tab.line",

@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import { Group } from "../models/Group";
 import { UpdateAction } from "./enums";
 import { Tab } from "../models/Tab";
+import { Line } from "../models/Line";
 
 export enum CREATE_TYPE {
     NEW = "new",
@@ -20,7 +21,7 @@ export interface ICreateGroup {
 
 export interface IUpdateGroup {
     action: UpdateAction;
-    group: Group;
+    node: Group;
     label?: string;
     color?: string;
     description?: string;
@@ -29,6 +30,13 @@ export interface IUpdateGroup {
 export interface IUpdateTab {
     action: UpdateAction;
     label?: string;
-    tab: Tab;
+    node: Tab;
+    description?: string;
+}
+
+export interface IUpdateLine {
+    action: UpdateAction;
+    label?: string;
+    node: Line;
     description?: string;
 }
