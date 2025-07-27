@@ -174,7 +174,7 @@ export class TabView extends CommandManager {
                 quickPick.items = [
                     {
                         label: `$(add) Create new group: "${value}"`,
-                        description: "New group",
+                        description: "new group",
                         alwaysShow: true,
                     },
                     ...groupList.filter((item) =>
@@ -769,33 +769,141 @@ export class TabView extends CommandManager {
             this.extractEditorLineInfo(editor, payload);
 
         let targetTab: Tab | undefined;
+        const activeFileName = path.basename(editor.document.fileName);
 
         // 1. Tab이 없는 경우 → 그룹 및 탭 생성
         if (matchingTabs.length === 0) {
             const group = await this.handleCreateGroupAndTab([uri]);
-            const allGroups = group?.getAllTabs() as Tab[];
-            targetTab = allGroups?.find((tab) => tab.path === uri.path);
+            const allTabs = group?.getAllTabs() as Tab[];
+            targetTab = allTabs?.find((tab) => tab.path === uri.path);
         }
 
-        // 2. Tab이 1개 있는 경우 → 바로 사용
-        else if (matchingTabs.length === 1) {
-            targetTab = matchingTabs[0];
-        }
+        // // 2. Tab이 1개 있는 경우 → 바로 사용 - 기능 제거
+        // else if (matchingTabs.length === 1) {
+        //     targetTab = matchingTabs[0];
+        // }
 
         // 3. Tab이 여러 개 있는 경우 → 사용자에게 선택 받기
         else {
-            const pickItems = matchingTabs.map((tab) => ({
+            const groupList = matchingTabs.map((tab) => ({
                 label: `${tab.getPath()}${tab.getLabel()}`,
+                description: `existing Tab`,
                 id: tab.id,
+                tab: tab,
             }));
 
-            const selected = await vscode.window.showQuickPick(pickItems, {
-                placeHolder: "Choose the tab to attach this line",
+            const quickPick = vscode.window.createQuickPick();
+            quickPick.placeholder = "Choose target tab or create new group";
+            quickPick.items = groupList;
+            quickPick.ignoreFocusOut = true;
+
+            quickPick.onDidChangeValue((value) => {
+                if (value) {
+                    quickPick.items = [
+                        {
+                            label: `$(add) Create new group and Tab and Line: "${value}/${activeFileName}"`,
+                            description: "new group",
+                            alwaysShow: true,
+                        } as any,
+                        ...groupList.filter((item) =>
+                            item.label
+                                .toLowerCase()
+                                .includes(value.toLowerCase())
+                        ),
+                    ];
+                } else {
+                    quickPick.items = groupList;
+                }
             });
 
-            if (selected) {
-                targetTab = matchingTabs.find((tab) => tab.id === selected.id);
-            }
+            targetTab = await new Promise<Tab | undefined>((resolve) => {
+                let isResolved = false;
+
+                const resolveOnce = (value: Tab | undefined) => {
+                    if (!isResolved) {
+                        isResolved = true;
+                        resolve(value);
+                    }
+                };
+
+                quickPick.onDidAccept(async () => {
+                    try {
+                        if (
+                            !quickPick.selectedItems ||
+                            quickPick.selectedItems.length === 0
+                        ) {
+                            quickPick.hide();
+                            resolveOnce(undefined);
+                            return;
+                        }
+
+                        const selectedItem = quickPick.selectedItems[0];
+
+                        // 새 그룹 생성 케이스 - 정규식 수정
+                        if (selectedItem.label.startsWith("$(add)")) {
+                            const newGroupLabel = selectedItem.label.replace(
+                                /\$\(add\) Create new group and Tab and Line\: "([^"]+)\/.*"/g,
+                                "$1"
+                            );
+
+                            if (newGroupLabel) {
+                                console.log(
+                                    `Creating new group: ${newGroupLabel}`
+                                );
+
+                                const createPayload = {
+                                    createType: CREATE_TYPE.NEW,
+                                    label: newGroupLabel,
+                                    uris: [uri],
+                                    workspaceUri:
+                                        vscode.workspace.workspaceFolders?.[0]
+                                            ?.uri,
+                                };
+
+                                const group =
+                                    await this.groupService.createGroup(
+                                        createPayload
+                                    );
+                                const allTabs = group?.getAllTabs() as Tab[];
+                                const newTab = allTabs?.find(
+                                    (tab) => tab.path === uri.path
+                                );
+
+                                vscode.window.showInformationMessage(
+                                    `New group "${newGroupLabel}" created with tab!`
+                                );
+
+                                quickPick.hide();
+                                resolveOnce(newTab);
+                            } else {
+                                console.error("Failed to extract group label");
+                                quickPick.hide();
+                                resolveOnce(undefined);
+                            }
+                        }
+                        // 기존 탭 선택 케이스
+                        else {
+                            const selectedTab = (selectedItem as any)
+                                ?.tab as Tab;
+                            quickPick.hide();
+                            resolveOnce(selectedTab);
+                        }
+                    } catch (error) {
+                        console.error(
+                            "Error in createLineAndDecorate quickPick:",
+                            error
+                        );
+                        quickPick.hide();
+                        resolveOnce(undefined);
+                    }
+                });
+
+                quickPick.onDidHide(() => {
+                    resolveOnce(undefined);
+                });
+
+                quickPick.show();
+            });
         }
 
         if (targetTab) {
@@ -819,23 +927,20 @@ export class TabView extends CommandManager {
                     line,
                     editor.document.lineAt(line).text.length
                 );
-
                 const range = new vscode.Range(lineStart, lineEnd);
 
                 const gutterLineInfo: GetterLineInfo = {
                     uri: uri,
                     tabId: targetTab.id,
-
                     lineId: lineNode.id,
                     line: line,
-                    // lineStart: lineStart,
-                    // lineEnd: lineEnd,
-
                     range: range,
                 };
 
                 await this.addGutterIcon(editor, gutterLineInfo);
             }
+        } else {
+            console.log("No target tab found - line creation cancelled");
         }
     }
 
