@@ -75,7 +75,9 @@ export class GutterIconProvider {
 
 // 데이터 구조
 // "file:///abc.ts" => [
-//   { tabId: "tab1", lineNumber: 10, range: ... },
-//   { tabId: "tab2", lineNumber: 12, range: ... },
-//   { tabId: "tab1", lineNumber: 20, range: ... }
+//      line: 10,
+//      lineId: 'line_74af64cf-5413-419f-ad1a-5020e73c6d72' },
+//      range: ...,
+//      tabId: 'tab_0e944ca1-007e-4c2e-a1fc-84d968bf9629',
+//      uri:...,
 // ]

@@ -822,12 +822,16 @@ export class TabView extends CommandManager {
 
                 const range = new vscode.Range(lineStart, lineEnd);
 
-                const gutterLineInfo = {
+                const gutterLineInfo: GetterLineInfo = {
                     uri: uri,
                     tabId: targetTab.id,
-                    line: line,
-                    range: range,
+
                     lineId: lineNode.id,
+                    line: line,
+                    // lineStart: lineStart,
+                    // lineEnd: lineEnd,
+
+                    range: range,
                 };
 
                 await this.addGutterIcon(editor, gutterLineInfo);
@@ -950,38 +954,36 @@ export class TabView extends CommandManager {
                 const lines = tab.getLines();
 
                 for (const line of lines) {
-                    // 해당 파일이 열려있는지 확인
+                    // range 생성
+                    const lineStart = new vscode.Position(line.line, 0);
+                    const lineEnd = new vscode.Position(line.line, 200);
+                    const range = new vscode.Range(lineStart, lineEnd);
+
+                    const gutterLineInfo: GetterLineInfo = {
+                        uri: line.uri,
+                        tabId: tab.id,
+                        line: line.line,
+                        range: range,
+                        lineId: line.id,
+                    };
+
+                    // GutterIconProvider에 추가
+                    const uriStr = line.uri.toString();
+                    const existingInfos =
+                        this.gutterIconProvider.get(uriStr) || [];
+                    existingInfos.push(gutterLineInfo);
+                    this.gutterIconProvider.set(uriStr, existingInfos);
+
+                    // 데코레이션 적용
+                    const ranges = existingInfos.map((info) => info.range);
+
+                    //현재 열려있는 파일은 바로 적용
                     const editor = vscode.window.visibleTextEditors.find(
                         (ed) =>
                             ed.document.uri.toString() === line.uri.toString()
                     );
 
                     if (editor) {
-                        // Gutter 아이콘 복구
-                        const lineStart = new vscode.Position(line.line, 0);
-                        const lineEnd = new vscode.Position(
-                            line.line,
-                            editor.document.lineAt(line.line).text.length
-                        );
-                        const range = new vscode.Range(lineStart, lineEnd);
-
-                        const gutterLineInfo = {
-                            uri: line.uri,
-                            tabId: tab.id,
-                            line: line.line,
-                            range: range,
-                            lineId: line.id,
-                        };
-
-                        // GutterIconProvider에 추가
-                        const uriStr = line.uri.toString();
-                        const existingInfos =
-                            this.gutterIconProvider.get(uriStr) || [];
-                        existingInfos.push(gutterLineInfo);
-                        this.gutterIconProvider.set(uriStr, existingInfos);
-
-                        // 데코레이션 적용
-                        const ranges = existingInfos.map((info) => info.range);
                         editor.setDecorations(
                             this.gutterIconProvider.getLineMarkerDecoration(),
                             ranges
