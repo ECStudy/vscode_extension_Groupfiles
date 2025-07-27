@@ -660,7 +660,13 @@ export class TabView extends CommandManager {
             "application/vnd.code.tree.tab"
         );
 
-        this.treeDataProvider.moveNode(target, dataTransferItem?.value);
+        const result = this.treeDataProvider.moveNode(
+            target,
+            dataTransferItem?.value
+        );
+        if (result?.message) {
+            vscode.window.showErrorMessage(result?.message);
+        }
     }
 
     // openNewWorkspace = async (workspaceUri: vscode.Uri) => {

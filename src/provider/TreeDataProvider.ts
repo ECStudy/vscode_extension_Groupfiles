@@ -254,14 +254,24 @@ export class TreeDataProvider
         this.viewStateService.setAlias(state);
     }
 
-    moveNode(target: any, dropNodeArr: any[]) {
+    moveNode(
+        target: Tree | Group | Tab | Line | undefined,
+        dropNodeArr: any[]
+    ): any {
         if (!dropNodeArr) {
             return;
         }
 
-        let targetGroup: Tree | Group;
+        let result = {
+            status: true,
+            message: "",
+        };
+
+        let targetGroup: Tree | Group | Tab;
+        let targetTab: Tab;
         let targetIndex: number | undefined;
 
+        // 타겟 결정
         if (!target) {
             targetGroup = this.tree;
         } else {
@@ -271,12 +281,25 @@ export class TreeDataProvider
             //드랍한 타겟이 Tab
             else if (target?.type === TreeItemType.Tab) {
                 targetGroup = target.getParentNode() as Group;
-            } else {
-                //
+            } else if (target?.type === TreeItemType.Line) {
+                targetGroup = target.getParentNode() as Tab;
+                targetTab = target.getParentNode() as Tab;
             }
         }
 
-        // const allGroups = this.getAllParent();
+        //타겟이 존재할 때만 타겟 인덱스 계산
+        if (target) {
+            const targetGroupParent = target.getParentNode() as Group;
+            const targetGroupChildren = targetGroupParent?.getChildren();
+
+            if (targetGroupParent && targetGroupChildren?.length > 0) {
+                targetIndex = targetGroupChildren.findIndex(
+                    (node) => node.id === target.id
+                );
+            }
+        }
+
+        // 드롭할 노드들 필터링
         const filterDropNodeArr = dropNodeArr
             .map((node: any) => {
                 const tempNode = this.tree.findPath(
@@ -287,22 +310,10 @@ export class TreeDataProvider
             })
             .filter((node: any) => node);
 
-        const targetGroupParent = target.getParentNode() as Group;
-        const targetGroupChildren = targetGroupParent.getChildren();
-
-        if (targetGroupChildren.length > 0) {
-            targetIndex = targetGroupChildren.findIndex(
-                (node) => node.id === target.id
-            );
-        }
-
+        // 각 노드 이동처리
         filterDropNodeArr.forEach((node) => {
-            if (node.type === TreeItemType.Line) {
-                return;
-            }
-
             //자기 자신이 자기 자신 그룹인 경우 넣을 수 없다.
-            if (node.id === targetGroup.id) {
+            if (!node || node.id === targetGroup.id) {
                 return;
             }
 
@@ -314,11 +325,30 @@ export class TreeDataProvider
                 return;
             }
 
+            // Line 특수 처리
+            if (node.type === TreeItemType.Line) {
+                // Line인경우 target 다시 조정
+                if (targetGroup.type === TreeItemType.Group) {
+                    targetTab = target as Tab;
+                    targetGroup = target as Tab;
+                }
+
+                // Line은 같은 path를 가진 Tab만 가능하다.
+                if (targetTab.path !== node.path) {
+                    result.message =
+                        "Lines can only be moved within the same file.";
+                    return;
+                }
+            }
+
             //자기자신 못넣음
             //tab은 tree에 붙을 수 없음
             targetGroup.add(node, targetIndex);
         });
+
         this.triggerEventRerender();
+
+        return result;
     }
 
     private async restoreGutterIcons() {
