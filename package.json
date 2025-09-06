@@ -50,13 +50,13 @@
                     "group": "navigation"
                 },
                 {
-                    "command": "myext.group.fold",
-                    "when": "view == tabview && !myext:group.fold",
+                    "command": "myext.group.collapsed",
+                    "when": "view == tabview && !myext:group.collapsed",
                     "group": "mygr@1"
                 },
                 {
-                    "command": "myext.group.unfold",
-                    "when": "view == tabview && myext:group.fold",
+                    "command": "myext.group.unCollapsed",
+                    "when": "view == tabview && myext:group.collapsed",
                     "group": "mygr@1"
                 },
                 {
@@ -248,11 +248,11 @@
                 "title": "Show/Hide Tab Alias"
             },
             {
-                "command": "myext.group.fold",
+                "command": "myext.group.collapsed",
                 "title": "✓ Fold/Unfold Group"
             },
             {
-                "command": "myext.group.unfold",
+                "command": "myext.group.unCollapsed",
                 "title": "Fold/Unfold Group"
             },
             {

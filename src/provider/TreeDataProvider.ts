@@ -39,7 +39,7 @@ export class TreeDataProvider
 
     private tree: Tree;
 
-    private viewCollapse: boolean;
+    private viewCollapsed: boolean;
     private viewDescription: boolean;
     private viewAlias: boolean; //탭 별칭
 
@@ -48,7 +48,7 @@ export class TreeDataProvider
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.tree = Tree.getInstance("root");
-        this.viewCollapse = false;
+        this.viewCollapsed = false;
         this.viewDescription = true;
         this.viewAlias = true; //탭 별칭
 
@@ -84,7 +84,7 @@ export class TreeDataProvider
         const tree = this.tree;
         const jsonTree = Serialize.toJson(tree);
         this.setGlobalState(STORAGE_KEYS.TREE_DATA, jsonTree);
-        this.setGlobalState(STORAGE_KEYS.VIEW_COLLAPSE, this.viewCollapse);
+        this.setGlobalState(STORAGE_KEYS.VIEW_COLLAPSED, this.viewCollapsed);
         this.setGlobalState(
             STORAGE_KEYS.VIEW_DESCRIPTION,
             this.viewDescription
@@ -101,11 +101,11 @@ export class TreeDataProvider
                 const tree = Serialize.fromJson(jsonTree, this.tree);
                 this.tree.setChildren(tree.getChildren());
             }
-            const viewCollapse = this.getGlobalState<boolean>(
-                STORAGE_KEYS.VIEW_COLLAPSE
+            const viewCollapsed = this.getGlobalState<boolean>(
+                STORAGE_KEYS.VIEW_COLLAPSED
             );
-            if (viewCollapse !== undefined) {
-                this.viewCollapse = viewCollapse;
+            if (viewCollapsed !== undefined) {
+                this.viewCollapsed = viewCollapsed;
             }
 
             const viewDescription = this.getGlobalState<boolean>(
@@ -231,15 +231,15 @@ export class TreeDataProvider
         return this.tree.getAllTabs();
     }
 
-    setViewCollapsed(nodes: (Group | Tab)[], isCollapse: boolean) {
+    setviewCollapsed(nodes: (Group | Tab)[], isCollapsed: boolean) {
         // 전체 접기/펼치기 상태 업데이트
-        this.viewStateService.setCollapse(isCollapse);
+        this.viewStateService.setCollapsed(isCollapsed);
 
         // 각 그룹의 상태 업데이트
         nodes.forEach((node) => {
             if (node?.type === TreeItemType.Group) {
                 // Group인 경우만 setCollapsed 호출
-                node.setCollapsed(isCollapse);
+                node.setCollapsed(isCollapsed);
             }
         });
 

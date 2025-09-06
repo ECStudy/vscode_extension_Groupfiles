@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 export enum STORAGE_KEYS {
     TREE_DATA = "treeData",
-    VIEW_COLLAPSE = "viewCollapse",
+    VIEW_COLLAPSED = "viewCollapsed",
     VIEW_DESCRIPTION = "viewDescription",
     VIEW_ALIAS = "viewAlias",
 }

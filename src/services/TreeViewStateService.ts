@@ -3,7 +3,7 @@ import { STORAGE_KEYS, StoreageManager } from "../store/StorageManager";
 export class TreeViewStateService {
     private storageManager: StoreageManager;
 
-    private viewCollapse = false;
+    private viewCollapsed = false;
     private viewDescription = true;
     private viewAlias = true;
 
@@ -15,21 +15,21 @@ export class TreeViewStateService {
     }
 
     initialize() {
-        const collapse = this.storageManager.get<boolean>(
-            STORAGE_KEYS.VIEW_COLLAPSE
+        const collapsed = this.storageManager.get<boolean>(
+            STORAGE_KEYS.VIEW_COLLAPSED
         );
         const desc = this.storageManager.get<boolean>(
             STORAGE_KEYS.VIEW_DESCRIPTION
         );
         const alias = this.storageManager.get<boolean>(STORAGE_KEYS.VIEW_ALIAS);
 
-        this.viewCollapse = collapse ?? false;
+        this.viewCollapsed = collapsed ?? false;
         this.viewDescription = desc ?? true;
         this.viewAlias = alias ?? true;
     }
 
-    getCollapse() {
-        return this.viewCollapse;
+    getCollapsed() {
+        return this.viewCollapsed;
     }
 
     getDescription() {
@@ -40,9 +40,9 @@ export class TreeViewStateService {
         return this.viewAlias;
     }
 
-    setCollapse(state: boolean) {
-        this.viewCollapse = state;
-        this.storageManager.set(STORAGE_KEYS.VIEW_COLLAPSE, state);
+    setCollapsed(state: boolean) {
+        this.viewCollapsed = state;
+        this.storageManager.set(STORAGE_KEYS.VIEW_COLLAPSED, state);
     }
 
     setDescription(state: boolean) {

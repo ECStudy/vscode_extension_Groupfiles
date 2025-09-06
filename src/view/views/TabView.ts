@@ -600,13 +600,13 @@ export class TabView extends CommandManager {
         }
     }
 
-    async handleFoldGroup() {
-        const viewCollapse = this.treeDataProvider.getGlobalState<boolean>(
-            STORAGE_KEYS.VIEW_COLLAPSE
+    async handleCollapsedGroup() {
+        const viewCollapsed = this.treeDataProvider.getGlobalState<boolean>(
+            STORAGE_KEYS.VIEW_COLLAPSED
         );
 
         const allGroup = this.treeDataProvider.getGroups() as Group[];
-        this.treeDataProvider.setViewCollapsed(allGroup, !viewCollapse);
+        this.treeDataProvider.setviewCollapsed(allGroup, !viewCollapsed);
     }
 
     async handleViewDescription() {
