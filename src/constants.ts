@@ -10,3 +10,7 @@ export const colorPalette = [
     { label: "black", icon: "⚫" },
     { label: "white", icon: "⚪" },
 ];
+
+export const constValue = {
+    delimiter: "∬",
+};

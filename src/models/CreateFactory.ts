@@ -9,8 +9,7 @@ import { Line } from "./Line";
 
 export class CreateFactory {
     static createGroup(label: string, payload?: any): Group {
-        const id = `group_${uuidv4()}`;
-        return new Group(id, label, payload);
+        return new Group({ label, payload });
     }
 
     static async createTab(
@@ -30,7 +29,7 @@ export class CreateFactory {
                 workspaceUri: payload.workspaceUri,
             };
 
-            return new Tab(`tab_${uuidv4()}`, nativeTab, tabCreatePayload);
+            return new Tab({ nativeTab, payload: tabCreatePayload });
         } else {
             const stat = await vscode.workspace.fs.stat(uri);
             if (stat.type === vscode.FileType.File) {
@@ -43,7 +42,7 @@ export class CreateFactory {
                     workspaceUri: payload.workspaceUri,
                 };
 
-                return new Tab(`tab_${uuidv4()}`, nativeTab, tabCreatePayload);
+                return new Tab({ nativeTab, payload: tabCreatePayload });
             }
         }
 
@@ -71,7 +70,7 @@ export class CreateFactory {
                     .trim();
                 updatePayload.lineText = lineText;
             }
-            return new Line(`line_${uuidv4()}`, nativeTab, updatePayload);
+            return new Line({ nativeTab, payload: updatePayload });
         } catch (err) {
             return null;
         }

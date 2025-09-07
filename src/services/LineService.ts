@@ -34,6 +34,9 @@ export class LineService {
             //새로운건 맨 뒤에 넣기
             tab?.add(lineNode);
             tab?.setCollapsed(false);
+
+            //부모들 펼치기
+            tab?.setCollapsedDownToUp(false);
         }
 
         this.treeProvider.triggerEventRerender();

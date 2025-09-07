@@ -6,6 +6,8 @@ import { Node } from "./Node";
 
 import { groupIconPaths } from "../assets";
 
+import { createId } from "../utils/util";
+
 export class Group extends Node {
     readonly type = TreeItemType.Group;
     // 그룹 이름
@@ -13,22 +15,29 @@ export class Group extends Node {
     // 컬러코드
     color: string;
     // 접기 펼치기 여부
-    collapsed: boolean;
+    //collapsed: boolean;
     // 경로
     path: string;
     //주석
     description?: string;
 
-    constructor(id: string, label: string, payload?: any) {
-        super(id);
+    constructor({
+        id,
+        label,
+        payload,
+    }: {
+        id?: string;
+        label: string;
+        payload?: any;
+    }) {
+        super(id ? id : createId(TreeItemType.Group));
         this.label = label;
         this.color = "default";
-        this.collapsed = false; // 기본적으로 열림 상태
         this.path = "";
         this.description = payload?.description || "";
     }
 
-    render(
+    createNode(
         context: vscode.ExtensionContext,
         payload?: RenderPayload
     ): vscode.TreeItem {
@@ -86,20 +95,6 @@ export class Group extends Node {
             );
 
             parentNode?.setChildren(removedChildren);
-        }
-    }
-
-    setCollapsed(collapsed: boolean) {
-        this.collapsed = collapsed;
-    }
-
-    setUpdateCollapsed(collapsed: boolean) {
-        //현재 노드 collapsed 업데이트
-        this.setCollapsed(collapsed);
-        //부모 노드 collapsed 업데이트
-        const parentNode = this.getParentNode() as Group;
-        if (parentNode && parentNode.type === TreeItemType.Group) {
-            parentNode.setUpdateCollapsed(collapsed);
         }
     }
 

@@ -87,7 +87,7 @@ export class TabView extends CommandManager {
     }
 
     async handleClearGlobalState() {
-        const nodes = this.treeDataProvider.getTree();
+        const tree = this.treeDataProvider.getTree();
 
         const confirm = await vscode.window.showInformationMessage(
             `Extension reset. Cannot be restored!`,
@@ -99,7 +99,7 @@ export class TabView extends CommandManager {
             this.context.globalState.keys().forEach((key) => {
                 this.context.globalState.update(key, undefined); // 키 값을 undefined로 설정하여 제거
             });
-            nodes.reset();
+            tree.reset();
             this.treeDataProvider.triggerEventRerender();
         }
     }
@@ -600,13 +600,25 @@ export class TabView extends CommandManager {
         }
     }
 
-    async handleCollapsedGroup() {
+    /**
+     * 전체/접기 펼치기
+     * 접기 - 1뎁스에 있는 group 접기
+     * 펼치기 - 모든 group, tab 펼치기
+     */
+    async handleViewCollapsed() {
         const viewCollapsed = this.treeDataProvider.getGlobalState<boolean>(
             STORAGE_KEYS.VIEW_COLLAPSED
         );
+        const newViewCollapsed = !viewCollapsed; //값 토글
 
-        const allGroup = this.treeDataProvider.getGroups() as Group[];
-        this.treeDataProvider.setviewCollapsed(allGroup, !viewCollapsed);
+        //root부터 시작해서 위에서 -> 아래로 가면서 열기
+        this.treeDataProvider.getTree().setCollapsedUpToDown(newViewCollapsed);
+        this.treeDataProvider.triggerEventRerender();
+
+        this.treeDataProvider.setGlobalState(
+            STORAGE_KEYS.VIEW_COLLAPSED,
+            newViewCollapsed
+        );
     }
 
     async handleViewDescription() {
@@ -919,15 +931,6 @@ export class TabView extends CommandManager {
             });
 
             if (lineNode) {
-                // Tab 펼칠때 타겟 Tab만 펼칠수 있는 꼼수
-                // Tab을 펼칠 목록에 추가
-                this.treeDataProvider.addForceExpandTab(targetTab.id);
-
-                // 잠시 후 목록에서 제거 (다음 렌더링에서는 정상 작동하도록)
-                setTimeout(() => {
-                    this.treeDataProvider.deleteForceExpandTab(targetTab!.id);
-                }, 1000);
-
                 const lineStart = new vscode.Position(line, 0);
                 const lineEnd = new vscode.Position(
                     line,

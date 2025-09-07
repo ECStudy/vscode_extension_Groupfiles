@@ -16,10 +16,8 @@ export class GroupService {
         const tab = await CreateFactory.createTab(uri, payload);
         if (tab) {
             group.add(tab);
-            // 그룹 상태 업데이트
-            if (typeof group.setUpdateCollapsed === "function") {
-                group.setUpdateCollapsed(false);
-            }
+            group.setUpdateCollapsed(false);
+            group?.setCollapsedDownToUp(false);
         }
         this.treeProvider.triggerEventRerender();
     }
@@ -61,6 +59,7 @@ export class GroupService {
             }
         }
 
+        newGroup?.setCollapsedDownToUp(false);
         this.treeProvider.triggerEventRerender();
         return newGroup;
     }
@@ -73,6 +72,7 @@ export class GroupService {
         if (payload?.label) {
             const group = CreateFactory.createGroup(payload.label);
             payload?.group?.add(group);
+            group?.setCollapsedDownToUp(false);
             this.treeProvider.triggerEventRerender();
         }
     }

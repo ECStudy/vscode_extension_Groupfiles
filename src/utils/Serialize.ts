@@ -78,10 +78,7 @@ export class Serialize {
                     node = tree;
                     break;
                 case TreeItemType.Group:
-                    node = new Group(
-                        nodeJson.payload.id,
-                        nodeJson.payload.label
-                    );
+                    node = new Group(nodeJson.payload);
                     node.setColor(nodeJson.payload.color);
                     node.collapsed = nodeJson.payload.collapsed;
                     node.description = nodeJson.payload.description;
@@ -104,17 +101,17 @@ export class Serialize {
                         );
                     }
 
-                    node = new Tab(
-                        nodeJson.payload.id,
-                        {
+                    node = new Tab({
+                        id: nodeJson.payload.id,
+                        nativeTab: {
                             input: { uri },
                         },
-                        {
+                        payload: {
                             label: nodeJson?.payload?.label,
                             description: nodeJson?.payload?.description,
                             workspaceUri: workspaceUri, // 복구
-                        }
-                    );
+                        },
+                    });
                     break;
                 case TreeItemType.Line:
                     //nodeJson.payload.uri.external : 파일명까지 나옴
@@ -125,18 +122,18 @@ export class Serialize {
                         nodeJson.payload?.uri?.path
                     );
 
-                    node = new Line(
-                        nodeJson.payload.id,
-                        {
+                    node = new Line({
+                        id: nodeJson.payload.id,
+                        nativeTab: {
                             input: { uri: lineUri },
                         },
-                        {
+                        payload: {
                             line: nodeJson?.payload?.line,
                             label: nodeJson?.payload?.label,
                             lineText: nodeJson?.payload?.lineText,
                             description: nodeJson?.payload?.description,
-                        }
-                    );
+                        },
+                    });
                     break;
                 default:
                     throw new Error(`Unknown node type: ${nodeJson.type}`);

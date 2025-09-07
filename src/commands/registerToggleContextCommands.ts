@@ -10,13 +10,13 @@ export const registerToggleContextCommands = (tabView: TabView) => {
         })
     );
 
-    // 전체 그룹 접기 / 펼치기
+    // 전체 노드 접기 / 펼치기
     registerToggleContextCommand({
         trueCommand: "myext.group.collapsed",
         falseCommand: "myext.group.unCollapsed",
         whenCondition: "myext:group.collapsed",
-        trueCallback: () => tabView.handleCollapsedGroup(),
-        falseCallback: () => tabView.handleCollapsedGroup(),
+        trueCallback: () => tabView.handleViewCollapsed(),
+        falseCallback: () => tabView.handleViewCollapsed(),
     });
 
     // 주석 보이기 / 숨기기

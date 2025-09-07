@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import { NativeTabInput, RenderPayload, TreeItemType } from "../types/types";
 
 import { Node } from "./Node";
+import { createId } from "../utils/util";
 
 export class Line extends Node {
     readonly type = TreeItemType.Line;
@@ -14,8 +15,16 @@ export class Line extends Node {
     //주석
     description?: string;
 
-    constructor(id: string, nativeTab: any, payload?: any) {
-        super(id);
+    constructor({
+        id,
+        nativeTab,
+        payload,
+    }: {
+        id?: string;
+        nativeTab: any;
+        payload?: any;
+    }) {
+        super(id ? id : createId(TreeItemType.Line));
         this.path = (nativeTab.input as NativeTabInput)?.uri?.path;
         this.uri = (nativeTab.input as NativeTabInput)?.uri;
         this.label = payload?.label || "";
@@ -24,7 +33,7 @@ export class Line extends Node {
         this.description = payload?.description || "";
     }
 
-    render(
+    createNode(
         context: vscode.ExtensionContext,
         payload?: RenderPayload
     ): vscode.TreeItem {

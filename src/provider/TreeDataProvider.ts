@@ -133,93 +133,62 @@ export class TreeDataProvider
         this._onDidChangeTreeData.fire();
     }
 
-    shouldForceExpandTab(tabId: string): boolean {
-        return this.tabsToExpand.has(tabId);
-    }
-
-    addForceExpandTab(tabId: string): void {
-        this.tabsToExpand.add(tabId);
-    }
-
-    deleteForceExpandTab(tabId: string): void {
-        this.tabsToExpand.delete(tabId);
-    }
-
-    getTreeItem(element: Group | Tab | Line): vscode.TreeItem {
+    /** 필수 함수 */
+    getTreeItem(node: Group | Tab | Line): vscode.TreeItem {
         const itemPayload = {
             viewDescription: this.viewStateService.getDescription(),
             viewAlias: this.viewStateService.getAlias(),
         };
 
         // Line 타입 확인 추가
-        if (element.type === TreeItemType.Line) {
-            return element.render(this.context, itemPayload);
+        if (node.type === TreeItemType.Line) {
+            return node.createNode(this.context, itemPayload);
         }
 
-        const treeItem = element.render(this.context, itemPayload);
+        const treeNode = node.createNode(this.context, itemPayload);
         // Group
-        if (element.type === TreeItemType.Group) {
-            //접기 펼치기 캐싱 때문에 렌더 할 때 아이디 변경
-            //collapsed 상태에 따라 ID 설정
-            treeItem.id = `${element.id}_${
-                element.collapsed ? "collapsed" : "expanded"
-            }`;
-
-            treeItem.collapsibleState = element.collapsed
+        if (node.type === TreeItemType.Group) {
+            treeNode.collapsibleState = node.collapsed
                 ? vscode.TreeItemCollapsibleState.Collapsed //닫힘 1
                 : vscode.TreeItemCollapsibleState.Expanded; //열림 2
         }
         // Tab
         else if (
-            element.type === TreeItemType.Tab &&
-            element.getChildren().length > 0
+            node.type === TreeItemType.Tab &&
+            node.getChildren().length > 0
         ) {
             // Tab이 Line을 가지고 있으면서 접힌 상태가 아니라면 강제로 펼치기
-            const hasLines = element.getLines().length > 0;
+            const hasLines = node.getLines().length > 0;
             if (hasLines) {
-                // Tab 펼칠때 타겟 Tab만 펼칠수 있는 꼼수
-                const shouldForceExpand = this.shouldForceExpandTab?.(
-                    element.id
-                );
-                if (!element.collapsed || shouldForceExpand) {
-                    treeItem.collapsibleState =
-                        vscode.TreeItemCollapsibleState.Expanded;
-
-                    // 강제 펼치기가 필요한 경우에만 새로운 ID 생성
-                    treeItem.id = shouldForceExpand
-                        ? `${element.id}_expanded_${Date.now()}`
-                        : `${element.id}`;
-                } else {
-                    // 접힌 상태일 때는 고정 ID 사용
-                    treeItem.id = `${element.id}`;
-                    treeItem.collapsibleState =
-                        vscode.TreeItemCollapsibleState.Collapsed;
-                }
+                treeNode.collapsibleState = node.collapsed
+                    ? vscode.TreeItemCollapsibleState.Collapsed //닫힘 1
+                    : vscode.TreeItemCollapsibleState.Expanded; //열림 2
             }
             //line 없음
             else {
-                treeItem.collapsibleState =
+                treeNode.collapsibleState =
                     vscode.TreeItemCollapsibleState.None;
             }
         }
 
-        return treeItem;
+        return treeNode;
     }
 
-    getChildren(element?: Group | Tab | Line): (Group | Tab | Line)[] {
-        if (element instanceof Line) {
+    /** 필수 함수 */
+    getChildren(node?: Group | Tab | Line): (Group | Tab | Line)[] {
+        if (node instanceof Line) {
             return [];
         }
 
-        const target = element ?? this.tree;
+        const target = node ?? this.tree;
         return target.getChildren();
     }
 
-    getParent(element: Group | Tab | Line): Node | undefined {
-        return element.getParentNode();
+    getParent(node: Group | Tab | Line): Node | undefined {
+        return node.getParentNode();
     }
 
-    getTree() {
+    getTree(): Tree {
         return this.tree;
     }
 
@@ -229,21 +198,6 @@ export class TreeDataProvider
 
     getAllTabs(): Node[] {
         return this.tree.getAllTabs();
-    }
-
-    setviewCollapsed(nodes: (Group | Tab)[], isCollapsed: boolean) {
-        // 전체 접기/펼치기 상태 업데이트
-        this.viewStateService.setCollapsed(isCollapsed);
-
-        // 각 그룹의 상태 업데이트
-        nodes.forEach((node) => {
-            if (node?.type === TreeItemType.Group) {
-                // Group인 경우만 setCollapsed 호출
-                node.setCollapsed(isCollapsed);
-            }
-        });
-
-        this.triggerEventRerender();
     }
 
     setViewDescription(state: boolean) {
@@ -344,6 +298,7 @@ export class TreeDataProvider
             //자기자신 못넣음
             //tab은 tree에 붙을 수 없음
             targetGroup.add(node, targetIndex);
+            targetGroup.setCollapsedDownToUp();
         });
 
         this.triggerEventRerender();

@@ -10,7 +10,7 @@ import {
     TreeItemType,
 } from "../types/types";
 
-import { getFileName } from "../utils/util";
+import { createId, getFileName } from "../utils/util";
 import { Node } from "./Node";
 import { Line } from "./Line";
 
@@ -24,20 +24,28 @@ export class Tab extends Node implements TabItem {
     description?: string;
     workspaceUri?: any;
     // 접기 펼치기 여부
-    collapsed: boolean;
+    //collapsed: boolean;
 
-    constructor(id: string, nativeTab: any, payload?: any) {
-        super(id);
+    constructor({
+        id,
+        nativeTab,
+        payload,
+    }: {
+        id?: string;
+        nativeTab: any;
+        payload?: any;
+    }) {
+        super(id ? id : createId(TreeItemType.Tab));
         this.path = (nativeTab.input as NativeTabInput)?.uri?.path;
         this.uri = (nativeTab.input as NativeTabInput)?.uri;
         this.label = payload?.label || "";
         this.description = payload?.description || "";
         this.workspaceUri = payload?.workspaceUri; //저장시점의 워크스페이스를 저장한다.
 
-        this.collapsed = false;
+        //this.collapsed = false;
     }
 
-    render(
+    createNode(
         context: vscode.ExtensionContext,
         payload?: RenderPayload
     ): vscode.TreeItem {
@@ -122,20 +130,5 @@ export class Tab extends Node implements TabItem {
             );
         });
         this.setChildren(updated);
-    }
-
-    setCollapsed(collapsed: boolean) {
-        this.collapsed = collapsed;
-    }
-
-    //@TODO GROUP이랑 올림
-    setUpdateCollapsed(collapsed: boolean) {
-        //현재 노드 collapsed 업데이트
-        this.setCollapsed(collapsed);
-        //부모 노드 collapsed 업데이트
-        const parentNode = this.getParentNode() as Tab;
-        if (parentNode && parentNode.type === TreeItemType.Tab) {
-            parentNode.setUpdateCollapsed(collapsed);
-        }
     }
 }

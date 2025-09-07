@@ -1,8 +1,12 @@
 import * as vscode from "vscode";
+import { TreeItemType } from "../types/types";
+import { constValue } from "../constants";
 
 export const getFileName = (path: string) => {
     return path.substring(path.lastIndexOf("/") + 1);
 };
+
+import { v4 as uuidv4 } from "uuid";
 
 export const showInputBox = async ({
     prompt,
@@ -47,4 +51,13 @@ export const parseGitGraphUri = (uri: vscode.Uri) => {
         filePath,
         metadata: fileMetadata,
     };
+};
+
+/**
+ * node id 생성 규칙 [0]type∬[1]id∬[2]hash
+ * @param type
+ * @returns
+ */
+export const createId = (type: TreeItemType): string => {
+    return `${type}${constValue.delimiter}${uuidv4()}`;
 };
